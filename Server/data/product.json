@@ -1,0 +1,242 @@
+[
+    {
+        "name": "KFC Original Chicken",
+        "description": "Crispy, juicy fried chicken with a secret blend of 11 herbs and spices.",
+        "price": 50000,
+        "imgUrl": "https://tse2.mm.bing.net/th?id=OIP.FodjM90_PuNDCtsqQT48fQHaEK&pid=Api&P=0&h=180",
+        "CategoryId": 1,
+        "stock": 1
+    },
+    {
+        "name": "KFC Spicy Chicken",
+        "description": "Spicy, crispy fried chicken with a special hot seasoning.",
+        "price": 55000,
+        "imgUrl": "https://tse1.mm.bing.net/th?id=OIP.uC0gpTnmfHUTjdMu3UE_6QHaEH&pid=Api&P=0&h=180",
+        "CategoryId": 1,
+        "stock": 5
+    },
+    {
+        "name": "KFC Chicken Popcorn",
+        "description": "Small, crispy chicken bites perfect for snacking.",
+        "price": 30000,
+        "imgUrl": "https://mymorningmocha.com/wp-content/uploads/2022/01/KFC-Popcorn-Chicken-Recipe.jpg",
+        "CategoryId": 2,
+        "stock": 2
+    },
+    {
+        "name": "KFC Fries",
+        "description": "Crispy golden fries served as a side dish.",
+        "price": 15000,
+        "imgUrl": "https://tse4.mm.bing.net/th?id=OIP.awC53W-EwbvI3DyUvEnwGQHaHa&pid=Api&P=0&h=180",
+        "CategoryId": 3,
+        "stock": 3
+    },
+    {
+        "name": "KFC Soft Drink",
+        "description": "Refreshing cold drinks to accompany your meal.",
+        "price": 10000,
+        "imgUrl": "https://tse4.mm.bing.net/th?id=OIP.0R6QXznuizx8eAmGlw1CewHaDV&pid=Api&P=0&h=180",
+        "CategoryId": 4,
+        "stock": 4
+    },
+    {
+        "name": "KFC Original Chicken",
+        "description": "Crispy, juicy fried chicken with a secret blend of 11 herbs and spices.",
+        "price": 50000,
+        "imgUrl": "https://tse2.mm.bing.net/th?id=OIP.FodjM90_PuNDCtsqQT48fQHaEK&pid=Api&P=0&h=180",
+        "CategoryId": 1,
+        "stock": 1
+    },
+    {
+        "name": "Grilled Chicken",
+        "description": "Tender and smoky grilled chicken with a savory seasoning.",
+        "price": 45000,
+        "imgUrl": "https://www.simplyrecipes.com/thmb/ByLQsxRDUb4lMtx81-bl-i-cgtI=/5156x3437/filters:fill(auto,1)/Simply-Recipes-Grilled-Chicken-LEAD-SEO-Horizontal-1b86ef1e115444ba8b6fb216f2810c7c.jpg",
+        "CategoryId": 1,
+        "stock": 1
+    },
+    {
+        "name": "Fried Chicken Wings",
+        "description": "Crispy and golden fried chicken wings, perfect for snacking.",
+        "price": 30000,
+        "imgUrl": "https://s3-media1.fl.yelpcdn.com/bphoto/pfyItJ9vzHgKPeJuWqbGZA/o.jpg",
+        "CategoryId": 1,
+        "stock": 1
+    },
+    {
+        "name": "Spicy Chicken Bites",
+        "description": "Spicy, crispy chicken bites with a zesty kick.",
+        "price": 35000,
+        "imgUrl": "https://thewholecook.com/wp-content/uploads/2020/01/Sweet-Spicy-Chicken-Bites-by-The-Whole-Cook-horizontal-3.jpg",
+        "CategoryId": 1,
+        "stock": 1
+    },
+    {
+        "name": "Chicken Tenders",
+        "description": "Breaded and deep-fried chicken tenders served with dipping sauce.",
+        "price": 40000,
+        "imgUrl": "https://tse1.mm.bing.net/th?id=OIP.TyuOx2CmYN_iXE7LVfVtPAHaE7&pid=Api&P=0&h=180",
+        "CategoryId": 1,
+        "stock": 1
+    },
+    {
+        "name": "French Fries",
+        "description": "Golden and crispy fries, the perfect snack.",
+        "price": 15000,
+        "imgUrl": "https://www.thespruceeats.com/thmb/IHKuXcx3uUI1IWkM_cnnQdFH-zQ=/3485x2323/filters:fill(auto,1)/how-to-make-homemade-french-fries-2215971-hero-01-02f62a016f3e4aa4b41d0c27539885c3.jpg",
+        "CategoryId": 2,
+        "stock": 2
+    },
+    {
+        "name": "Mozzarella Sticks",
+        "description": "Fried cheese sticks with a gooey mozzarella center.",
+        "price": 20000,
+        "imgUrl": "https://tse2.mm.bing.net/th?id=OIP.cGlibPQHW6yZMLRVC_80qwHaJQ&pid=Api&P=0&h=180",
+        "CategoryId": 2,
+        "stock": 2
+    },
+    {
+        "name": "Onion Rings",
+        "description": "Crispy and savory onion rings.",
+        "price": 18000,
+        "imgUrl": "https://houseofnasheats.com/wp-content/uploads/2023/03/Homemade-Onion-Rings-Square-1-720x720.jpg",
+        "CategoryId": 2,
+        "stock": 2
+    },
+    {
+        "name": "Chicken Popcorn",
+        "description": "Crispy, bite-sized chicken pieces perfect for snacking.",
+        "price": 25000,
+        "imgUrl": "https://thecozycook.com/wp-content/uploads/2023/02/Popcorn-Chicken-1.jpg",
+        "CategoryId": 2,
+        "stock": 2
+    },
+    {
+        "name": "Potato Wedges",
+        "description": "Seasoned potato wedges, crispy on the outside and soft on the inside.",
+        "price": 22000,
+        "imgUrl": "https://healthyfitnessmeals.com/wp-content/uploads/2020/05/Baked-potato-wedges-4.jpg",
+        "CategoryId": 2,
+        "stock": 2
+    },
+    {
+        "name": "Coleslaw",
+        "description": "Creamy and tangy coleslaw with a perfect blend of vegetables.",
+        "price": 12000,
+        "imgUrl": "https://tse2.mm.bing.net/th?id=OIP.iIqAL7gEH2fHJC3ktpsohgHaFS&pid=Api&P=0&h=180",
+        "CategoryId": 3,
+        "stock": 3
+    },
+    {
+        "name": "Garlic Bread",
+        "description": "Buttery garlic bread, perfect for pairing with any meal.",
+        "price": 16000,
+        "imgUrl": "https://tse2.mm.bing.net/th?id=OIP.bfkLBUC9TTrrz9EI1LPq6wHaLH&pid=Api&P=0&h=180",
+        "CategoryId": 3,
+        "stock": 3
+    },
+    {
+        "name": "Mashed Potatoes",
+        "description": "Smooth and creamy mashed potatoes with a rich gravy.",
+        "price": 17000,
+        "imgUrl": "https://inspiringrecipeideas.com/wp-content/uploads/2020/08/044DD917-0889-4434-8BAC-9548AC4832A0-scaled.jpeg",
+        "CategoryId": 3,
+        "stock": 3
+    },
+    {
+        "name": "Rice Pilaf",
+        "description": "Fluffy and fragrant rice with a delicate seasoning.",
+        "price": 14000,
+        "imgUrl": "https://falasteenifoodie.com/wp-content/uploads/2022/11/Middle-Eastern-Rice-Pilaf.jpg",
+        "CategoryId": 3,
+        "stock": 3
+    },
+    {
+        "name": "Steamed Vegetables",
+        "description": "A healthy mix of steamed vegetables to complement any meal.",
+        "price": 13000,
+        "imgUrl": "https://tse4.mm.bing.net/th?id=OIP.VRNRBjnnQlis1uCW_F30YAHaHa&pid=Api&P=0&h=180",
+        "CategoryId": 3,
+        "stock": 3
+    },
+    {
+        "name": "Coca-Cola",
+        "description": "Classic Coca-Cola, a refreshing carbonated drink.",
+        "price": 10000,
+        "imgUrl": "https://www.coca-cola.com/content/dam/onexp/mx/es/history/global_history_rich_history_campaign_card_1280x1024.jpg",
+        "CategoryId": 4,
+        "stock": 4
+    },
+    {
+        "name": "Lemonade",
+        "description": "Freshly squeezed lemonade with a perfect balance of sweet and sour.",
+        "price": 12000,
+        "imgUrl": "https://www.simplyrecipes.com/thmb/ZOXgJKuuMMYQGUJ8Co1eooL37tw=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/Simply-Recipes-Perfect-Lemonade-LEAD-06-B-a488322e63604cd6a1442de661722553.jpg",
+        "CategoryId": 4,
+        "stock": 4
+    },
+    {
+        "name": "Iced Tea",
+        "description": "Refreshing iced tea with a hint of lemon.",
+        "price": 11000,
+        "imgUrl": "https://tse3.mm.bing.net/th?id=OIP.UkUlNWQOvboZ0ruHcx5cPgAAAA&pid=Api&P=0&h=180",
+        "CategoryId": 4,
+        "stock": 4
+    },
+    {
+        "name": "Orange Juice",
+        "description": "Freshly squeezed orange juice, full of vitamins and flavor.",
+        "price": 13000,
+        "imgUrl": "https://tse1.mm.bing.net/th?id=OIP.jqxR_QrdtXQR6kfXBUHrBAHaFD&pid=Api&P=0&h=180",
+        "CategoryId": 4,
+        "stock": 4
+    },
+    {
+        "name": "Milkshake",
+        "description": "Rich and creamy milkshake, available in various flavors.",
+        "price": 15000,
+        "imgUrl": "https://www.spoonforkbacon.com/wp-content/uploads/2023/04/milshake-recipe-card.jpg",
+        "CategoryId": 4,
+        "stock": 4
+    },
+    {
+        "name": "Chocolate Cake",
+        "description": "Decadent and moist chocolate cake with a rich ganache.",
+        "price": 25000,
+        "imgUrl": "https://www.tasteofhome.com/wp-content/uploads/2017/10/Best-Chocolate-Cake_exps47786._THCA1917912C10_02_1bC_RMS-2.jpg",
+        "CategoryId": 5,
+        "stock": 5
+    },
+    {
+        "name": "Apple Pie",
+        "description": "Warm and comforting apple pie with a buttery crust.",
+        "price": 22000,
+        "imgUrl": "https://ohsweetbasil.com/wp-content/uploads/classic-apple-pie-recipe-10-scaled.jpg",
+        "CategoryId": 5,
+        "stock": 5
+    },
+    {
+        "name": "Ice Cream Sundae",
+        "description": "A classic sundae with scoops of vanilla ice cream, hot fudge, and whipped cream.",
+        "price": 20000,
+        "imgUrl": "https://icecreamfromscratch.com/wp-content/uploads/2022/05/Ice-Cream-Sundae-1.2-735x1103.jpg",
+        "CategoryId": 5,
+        "stock": 5
+    },
+    {
+        "name": "Brownies",
+        "description": "Rich, fudgy brownies with a perfect chocolate flavor.",
+        "price": 18000,
+        "imgUrl": "https://sugargeekshow.com/wp-content/uploads/2019/10/fudgy_brownie_recipe_featured.jpg",
+        "CategoryId": 5,
+        "stock": 5
+    },
+    {
+        "name": "Churros",
+        "description": "Warm, crispy churros dusted with sugar and cinnamon.",
+        "price": 15000,
+        "imgUrl": "https://tse4.mm.bing.net/th?id=OIP.0KbTSA-IYBwqHNZFBnuusgHaLH&pid=Api&P=0&h=180",
+        "CategoryId": 5,
+        "stock": 5
+    }
+]

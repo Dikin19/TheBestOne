@@ -1,0 +1,52 @@
+[
+    {
+        "id": 1,
+        "fullName": "Dikin",
+        "email": "Dikin@bluerim.com",
+        "password": "password123",
+        "role": "admin",
+        "phoneNumber": "081234567890",
+        "address": "Jl. KFC No. 1, Jakarta",
+        "profilePicture": "https://personalexcellence.co/files/ceo.jpg"
+    },
+    {
+        "id": 2,
+        "fullName": "Reno",
+        "email": "Reno@bluerim.com",
+        "password": "password123",
+        "role": "customer",
+        "phoneNumber": "081234567891",
+        "address": "Jl. KFC No. 2, Bandung",
+        "profilePicture": "https://personalexcellence.co/files/ceo.jpg"
+    },
+    {
+        "id": 3,
+        "fullName": "Dikin1",
+        "email": "Dikin1@bluerim.com",
+        "password": "password123",
+        "role": "customer",
+        "phoneNumber": "081234567890",
+        "address": "Jl. KFC No. 1, Jakarta",
+        "profilePicture": "https://personalexcellence.co/files/ceo.jpg"
+    },
+    {
+        "id": 4,
+        "fullName": "Dikin2",
+        "email": "Dikin2@bluerim.com",
+        "password": "password123",
+        "role": "admin",
+        "phoneNumber": "081234567890",
+        "address": "Jl. KFC No. 1, Jakarta",
+        "profilePicture": "https://personalexcellence.co/files/ceo.jpg"
+    },
+    {
+        "id": 5,
+        "fullName": "Dikin3",
+        "email": "Dikin3@bluerim.com",
+        "password": "password123",
+        "role": "admin",
+        "phoneNumber": "081234567890",
+        "address": "Jl. KFC No. 1, Jakarta",
+        "profilePicture": "https://personalexcellence.co/files/ceo.jpg"
+    }
+]
