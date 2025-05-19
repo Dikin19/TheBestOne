@@ -1,11 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axios from "../config/axiosInstance";
 
+
 const productSlice = createSlice({
   name: "products",
   initialState: {
     items: [],
     detail:[],
+    Profile: [],
     isLoading: false, 
   },
   reducers: {
@@ -23,10 +25,14 @@ const productSlice = createSlice({
       state.detail = action.payload;
       state.isLoading = false;
     },
+    fetchProfileSuccess: (state, action) => {
+      state.Profile = action.payload;
+      state.isLoading = false;
+    },
   },
 });
 
-export const { fetchProductsStart, fetchProductsSuccess, fetchProductsFailure,fetchProductByIdSuccess } = productSlice.actions;
+export const { fetchProductsStart, fetchProductsSuccess, fetchProductsFailure,fetchProductByIdSuccess, fetchProfileSuccess } = productSlice.actions;
 
 const productReducer = productSlice.reducer;
 export default productReducer;
@@ -63,6 +69,25 @@ export function fetchById(id) {
         },
       });
       dispatch(fetchProductByIdSuccess(data));
+    } catch (error) {
+      console.log(error);
+      dispatch(fetchProductsFailure(error.response?.data?.message || "Something went wrong!"));
+    }
+  };
+}
+
+export function fetchProfile() {
+  return async (dispatch) => {
+    dispatch(fetchProductsStart());
+    try {
+      const { data } = await axios({
+        method: "get",
+        url: "/customers/profile",
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("access_token"),
+        },
+      });
+      dispatch(fetchProfileSuccess(data));
     } catch (error) {
       console.log(error);
       dispatch(fetchProductsFailure(error.response?.data?.message || "Something went wrong!"));

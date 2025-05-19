@@ -27,6 +27,7 @@ export default function DetailPage() {
                 }
             });
             setGemini(data);
+            console.log(data, 'apaa ini');
         } catch (error) {
             console.log(error);
         }
