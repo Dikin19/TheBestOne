@@ -164,24 +164,28 @@ static async updateProfile (req, res, next){
   }
 }
 
-static async deleteById (req, res, next){
+static async deleteById(req, res, next) {
   try {
-      
-      let {id} = req.params
-      let dataUser = await User.findByPk(id) 
+    const id = +req.params.id;
+    const dataUser = await User.findOne({ where: { id, isDeleted: false } });
 
-      if (!dataUser) {
-          throw { name: "NotFound", message: 'User is not found' }
-        }
+    if (!dataUser) {
+      throw { name: "NotFound", message: 'User is not found' };
+    }
 
-        let data = `${dataUser.fullName} success to delete`
-        await dataUser.destroy();
-        res.status(200).json({message:data});
+    // Cek jika user ingin hapus akun dirinya sendiri
+    if (req.user.id !== id) {
+      throw { name: "Forbidden", message: "You can't delete another user's account" };
+    }
 
+    await dataUser.update({ isDeleted: true }); // soft delete
+    res.status(200).json({ message: `${dataUser.fullName} has been deleted.` });
   } catch (err) {
-      next (err)
+    next(err);
   }
 }
+
+
 
 static async ByCategoryId (req, res, next) {
 
