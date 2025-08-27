@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import axios from '../config/axiosInstance';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export default function UpdateProfile() {
-    const { id } = useParams();
     const nav = useNavigate();
 
     const [form, setForm] = useState({
+        id: "", // tambahkan id
         profilePicture: "",
         fullName: "",
         phoneNumber: "",
@@ -22,7 +22,7 @@ export default function UpdateProfile() {
                     Authorization: 'Bearer ' + localStorage.getItem('access_token')
                 }
             });
-            setForm(data);
+            setForm(data); // pastikan data mengandung id
         } catch (error) {
             console.log(error);
         }
@@ -37,7 +37,7 @@ export default function UpdateProfile() {
         try {
             const { data } = await axios({
                 method: "put",
-                url: `/customers/profile/${id}`,
+                url: `/customers/profile/${form.id}`, // ambil id dari state
                 data: form,
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('access_token')}`,

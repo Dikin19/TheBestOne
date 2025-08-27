@@ -47,10 +47,13 @@ function Login() {
     }
 
     async function handleCredentialResponse(response) {
+        // console.log('Google Credential Token:', response.credential);
         try {
             const { data } = await axios.post('/google-login', {
                 googleToken: response.credential,
             });
+
+            // console.log(response.credentialta, 'login sukses')
 
             localStorage.setItem('access_token', data.access_token);
             localStorage.setItem('email', data.user.email);
@@ -65,7 +68,7 @@ function Login() {
     useEffect(() => {
         /* global google */
         google.accounts.id.initialize({
-            client_id: '350708614453-fefamno8l97ct80hlbto5lno30rtev9i.apps.googleusercontent.com',
+            client_id: '671432847103-47644tqd66u9kkoo9f9d2q8ea0ij9qka.apps.googleusercontent.com',
             callback: handleCredentialResponse,
         });
 

@@ -3,6 +3,7 @@ import axios from '../config/axiosInstance';
 import { useParams, NavLink } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchById } from '../store/productSlice';
+import ProductAnalysis from '../Components/ProductAnalysis';
 
 export default function DetailPage() {
     const dispatch = useDispatch();
@@ -123,6 +124,9 @@ export default function DetailPage() {
                     </div>
                 </div>
             </div>
+
+            {/* IBM Granite AI Analysis Section */}
+            <ProductAnalysis productId={params.id} />
         </div>
     );
 }
