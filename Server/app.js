@@ -16,10 +16,9 @@ app.use('/', router)
 
 app.use(errorHandler)
 
+// const port = process.env.PORT || 3000
 // app.listen(port, () => {
 //   console.log(`Server can be run on port ${port}`)
 // })
-
-
 
 module.exports = app

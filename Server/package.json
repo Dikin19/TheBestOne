@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@google/genai": "^1.5.1",
     "@google/generative-ai": "^0.22.0",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^3.0.2",
@@ -21,7 +22,10 @@
     "jsonwebtoken": "^9.0.2",
     "midtrans-client": "^1.4.2",
     "pg": "^8.13.3",
-    "sequelize": "^6.37.5"
+    "pg-listen": "^1.7.0",
+    "replicate": "^1.1.0",
+    "sequelize": "^6.37.7",
+    "sequelize-cli": "^6.6.3"
   },
   "devDependencies": {
     "jest": "^29.7.0",

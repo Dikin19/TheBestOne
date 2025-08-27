@@ -15,5 +15,4 @@ customer.put('/profile/:id',CustController.updateProfile)
 customer.delete('/profile/:id',CustController.deleteById)
 
 
-
 module.exports = customer

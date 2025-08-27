@@ -2,10 +2,14 @@ const {User, Product, Category} = require("../models")
 const { comparePassword } = require('../helpers/bcrypt')
 const { signToken } = require('../helpers/jwt')
 const fs = require('fs')
-const { GoogleGenerativeAI } = require("@google/generative-ai");
-const productJson = require ('../data/product.json')
 const { OAuth2Client } = require('google-auth-library');
-const client = new OAuth2Client();
+const crypto = require('crypto');
+const productJson = require ('../data/product.json')
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
 
 
 module.exports = class CustController {
@@ -117,7 +121,6 @@ module.exports = class CustController {
 
 }
 
-
 static async Profile (req, res, next){
   try {
     
@@ -185,59 +188,80 @@ static async deleteById(req, res, next) {
   }
 }
 
-
-
-static async ByCategoryId (req, res, next) {
-
-  // const GEMINI_API_KEY = process.env.GEMINI_API_KEY
+static async ByCategoryId(req, res, next) {
+  
   const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
   try {
+    const product = await Product.findByPk(req.params.id);
+    const data = await Product.findAll();
 
-    const product = await Product.findByPk(req.params.id)
-
-    const data = await Product.findAll()
-    const products = data.map((el)=>{
-      return {
-        
-        id : el.id,
-        name: el.name,
-        imgUrl: el.imgUrl,
-        price: el.price,
-        CategoryId: el.CategoryId
-      }
-    })
-
+    const products = data.map(el => ({
+      id: el.id,
+      name: el.name,
+      imgUrl: el.imgUrl,
+      price: el.price,
+      CategoryId: el.CategoryId
+    }));
 
     const prompt = `
-    Give me 3 menu recommendation dari Category.
-    It should be ${product.CategoryId} menu recommendation dari Category based on my data here ${JSON.stringify(products)}.
-    Don't suggest any Category outside ${product.CategoryId} and don't suggest same menu ${product.CategoryId}.
-    if you don't find any ${product.CategoryId} give me closser menu from ${JSON.stringify(products)} don't give more than 3.
+      I have a list of product menus in the following data: ${JSON.stringify(products)}.
 
-    Please give me the response in JSON like below format:
-    [
-      {
-        "name": string,
-        "price": number,
-        "imgUrl": string,
-        "description": string,
-        "CategoryId": number
-      }
-    ]
+      Please give me 3 menu recommendations from the same category as this product (CategoryId = ${product.CategoryId}).
 
-    and without this open \`\`\`json and close \`\`\`.
-  `;
+      Instructions:
+      - Only recommend menus with CategoryId = ${product.CategoryId}.
+      - Do not include the same menu as the current product.
+      - If there are not enough items in CategoryId = ${product.CategoryId}, recommend 3 closest items from the available data.
 
-  const rawResult = await model.generateContent(prompt);
-  const result =JSON.parse(rawResult.response.text())
-  console.log(rawResult.response.text);
-  res.json(result);
-    
+      Return the response in pure JSON array format, like this:
+      [
+        {
+          "name": "string",
+          "price": number,
+          "imgUrl": "string",
+          "description": "string",
+          "CategoryId": number
+        }
+      ]
+
+      Important:
+      - Do NOT include any markdown formatting like \`\`\`json or \`\`\`.
+      - Only return the JSON array, no extra text or explanation.
+    `;
+
+    const rawResult = await model.generateContent(prompt);
+    const response = rawResult.response;
+    const rawText = response.text();
+
+    let cleanedText = rawText.trim();
+    const startIdx = cleanedText.indexOf('[');
+    const endIdx = cleanedText.lastIndexOf(']');
+
+    if (startIdx === -1 || endIdx === -1) {
+      console.error("RawText from Gemini:\n", rawText);
+      throw new Error("Failed to locate valid JSON array in Gemini response.");
+    }
+
+    cleanedText = cleanedText.slice(startIdx, endIdx + 1);
+
+    let result;
+    try {
+      result = JSON.parse(cleanedText);
+    } catch (err) {
+      console.error("Gagal parsing JSON. Cleaned text:\n", cleanedText);
+      throw err;
+    }
+
+    console.log("Gemini Result:\n", JSON.stringify(result, null, 2));
+
+    res.setHeader("Content-Type", "application/json");
+    res.status(200).json(result);
+
   } catch (err) {
-    next(err)
-    
+    console.error("ERROR:", err);
+    next(err);
   }
 }
 
@@ -253,46 +277,52 @@ static async ByCategoryId (req, res, next) {
 
   static async googleLogin(req, res, next) {
     try {
-      const { googleToken } = req.body
+      const { googleToken } = req.body;
+      console.log(googleToken)
 
       if (!googleToken) {
-        throw { name: 'BadRequest', message: "Google Token is required" }
+        throw { name: 'BadRequest', message: "Google Token is required" };
       }
 
-      // Verifikasi google token dari client, apakah benar datang dari google
+      // Verifikasi token Google
       const ticket = await client.verifyIdToken({
         idToken: googleToken,
         audience: process.env.GOOGLE_CLIENT_ID,
       });
 
-      // payload adalah informasi yg terkandung didalam tokennya
+      // Ambil informasi dari token
       const payload = ticket.getPayload();
+      console.log(payload, "<<<< Google Payload");
 
-      console.log(payload, "<<<<");
+      // Buat password dummy (hanya digunakan sekali saat register otomatis)
+      const dummyPassword = `${Math.random()}=${Date.now()}=${crypto.randomUUID()}`;
+      console.log(dummyPassword, "<<<< dummy password");
 
-      let dummyPassword = Math.random().toString() + '=' + Date.now() + '=' + crypto.randomUUID()
-
-      console.log(dummyPassword);
-
+      // Cari user, kalau belum ada, buat user baru
       const [user] = await User.findOrCreate({
-        where: {
-          email: payload.email
-        },
+        where: { email: payload.email },
         defaults: {
           email: payload.email,
           role: 'customer',
           password: dummyPassword,
-          profilePicture: payload.picture
+          profilePicture: payload.picture,
+        },
+      });
 
-          // name: payload.name,
-          // profilePicture: payload.picture
-        }
-      })
+      // Buat access token
+      const access_token = signToken({ id: user.id });
 
-      const access_token = signToken({ id: user.id })
-      res.status(200).json({ access_token, user: { email: user.email, role: user.role, profilePicture: user.profilePicture } })
+      // Kirim respons
+      res.status(200).json({
+        access_token,
+        user: {
+          email: user.email,
+          role: user.role,
+          profilePicture: user.profilePicture,
+        },
+      });
     } catch (error) {
-      next(error)
+      next(error);
     }
   }
 
