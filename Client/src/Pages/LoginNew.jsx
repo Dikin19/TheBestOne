@@ -22,7 +22,7 @@ function Login() {
     async function handleSubmit(e) {
         e.preventDefault();
         setIsLoading(true);
-        
+
         try {
             const { data } = await axios.post('/login', { email, password });
 
@@ -96,11 +96,11 @@ function Login() {
             {/* Background Elements */}
             <div className="absolute inset-0 overflow-hidden">
                 <motion.div
-                    animate={{ 
+                    animate={{
                         rotate: [0, 360],
                         scale: [1, 1.1, 1]
                     }}
-                    transition={{ 
+                    transition={{
                         duration: 20,
                         repeat: Infinity,
                         ease: "linear"
@@ -108,11 +108,11 @@ function Login() {
                     className="absolute -top-40 -left-40 w-80 h-80 bg-gradient-to-r from-amber-400/10 to-amber-600/10 rounded-full blur-3xl"
                 />
                 <motion.div
-                    animate={{ 
+                    animate={{
                         rotate: [360, 0],
                         scale: [1, 1.2, 1]
                     }}
-                    transition={{ 
+                    transition={{
                         duration: 25,
                         repeat: Infinity,
                         ease: "linear"
@@ -132,10 +132,10 @@ function Login() {
                         <motion.div
                             initial={{ scale: 0 }}
                             animate={{ scale: 1 }}
-                            transition={{ 
-                                delay: 0.2, 
-                                type: "spring", 
-                                stiffness: 200 
+                            transition={{
+                                delay: 0.2,
+                                type: "spring",
+                                stiffness: 200
                             }}
                             className="flex items-center justify-center gap-3 mb-4"
                         >
@@ -143,7 +143,7 @@ function Login() {
                                 <ShoppingBag className="h-8 w-8 text-white" />
                             </div>
                         </motion.div>
-                        
+
                         <CardTitle className="text-3xl font-bold bg-gradient-to-r from-slate-900 via-slate-700 to-amber-600 bg-clip-text text-transparent">
                             Welcome Back
                         </CardTitle>
@@ -254,8 +254,8 @@ function Login() {
                         >
                             <p className="text-sm text-slate-600">
                                 Don't have an account?{' '}
-                                <Link 
-                                    to="/register" 
+                                <Link
+                                    to="/register"
                                     className="text-amber-600 font-semibold hover:text-amber-700 transition-colors"
                                 >
                                     Create account

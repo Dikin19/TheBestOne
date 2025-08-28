@@ -11,7 +11,7 @@ import {
     Star
 } from 'lucide-react';
 
-const ProductAnalysis = ({ productId }) => {
+const ProductAnalysisNew = ({ productId }) => {
     const [loading, setLoading] = useState(false);
     const [review, setReview] = useState(null);
     const [error, setError] = useState(null);
@@ -161,4 +161,4 @@ const ProductAnalysis = ({ productId }) => {
     );
 };
 
-export default ProductAnalysis;
+export default ProductAnalysisNew;

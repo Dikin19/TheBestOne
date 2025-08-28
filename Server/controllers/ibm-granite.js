@@ -41,13 +41,16 @@ const runGraniteModel = async (req, res) => {
     
     console.log('Done!', output)
 
+    // Pastikan output adalah string
+    const resultText = Array.isArray(output) ? output.join('') : output.toString();
+
     res.status(200).json({
       success: true,
       message: 'IBM Granite model executed successfully',
       data: {
         model,
         input,
-        output
+        output: resultText
       }
     })
 

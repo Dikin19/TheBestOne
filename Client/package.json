@@ -11,15 +11,21 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.6.0",
+    "@supabase/supabase-js": "^2.56.0",
     "@tailwindcss/vite": "^4.1.5",
     "axios": "^1.7.9",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "framer-motion": "^12.23.12",
+    "lucide-react": "^0.542.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-redux": "^9.2.0",
     "react-router": "^7.2.0",
     "react-router-dom": "^7.5.3",
     "redux": "^5.0.1",
-    "sweetalert2": "^11.17.2"
+    "sweetalert2": "^11.17.2",
+    "tailwind-merge": "^3.3.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
