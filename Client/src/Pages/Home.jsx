@@ -361,14 +361,14 @@ export default function Home() {
                                     <option value="name">Name A-Z</option>
                                 </select>
 
-                                <div className="flex border-2 border-blue-200 rounded-xl p-1 bg-white/70 backdrop-blur-sm">
+                                <div className="flex border-2 border-blue-200 rounded-xl p-2 bg-white/70 backdrop-blur-sm">
                                     <Button
                                         variant={viewMode === "grid" ? "default" : "ghost"}
                                         size="sm"
                                         onClick={() => setViewMode("grid")}
                                         className={viewMode === "grid" ? "bg-blue-600 text-white" : "text-blue-600"}
                                     >
-                                        <Grid3X3 className="h-4 w-4" />
+                                        <Grid3X3 className="h-4 w-4 rounded-lg" />
                                     </Button>
                                     <Button
                                         variant={viewMode === "list" ? "default" : "ghost"}

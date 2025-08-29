@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from '../config/axiosInstance';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchById } from '../store/productSlice';
 import ProductAnalysis from '../Components/ProductAnalysis';
@@ -31,13 +31,15 @@ import {
     CheckCircle,
     Crown,
     Sparkles,
-    Phone
+    Phone,
+    Eye
 } from 'lucide-react';
 import { formatPrice } from '../lib/utils';
 import Swal from 'sweetalert2';
 
 export default function DetailPage() {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const detail = useSelector((state) => state.product.detail);
     const error = useSelector((state) => state.product.error);
 
@@ -48,6 +50,7 @@ export default function DetailPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [isAddingToWishlist, setIsAddingToWishlist] = useState(false);
     const [showAnalysis, setShowAnalysis] = useState(false);
+    const [isNavigating, setIsNavigating] = useState(false);
     const params = useParams();
 
     // Enhanced product images with variations
@@ -61,6 +64,33 @@ export default function DetailPage() {
     const rating = Math.floor(Math.random() * 2) + 4; // Random rating 4-5
     const reviews = Math.floor(Math.random() * 500) + 50; // Random reviews
     const discount = Math.floor(Math.random() * 30) + 10; // Random discount
+
+    // Handle navigation to another product detail
+    const handleProductNavigation = async (productId) => {
+        try {
+            // Check if productId is valid
+            if (!productId || productId === 'undefined') {
+                console.error('Invalid product ID:', productId);
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Invalid product ID. Please try again.',
+                    icon: 'error',
+                    confirmButtonColor: '#ef4444'
+                });
+                return;
+            }
+
+            console.log('Navigating to product ID:', productId);
+            setIsNavigating(true);
+
+            // Navigate to new product with force reload
+            window.location.href = `/detail/${productId}`;
+
+        } catch (error) {
+            console.error('Navigation error:', error);
+            setIsNavigating(false);
+        }
+    };
 
     useEffect(() => {
         dispatch(fetchById(params.id));
@@ -95,9 +125,20 @@ export default function DetailPage() {
                     Authorization: `Bearer ${localStorage.getItem('access_token')}`
                 }
             });
-            setGemini(data);
+
+            // Debug: log the data structure
+            console.log('Gemini recommendations data:', data);
+
+            // Ensure each item has an id property
+            const processedData = data.map((item, index) => ({
+                ...item,
+                id: item.id || item.productId || item.Product?.id || index + 1
+            }));
+
+            console.log('Processed gemini data:', processedData);
+            setGemini(processedData);
         } catch (error) {
-            console.log(error);
+            console.log('Error fetching recommendations:', error);
         }
     }
 
@@ -260,26 +301,6 @@ Thank you for your excellent service! 🙏
     const increaseQuantity = () => setQuantity(prev => prev + 1);
     const decreaseQuantity = () => setQuantity(prev => prev > 1 ? prev - 1 : 1);
 
-    const shareProduct = () => {
-        if (navigator.share) {
-            navigator.share({
-                title: `${detail.name} - TheBestOne`,
-                text: `Check out this amazing betta fish: ${detail.description}`,
-                url: window.location.href,
-            });
-        } else {
-            navigator.clipboard.writeText(window.location.href);
-            Swal.fire({
-                toast: true,
-                position: 'top-end',
-                icon: 'success',
-                title: '🔗 Link copied to clipboard!',
-                showConfirmButton: false,
-                timer: 2000
-            });
-        }
-    };
-
     // Handle wishlist toggle functionality
     const handleWishlistToggle = async () => {
         if (!localStorage.getItem('access_token')) {
@@ -365,22 +386,62 @@ Thank you for your excellent service! 🙏
 
     if (!detail.id) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center">
-                <div className="text-center">
+            <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-cyan-50/40 relative overflow-hidden flex items-center justify-center">
+                {/* Professional Ocean Depth Layers */}
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-blue-500/3 to-cyan-600/8"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-600/2 via-transparent to-teal-600/3"></div>
+
+                {/* Enhanced Professional Background Effects */}
+                <div className="absolute inset-0 opacity-10">
+                    <div className="absolute top-16 left-16 w-40 h-40 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full blur-3xl animate-pulse"></div>
+                    <div className="absolute top-48 right-24 w-32 h-32 bg-gradient-to-br from-teal-500 to-blue-600 rounded-full blur-2xl animate-pulse delay-1000"></div>
+                    <div className="absolute bottom-40 left-1/3 w-48 h-48 bg-gradient-to-br from-cyan-500 to-blue-700 rounded-full blur-3xl animate-pulse delay-2000"></div>
+
+                    {/* Elegant Ocean Bubbles */}
+                    <div className="absolute top-1/4 left-1/4 w-3 h-3 bg-cyan-400/60 rounded-full animate-bounce delay-500"></div>
+                    <div className="absolute top-3/4 right-1/4 w-2 h-2 bg-blue-400/60 rounded-full animate-bounce delay-1000"></div>
+                    <div className="absolute top-1/2 left-1/2 w-4 h-4 bg-teal-400/60 rounded-full animate-bounce delay-1500"></div>
+                    <div className="absolute top-1/3 right-1/3 w-2 h-2 bg-cyan-300/50 rounded-full animate-bounce delay-700"></div>
+                </div>
+
+                <div className="text-center relative z-10 bg-white/80 backdrop-blur-md rounded-2xl p-8 shadow-2xl border border-blue-100">
                     <motion.div
                         animate={{ rotate: 360 }}
                         transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
                         className="w-16 h-16 border-4 border-blue-300 border-t-blue-600 rounded-full mx-auto mb-4"
                     />
-                    <p className="text-slate-600 text-lg">Loading beautiful betta fish...</p>
+                    <p className="text-slate-700 text-lg font-semibold">Loading beautiful betta fish...</p>
                     <p className="text-slate-500 text-sm mt-2">Preparing premium collection...</p>
+                    <div className="flex items-center justify-center gap-2 mt-4">
+                        <Fish className="h-5 w-5 text-blue-500 animate-bounce" />
+                        <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce delay-200"></div>
+                        <div className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce delay-400"></div>
+                        <div className="w-2 h-2 bg-teal-400 rounded-full animate-bounce delay-600"></div>
+                    </div>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-cyan-50/40 relative overflow-hidden">
+            {/* Professional Ocean Depth Layers */}
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-blue-500/3 to-cyan-600/8"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-600/2 via-transparent to-teal-600/3"></div>
+
+            {/* Enhanced Professional Background Effects */}
+            <div className="absolute inset-0 opacity-10">
+                <div className="absolute top-16 left-16 w-40 h-40 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full blur-3xl animate-pulse"></div>
+                <div className="absolute top-48 right-24 w-32 h-32 bg-gradient-to-br from-teal-500 to-blue-600 rounded-full blur-2xl animate-pulse delay-1000"></div>
+                <div className="absolute bottom-40 left-1/3 w-48 h-48 bg-gradient-to-br from-cyan-500 to-blue-700 rounded-full blur-3xl animate-pulse delay-2000"></div>
+
+                {/* Elegant Ocean Bubbles */}
+                <div className="absolute top-1/4 left-1/4 w-3 h-3 bg-cyan-400/60 rounded-full animate-bounce delay-500"></div>
+                <div className="absolute top-3/4 right-1/4 w-2 h-2 bg-blue-400/60 rounded-full animate-bounce delay-1000"></div>
+                <div className="absolute top-1/2 left-1/2 w-4 h-4 bg-teal-400/60 rounded-full animate-bounce delay-1500"></div>
+                <div className="absolute top-1/3 right-1/3 w-2 h-2 bg-cyan-300/50 rounded-full animate-bounce delay-700"></div>
+            </div>
+
             {/* Navigation */}
             <div className="bg-white/80 backdrop-blur-md sticky top-0 z-40 border-b border-slate-200">
                 <div className="max-w-7xl mx-auto px-4 py-4">
@@ -393,8 +454,169 @@ Thank you for your excellent service! 🙏
                     </Link>
                 </div>
             </div>
+            {/* Recommendations */}
+            {gemini.length > 0 && (
+                <motion.section
+                    initial={{ opacity: 0, y: 50 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.4 }}
+                    className="mb-16 relative z-10"
+                >
+                    <div className="max-w-7xl mx-auto px-4 mt-3">
+                        <div className="text-center mb-6">
+                            <h2 className="text-2xl font-bold text-slate-900 mb-2">
+                                You Might Also Love
+                            </h2>
+                            <p className="text-gray-600 text-sm max-w-xl mx-auto">
+                                Handpicked recommendations based on your interest in premium betta fish
+                            </p>
+                        </div>
 
-            <div className="max-w-7xl mx-auto px-4 py-8">
+                        <div className="flex justify-center">
+                            <div className="grid grid-cols-2 sm:grid-cols-3 ml-20 gap-20 mr-20">
+                                {gemini.map((item, index) => {
+                                    // Get ID with multiple fallbacks
+                                    const itemId = item.id || item.productId || item.Product?.id || `temp-${index}`;
+
+                                    // Debug log for each item
+                                    console.log(`Item ${index}:`, {
+                                        id: item.id,
+                                        productId: item.productId,
+                                        'Product.id': item.Product?.id,
+                                        finalId: itemId,
+                                        item: item
+                                    });
+
+                                    return (
+                                        <motion.div
+                                            key={itemId}
+                                            initial={{ opacity: 0, y: 30 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ delay: index * 0.1 }}
+                                            whileHover={{ y: -8, scale: 1.03 }}
+                                            className="group"
+                                        >
+                                            <Card className="overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 bg-white/95 backdrop-blur-sm border border-blue-100/60 h-full flex flex-col cursor-pointer rounded-xl">
+                                                <div
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        handleProductNavigation(itemId);
+                                                    }}
+                                                    className="block cursor-pointer relative"
+                                                >
+                                                    <div className="aspect-square overflow-hidden relative">
+                                                        <img
+                                                            src={item.imgUrl}
+                                                            alt={item.name}
+                                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                                                        />
+
+                                                        {/* Elegant Gradient Overlay */}
+                                                        <div className="absolute inset-0 bg-gradient-to-t from-blue-900/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                                                        {/* Premium Badge */}
+                                                        <div className="absolute top-2 left-2">
+                                                            <Badge className="bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg text-xs px-2 py-1 rounded-lg">
+                                                                <Crown className="w-2 h-2 mr-1" />
+                                                                Premium
+                                                            </Badge>
+                                                        </div>
+
+                                                        {/* Rating Badge */}
+                                                        <div className="absolute top-2 right-2">
+                                                            <Badge className="bg-white/90 backdrop-blur-sm text-yellow-600 shadow-md text-xs px-2 py-1 rounded-lg">
+                                                                <Star className="w-2 h-2 mr-1 fill-current" />
+                                                                5.0
+                                                            </Badge>
+                                                        </div>
+
+                                                        {/* Quick View Overlay */}
+                                                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500">
+                                                            <div className="bg-white/95 backdrop-blur-sm rounded-full p-3 shadow-xl border border-blue-100">
+                                                                <Eye className="w-5 h-5 text-blue-600" />
+                                                            </div>
+                                                        </div>
+
+                                                        {/* Bottom Fade Effect */}
+                                                        <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white/20 to-transparent"></div>
+                                                    </div>
+                                                </div>
+
+                                                <CardContent className="p-4 flex-grow flex flex-col">
+                                                    <div
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            handleProductNavigation(itemId);
+                                                        }}
+                                                        className="block flex-grow cursor-pointer mb-3"
+                                                    >
+                                                        <h3 className="font-bold text-sm mb-2 text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-2 leading-tight">
+                                                            {item.name}
+                                                        </h3>
+                                                        <p className="text-gray-600 text-xs mb-3 line-clamp-2 leading-relaxed">
+                                                            {item.description}
+                                                        </p>
+                                                    </div>
+
+                                                    {/* Fish Specs & Rating */}
+                                                    <div className="flex items-center justify-between mb-3">
+                                                        <Badge variant="outline" className="text-xs border-blue-200 text-blue-700 px-2 py-1 rounded-md">
+                                                            <Fish className="w-2 h-2 mr-1" />
+                                                            Betta
+                                                        </Badge>
+                                                        <div className="flex items-center gap-1">
+                                                            {[...Array(5)].map((_, i) => (
+                                                                <Star
+                                                                    key={i}
+                                                                    className="w-2.5 h-2.5 text-yellow-400 fill-current"
+                                                                />
+                                                            ))}
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Price & Button */}
+                                                    <div className="flex items-center justify-between mt-auto">
+                                                        <div className="flex flex-col">
+                                                            <span className="text-lg font-bold text-blue-600 leading-tight">
+                                                                {formatPrice(item.price)}
+                                                            </span>
+                                                            <span className="text-xs text-emerald-600 font-medium">Free Shipping</span>
+                                                        </div>
+                                                        <Button
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                e.preventDefault();
+                                                                handleProductNavigation(itemId);
+                                                            }}
+                                                            size="sm"
+                                                            disabled={isNavigating}
+                                                            className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-lg hover:shadow-xl transition-all duration-300 text-white px-3 py-2 text-xs h-8 rounded-lg disabled:opacity-50 font-medium min-w-[90px] flex items-center justify-center gap-1.5"
+                                                        >
+                                                            {isNavigating ? (
+                                                                <>
+                                                                    <div className="w-3 h-3 border border-white border-t-transparent rounded-full animate-spin"></div>
+                                                                    <span>Loading...</span>
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                    <Eye className="w-3 h-3" />
+                                                                    <span>View</span>
+                                                                </>
+                                                            )}
+                                                        </Button>
+                                                    </div>
+                                                </CardContent>
+                                            </Card>
+                                        </motion.div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    </div>
+                </motion.section>
+            )}
+
+            <div className="max-w-7xl mx-auto px-4 py-8 relative z-10">
                 {/* Product Details */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -406,13 +628,16 @@ Thank you for your excellent service! 🙏
                     <div className="space-y-4">
                         <motion.div
                             layoutId="product-image"
-                            className="aspect-square rounded-2xl overflow-hidden bg-white shadow-2xl relative group"
+                            className="aspect-square rounded-2xl overflow-hidden bg-white/95 backdrop-blur-sm shadow-2xl relative group border-2 border-blue-100/60"
                         >
                             <img
                                 src={productImages[selectedImageIndex] || detail.imgUrl}
                                 alt={detail.name}
                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                             />
+
+                            {/* Ocean Depth Effect Overlay */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-blue-900/10 via-transparent to-transparent group-hover:from-blue-900/20 transition-all duration-500"></div>
 
                             {/* Image Overlay */}
                             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 flex items-center justify-center">
@@ -424,7 +649,7 @@ Thank you for your excellent service! 🙏
                                     <Button
                                         variant="secondary"
                                         size="sm"
-                                        className="bg-white/90 backdrop-blur-sm"
+                                        className="bg-white/90 backdrop-blur-sm text-blue-700 border-blue-200 hover:bg-white shadow-lg"
                                     >
                                         <Camera className="w-4 h-4 mr-2" />
                                         View Details
@@ -440,10 +665,11 @@ Thank you for your excellent service! 🙏
                                 </Badge>
                             </div>
 
-                            {/* Discount Badge */}
+                            {/* Quality Indicator */}
                             <div className="absolute top-4 right-4">
-                                <Badge className="bg-red-500 text-white shadow-lg animate-pulse">
-                                    -{discount}% OFF
+                                <Badge className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg">
+                                    <Award className="w-3 h-3 mr-1" />
+                                    Show Quality
                                 </Badge>
                             </div>
                         </motion.div>
@@ -456,9 +682,9 @@ Thank you for your excellent service! 🙏
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
                                     onClick={() => setSelectedImageIndex(index)}
-                                    className={`w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${selectedImageIndex === index
-                                        ? 'border-blue-500 ring-4 ring-blue-200'
-                                        : 'border-gray-200 hover:border-blue-300'
+                                    className={`w-20 h-20 rounded-lg overflow-hidden border-2 transition-all backdrop-blur-sm ${selectedImageIndex === index
+                                        ? 'border-blue-500 ring-4 ring-blue-200 bg-white/95'
+                                        : 'border-blue-200/60 hover:border-blue-300 bg-white/80 hover:bg-white/95'
                                         }`}
                                 >
                                     <img
@@ -466,6 +692,9 @@ Thank you for your excellent service! 🙏
                                         alt={`${detail.name} view ${index + 1}`}
                                         className="w-full h-full object-cover"
                                     />
+                                    {selectedImageIndex === index && (
+                                        <div className="absolute inset-0 bg-blue-500/10"></div>
+                                    )}
                                 </motion.button>
                             ))}
                         </div>
@@ -492,18 +721,6 @@ Thank you for your excellent service! 🙏
                             </div>
 
                             <h1 className="text-4xl font-bold text-slate-900 mb-4 leading-tight">{detail.name}</h1>
-
-                            <div className="flex items-center gap-4 mb-6">
-                                <div className="text-4xl font-bold text-blue-600">
-                                    {formatPrice(detail.price * (1 - discount / 100))}
-                                </div>
-                                <div className="text-xl text-gray-500 line-through">
-                                    {formatPrice(detail.price)}
-                                </div>
-                                <Badge className="bg-red-100 text-red-800 px-3 py-1 text-sm">
-                                    Save {formatPrice(detail.price * discount / 100)}
-                                </Badge>
-                            </div>
 
                             {/* Trust Indicators */}
                             <div className="flex items-center gap-4 mb-6">
@@ -602,46 +819,24 @@ Thank you for your excellent service! 🙏
                                 </div>
                             </div>
 
-                            {/* Action Buttons */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <Button
-                                    onClick={handlePayment}
-                                    disabled={isLoading}
-                                    className="h-14 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300"
-                                >
-                                    {isLoading ? (
-                                        <div className="flex items-center gap-2">
-                                            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                                            Processing...
-                                        </div>
-                                    ) : (
-                                        <div className="flex items-center gap-2">
-                                            <ShoppingCart className="w-5 h-5" />
-                                            Buy Now - {formatPrice(detail.price * quantity * (1 - discount / 100))}
-                                        </div>
-                                    )}
-                                </Button>
-
+                            {/* Secondary Actions */}
+                            <div className="flex gap-3">
                                 <Button
                                     onClick={handleWhatsAppOrder}
                                     variant="outline"
-                                    className="h-14 border-2 border-green-500 text-green-600 hover:bg-green-50 font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300"
+                                    className="h-14 border-2 border-green-500 text-green-600 hover:bg-green-50 font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm"
                                 >
                                     <MessageCircle className="w-5 h-5 mr-2" />
                                     Order via WhatsApp
                                 </Button>
-                            </div>
-
-                            {/* Secondary Actions */}
-                            <div className="flex gap-3">
                                 <Button
                                     variant="outline"
                                     size="icon"
                                     onClick={handleWishlistToggle}
                                     disabled={isAddingToWishlist}
-                                    className={`h-12 w-12 transition-all duration-300 ${isLiked
-                                        ? 'text-red-500 border-red-500 bg-red-50 hover:bg-red-100'
-                                        : 'hover:text-red-500 hover:border-red-300 hover:bg-red-50'
+                                    className={`h-12 w-12 transition-all duration-300 bg-white/80 backdrop-blur-sm ${isLiked
+                                        ? 'text-red-500 border-red-500 bg-red-50/80 hover:bg-red-100/80'
+                                        : 'hover:text-red-500 hover:border-red-300 hover:bg-red-50/80 border-slate-300'
                                         } ${isAddingToWishlist ? 'opacity-50 cursor-not-allowed' : ''}`}
                                 >
                                     {isAddingToWishlist ? (
@@ -652,40 +847,13 @@ Thank you for your excellent service! 🙏
                                 </Button>
                                 <Button
                                     variant="outline"
-                                    size="icon"
-                                    onClick={shareProduct}
-                                    className="h-12 w-12 hover:text-blue-500 hover:border-blue-300 transition-all duration-300"
-                                >
-                                    <Share2 className="w-5 h-5" />
-                                </Button>
-                                <Button
-                                    variant="outline"
                                     onClick={() => setShowAnalysis(!showAnalysis)}
-                                    className="flex-1 h-12 hover:text-purple-500 hover:border-purple-300 transition-all duration-300"
+                                    className="flex-1 h-12 hover:text-purple-500 hover:border-purple-300 transition-all duration-300 bg-white/80 backdrop-blur-sm border-slate-300"
                                 >
                                     <Sparkles className="w-5 h-5 mr-2" />
                                     {showAnalysis ? 'Hide' : 'Show'} AI Analysis
                                 </Button>
                             </div>
-                        </div>
-
-                        {/* Features */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <Card className="text-center p-4 hover:shadow-lg transition-shadow duration-300 bg-gradient-to-br from-blue-50 to-blue-100">
-                                <Truck className="w-8 h-8 text-blue-600 mx-auto mb-2" />
-                                <p className="font-semibold text-sm text-blue-800">Free Shipping</p>
-                                <p className="text-xs text-blue-600">On orders over $50</p>
-                            </Card>
-                            <Card className="text-center p-4 hover:shadow-lg transition-shadow duration-300 bg-gradient-to-br from-green-50 to-green-100">
-                                <Shield className="w-8 h-8 text-green-600 mx-auto mb-2" />
-                                <p className="font-semibold text-sm text-green-800">Health Guarantee</p>
-                                <p className="text-xs text-green-600">7-day guarantee</p>
-                            </Card>
-                            <Card className="text-center p-4 hover:shadow-lg transition-shadow duration-300 bg-gradient-to-br from-orange-50 to-orange-100">
-                                <RotateCcw className="w-8 h-8 text-orange-600 mx-auto mb-2" />
-                                <p className="font-semibold text-sm text-orange-800">Easy Returns</p>
-                                <p className="text-xs text-orange-600">30-day return policy</p>
-                            </Card>
                         </div>
                     </div>
                 </motion.div>
@@ -700,13 +868,13 @@ Thank you for your excellent service! 🙏
                             transition={{ duration: 0.6 }}
                             className="mb-16"
                         >
-                            <Card className="bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200">
+                            <Card className="bg-gradient-to-r from-purple-50/80 to-pink-50/80 backdrop-blur-sm border-purple-200/60 shadow-2xl">
                                 <CardHeader>
                                     <CardTitle className="flex items-center gap-2 text-purple-800">
                                         <Sparkles className="w-5 h-5" />
                                         AI-Powered Analysis
                                     </CardTitle>
-                                    <CardDescription>
+                                    <CardDescription className="text-purple-600">
                                         IBM Granite AI provides expert insights about this betta fish
                                     </CardDescription>
                                 </CardHeader>
@@ -717,75 +885,6 @@ Thank you for your excellent service! 🙏
                         </motion.div>
                     )}
                 </AnimatePresence>
-
-                {/* Recommendations */}
-                {gemini.length > 0 && (
-                    <motion.section
-                        initial={{ opacity: 0, y: 50 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.4 }}
-                        className="mb-16"
-                    >
-                        <div className="text-center mb-8">
-                            <h2 className="text-3xl font-bold text-slate-900 mb-4">
-                                You Might Also Love
-                            </h2>
-                            <p className="text-gray-600 max-w-2xl mx-auto">
-                                Handpicked recommendations based on your interest in premium betta fish
-                            </p>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {gemini.map((item, index) => (
-                                <motion.div
-                                    key={index}
-                                    initial={{ opacity: 0, y: 30 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: index * 0.1 }}
-                                    whileHover={{ y: -10, scale: 1.02 }}
-                                    className="group"
-                                >
-                                    <Card className="overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-300 bg-white">
-                                        <div className="aspect-square overflow-hidden relative">
-                                            <img
-                                                src={item.imgUrl}
-                                                alt={item.name}
-                                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                                            />
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                                            <div className="absolute bottom-4 left-4 right-4 text-white transform translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300">
-                                                <Badge className="bg-white/20 backdrop-blur-sm text-white">
-                                                    Premium Grade
-                                                </Badge>
-                                            </div>
-                                        </div>
-                                        <CardContent className="p-6">
-                                            <h3 className="font-bold text-lg mb-2 text-slate-900 group-hover:text-blue-600 transition-colors">
-                                                {item.name}
-                                            </h3>
-                                            <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                                                {item.description}
-                                            </p>
-                                            <div className="flex items-center justify-between">
-                                                <span className="text-2xl font-bold text-blue-600">
-                                                    {formatPrice(item.price)}
-                                                </span>
-                                                <Link to={`/detail/${item.id}`}>
-                                                    <Button
-                                                        size="sm"
-                                                        className="bg-blue-600 hover:bg-blue-700 shadow-md hover:shadow-lg transition-all duration-300"
-                                                    >
-                                                        View Details
-                                                    </Button>
-                                                </Link>
-                                            </div>
-                                        </CardContent>
-                                    </Card>
-                                </motion.div>
-                            ))}
-                        </div>
-                    </motion.section>
-                )}
             </div>
         </div>
     );
