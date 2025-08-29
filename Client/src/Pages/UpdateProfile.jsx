@@ -83,6 +83,14 @@ export default function UpdateProfile() {
                 headers: headers
             });
             console.log(data);
+
+            // Update localStorage dengan profile picture terbaru
+            if (data.profilePicture) {
+                localStorage.setItem('profilePicture', data.profilePicture);
+                // Trigger custom event untuk memperbarui navbar
+                window.dispatchEvent(new Event('profilePictureUpdated'));
+            }
+
             nav('/profile');
         } catch (error) {
             console.log(error);
@@ -102,159 +110,183 @@ export default function UpdateProfile() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 to-cyan-700 flex items-center justify-center px-4 py-6">
-            <div className="bg-white/95 backdrop-blur-sm rounded-xl shadow-2xl w-full max-w-3xl grid grid-cols-1 md:grid-cols-3 overflow-hidden border border-blue-100">
-                {/* Sidebar left */}
-                <div className="bg-gradient-to-br from-blue-600 to-blue-700 text-white p-5 flex items-center justify-center text-center">
-                    <div>
-                        <h2 className="text-xl font-bold mb-1">Welcome Back!</h2>
-                        <p className="text-blue-100 text-sm">Update your profile information</p>
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-6">
+            <div className="bg-white rounded-lg shadow-lg w-full max-w-3xl overflow-hidden border border-gray-200">
+                <div className="grid grid-cols-1 md:grid-cols-3">
+                    {/* Left Info Panel */}
+                    <div className="bg-gradient-to-br from-slate-800 to-slate-900 text-white p-4 flex flex-col justify-center">
+                        <div className="text-center">
+                            <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                                {form.profilePicture || (profileFile && URL.createObjectURL(profileFile)) ? (
+                                    <img
+                                        src={profileFile ? URL.createObjectURL(profileFile) : form.profilePicture}
+                                        alt="Profile"
+                                        className="w-10 h-10 rounded-full object-cover"
+                                    />
+                                ) : (
+                                    <svg className="w-6 h-6 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                    </svg>
+                                )}
+                            </div>
+                            <h3 className="text-sm font-semibold mb-1">{form.fullName || "Your Name"}</h3>
+                            <p className="text-slate-300 text-xs">{form.email || "your.email@example.com"}</p>
+                            <div className="mt-3 space-y-1 text-xs text-slate-300">
+                                <p className="text-xs">{form.phoneNumber || "Phone Number"}</p>
+                                <p className="text-xs">{form.address || "Address"}</p>
+                            </div>
+                            <div className="mt-3 pt-3 border-t border-white/20">
+                                <p className="text-xs text-slate-400">Profile Settings</p>
+                            </div>
+                        </div>
                     </div>
-                </div>
 
-                {/* Form section */}
-                <div className="col-span-2 p-6">
-                    <h2 className="text-xl font-bold text-blue-900 mb-4">Edit Profile</h2>
-
-                    {error && (
-                        <div className="mb-3 p-3 bg-red-50 border border-red-200 text-red-600 rounded-lg text-sm">
-                            {error}
+                    {/* Form section */}
+                    <div className="col-span-2 p-4">
+                        <div className="mb-3">
+                            <h2 className="text-base font-semibold text-gray-900">Edit Profile</h2>
+                            <p className="text-gray-600 text-xs mt-1">Update your personal information</p>
                         </div>
-                    )}
-
-                    <form onSubmit={handleEditProfile} className="space-y-3">
-                        <div>
-                            <label className="block text-sm font-medium text-blue-900 mb-1">Email</label>
-                            <input
-                                type="email"
-                                placeholder="Email"
-                                value={form.email}
-                                onChange={(e) => setForm({ ...form, email: e.target.value })}
-                                className="block w-full px-3 py-2 border border-blue-200 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-                            />
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-medium text-blue-900 mb-1">Profile Picture</label>
-
-                            {/* Upload Type Toggle */}
-                            <div className="flex gap-4 mb-2">
-                                <label className="flex items-center text-sm">
-                                    <input
-                                        type="radio"
-                                        name="uploadType"
-                                        value="url"
-                                        checked={uploadType === "url"}
-                                        onChange={(e) => setUploadType(e.target.value)}
-                                        className="mr-2 text-blue-600"
-                                    />
-                                    URL
-                                </label>
-                                <label className="flex items-center text-sm">
-                                    <input
-                                        type="radio"
-                                        name="uploadType"
-                                        value="file"
-                                        checked={uploadType === "file"}
-                                        onChange={(e) => setUploadType(e.target.value)}
-                                        className="mr-2 text-blue-600"
-                                    />
-                                    Upload File
-                                </label>
+                        {error && (
+                            <div className="mb-3 p-2 bg-red-50 border border-red-200 text-red-600 rounded-md text-xs">
+                                {error}
                             </div>
+                        )}
 
-                            {uploadType === "url" ? (
-                                <input
-                                    type="text"
-                                    placeholder="Profile Picture URL"
-                                    value={form.profilePicture}
-                                    onChange={(e) => setForm({ ...form, profilePicture: e.target.value })}
-                                    className="block w-full px-3 py-2 border border-blue-200 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-                                />
-                            ) : (
-                                <input
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={handleFileChange}
-                                    className="block w-full px-3 py-2 border border-blue-200 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-                                />
-                            )}
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <form onSubmit={handleEditProfile} className="space-y-3">
                             <div>
-                                <label className="block text-sm font-medium text-blue-900 mb-1">Full Name</label>
+                                <label className="block text-xs font-medium text-gray-700 mb-1">Email</label>
                                 <input
-                                    type="text"
-                                    placeholder="Full Name"
-                                    value={form.fullName}
-                                    onChange={(e) => setForm({ ...form, fullName: e.target.value })}
-                                    className="block w-full px-3 py-2 border border-blue-200 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                                    type="email"
+                                    placeholder="Email"
+                                    value={form.email}
+                                    onChange={(e) => setForm({ ...form, email: e.target.value })}
+                                    className="block w-full px-2 py-1.5 border border-gray-300 rounded-md shadow-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-xs"
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-blue-900 mb-1">Phone Number</label>
-                                <input
-                                    type="text"
-                                    placeholder="Phone Number"
-                                    value={form.phoneNumber}
-                                    onChange={(e) => setForm({ ...form, phoneNumber: e.target.value })}
-                                    className="block w-full px-3 py-2 border border-blue-200 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-                                />
+                                <label className="block text-xs font-medium text-gray-700 mb-1">Profile Picture</label>
+
+                                {/* Upload Type Toggle */}
+                                <div className="flex gap-3 mb-2">
+                                    <label className="flex items-center text-xs text-gray-600">
+                                        <input
+                                            type="radio"
+                                            name="uploadType"
+                                            value="url"
+                                            checked={uploadType === "url"}
+                                            onChange={(e) => setUploadType(e.target.value)}
+                                            className="mr-1 text-blue-600"
+                                        />
+                                        URL
+                                    </label>
+                                    <label className="flex items-center text-xs text-gray-600">
+                                        <input
+                                            type="radio"
+                                            name="uploadType"
+                                            value="file"
+                                            checked={uploadType === "file"}
+                                            onChange={(e) => setUploadType(e.target.value)}
+                                            className="mr-1 text-blue-600"
+                                        />
+                                        Upload File
+                                    </label>
+                                </div>
+
+                                {uploadType === "url" ? (
+                                    <input
+                                        type="text"
+                                        placeholder="Profile Picture URL"
+                                        value={form.profilePicture}
+                                        onChange={(e) => setForm({ ...form, profilePicture: e.target.value })}
+                                        className="block w-full px-2 py-1.5 border border-gray-300 rounded-md shadow-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-xs"
+                                    />
+                                ) : (
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={handleFileChange}
+                                        className="block w-full px-2 py-1.5 border border-gray-300 rounded-md shadow-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-xs file:mr-2 file:py-1 file:px-2 file:rounded-sm file:border-0 file:text-xs file:font-medium file:bg-blue-50 file:text-blue-600 hover:file:bg-blue-100"
+                                    />
+                                )}
                             </div>
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-medium text-blue-900 mb-1">Address</label>
-                            <input
-                                type="text"
-                                placeholder="Address"
-                                value={form.address}
-                                onChange={(e) => setForm({ ...form, address: e.target.value })}
-                                className="block w-full px-3 py-2 border border-blue-200 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-                            />
-                        </div>
-
-                        {/* Password Change Section */}
-                        <div className="border-t border-blue-200 pt-3 mt-4">
-                            <h3 className="text-base font-medium text-blue-900 mb-3">Change Password (Optional)</h3>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                 <div>
-                                    <label className="block text-sm font-medium text-blue-900 mb-1">Current Password</label>
+                                    <label className="block text-xs font-medium text-gray-700 mb-1">Full Name</label>
                                     <input
-                                        type="password"
-                                        placeholder="Current Password"
-                                        value={form.currentPassword}
-                                        onChange={(e) => setForm({ ...form, currentPassword: e.target.value })}
-                                        className="block w-full px-3 py-2 border border-blue-200 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                                        type="text"
+                                        placeholder="Full Name"
+                                        value={form.fullName}
+                                        onChange={(e) => setForm({ ...form, fullName: e.target.value })}
+                                        className="block w-full px-2 py-1.5 border border-gray-300 rounded-md shadow-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-xs"
                                     />
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-blue-900 mb-1">New Password</label>
+                                    <label className="block text-xs font-medium text-gray-700 mb-1">Phone Number</label>
                                     <input
-                                        type="password"
-                                        placeholder="New Password (min 6 chars)"
-                                        value={form.newPassword}
-                                        onChange={(e) => setForm({ ...form, newPassword: e.target.value })}
-                                        className="block w-full px-3 py-2 border border-blue-200 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                                        type="text"
+                                        placeholder="Phone Number"
+                                        value={form.phoneNumber}
+                                        onChange={(e) => setForm({ ...form, phoneNumber: e.target.value })}
+                                        className="block w-full px-2 py-1.5 border border-gray-300 rounded-md shadow-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-xs"
                                     />
                                 </div>
                             </div>
-                        </div>
 
-                        <div className="pt-4">
-                            <button
-                                type="submit"
-                                disabled={loading}
-                                className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-2.5 px-4 rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-300 font-medium disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
-                            >
-                                {loading ? "Updating..." : "Update Profile"}
-                            </button>
-                        </div>
-                    </form>
+                            <div>
+                                <label className="block text-xs font-medium text-gray-700 mb-1">Address</label>
+                                <input
+                                    type="text"
+                                    placeholder="Address"
+                                    value={form.address}
+                                    onChange={(e) => setForm({ ...form, address: e.target.value })}
+                                    className="block w-full px-2 py-1.5 border border-gray-300 rounded-md shadow-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-xs"
+                                />
+                            </div>
+
+                            {/* Password Change Section */}
+                            <div className="border-t border-gray-200 pt-3 mt-4">
+                                <h3 className="text-sm font-medium text-gray-900 mb-3">Change Password (Optional)</h3>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    <div>
+                                        <label className="block text-xs font-medium text-gray-700 mb-1">Current Password</label>
+                                        <input
+                                            type="password"
+                                            placeholder="Current Password"
+                                            value={form.currentPassword}
+                                            onChange={(e) => setForm({ ...form, currentPassword: e.target.value })}
+                                            className="block w-full px-2 py-1.5 border border-gray-300 rounded-md shadow-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-xs"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-xs font-medium text-gray-700 mb-1">New Password</label>
+                                        <input
+                                            type="password"
+                                            placeholder="New Password (min 6 chars)"
+                                            value={form.newPassword}
+                                            onChange={(e) => setForm({ ...form, newPassword: e.target.value })}
+                                            className="block w-full px-2 py-1.5 border border-gray-300 rounded-md shadow-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-xs"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="pt-4">
+                                <button
+                                    type="submit"
+                                    disabled={loading}
+                                    className="w-full bg-blue-600 text-white py-2 px-3 rounded-md hover:bg-blue-700 transition-colors duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed shadow-sm text-sm"
+                                >
+                                    {loading ? "Updating..." : "Update Profile"}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>

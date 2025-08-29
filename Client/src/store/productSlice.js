@@ -87,6 +87,12 @@ export function fetchProfile() {
           Authorization: "Bearer " + localStorage.getItem("access_token"),
         },
       });
+      
+      // Simpan profilePicture ke localStorage jika ada
+      if (data.profilePicture) {
+        localStorage.setItem('profilePicture', data.profilePicture);
+      }
+      
       dispatch(fetchProfileSuccess(data));
     } catch (error) {
       console.log(error);

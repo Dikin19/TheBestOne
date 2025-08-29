@@ -34,6 +34,9 @@ function Login() {
             localStorage.setItem('email', data.user.email);
             localStorage.setItem('profilePicture', data.user.profilePicture || '');
 
+            // Trigger custom event untuk memperbarui navbar
+            window.dispatchEvent(new Event('profilePictureUpdated'));
+
             Swal.fire({
                 toast: true,
                 position: 'top-end',

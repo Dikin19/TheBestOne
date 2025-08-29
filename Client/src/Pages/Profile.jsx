@@ -10,7 +10,12 @@ export default function Profile() {
     const [activeTab, setActiveTab] = useState('profile');
 
     useEffect(() => {
-        dispatch(fetchProfile())
+        const fetchProfileData = async () => {
+            await dispatch(fetchProfile());
+            // Trigger update navbar setelah fetch profile
+            window.dispatchEvent(new Event('profilePictureUpdated'));
+        };
+        fetchProfileData();
     }, [dispatch])
 
     const renderTabContent = () => {

@@ -5,14 +5,19 @@ import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { useState, useRef, useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { useWishlistEnhanced } from "../hooks/useWishlistEnhanced";
 import { useNavbarWishlistCount } from "../hooks/useNavbarWishlistCount";
+import { clearWishlist } from "../store/wishlistSlice";
+import Swal from "sweetalert2";
 
 function Navbar() {
     const nav = useNavigate();
+    const dispatch = useDispatch();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const [isMarketplaceOpen, setIsMarketplaceOpen] = useState(false);
+    const [profilePicture, setProfilePicture] = useState(localStorage.getItem('profilePicture') || '');
     const profileRef = useRef(null);
     const marketplaceRef = useRef(null);
 
@@ -21,6 +26,12 @@ function Navbar() {
 
     // Use specialized hook for real-time wishlist count updates
     const wishlistCount = useNavbarWishlistCount();
+
+    // Function to update profile picture from localStorage
+    const updateProfilePicture = () => {
+        const newProfilePicture = localStorage.getItem('profilePicture') || '';
+        setProfilePicture(newProfilePicture);
+    };
 
     // Initialize and maintain synchronization
     useEffect(() => {
@@ -45,6 +56,32 @@ function Navbar() {
         return () => clearInterval(syncInterval);
     }, [forceSynchronize]);
 
+    // Listen for profile picture changes
+    useEffect(() => {
+        // Update profile picture on mount
+        updateProfilePicture();
+
+        // Listen for storage events (when localStorage changes)
+        const handleStorageChange = (e) => {
+            if (e.key === 'profilePicture') {
+                setProfilePicture(e.newValue || '');
+            }
+        };
+
+        // Listen for custom events for same-tab updates
+        const handleProfileUpdate = () => {
+            updateProfilePicture();
+        };
+
+        window.addEventListener('storage', handleStorageChange);
+        window.addEventListener('profilePictureUpdated', handleProfileUpdate);
+
+        return () => {
+            window.removeEventListener('storage', handleStorageChange);
+            window.removeEventListener('profilePictureUpdated', handleProfileUpdate);
+        };
+    }, []);
+
     const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
     // Close dropdowns when clicking outside
@@ -64,13 +101,71 @@ function Navbar() {
 
     const userEmail = localStorage.getItem('email') || 'User';
     const userName = userEmail.split('@')[0];
-    const profilePicture = localStorage.getItem('profilePicture') || '';
 
-    const handleLogout = () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('email');
-        localStorage.removeItem('profilePicture');
-        nav('/login');
+    const handleLogout = async () => {
+        const result = await Swal.fire({
+            title: 'Konfirmasi Logout',
+            text: 'Apakah Anda yakin ingin keluar dari akun?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#dc2626',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Ya, Keluar',
+            cancelButtonText: 'Batal',
+            reverseButtons: true
+        });
+
+        if (result.isConfirmed) {
+            try {
+                // Show loading toast
+                Swal.fire({
+                    title: 'Logging out...',
+                    text: 'Mohon tunggu sebentar',
+                    icon: 'info',
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                // Clear Redux store state
+                dispatch(clearWishlist());
+
+                // Clear all authentication related data from localStorage
+                localStorage.removeItem('access_token');
+                localStorage.removeItem('token'); // Keep for backward compatibility
+                localStorage.removeItem('email');
+                localStorage.removeItem('profilePicture');
+
+                // Clear any wishlist data to prevent state inconsistency
+                localStorage.removeItem('wishlist');
+                localStorage.removeItem('wishlistItems');
+                localStorage.removeItem('wishlist_cache');
+                localStorage.removeItem('wishlist_cache_timestamp');
+
+                // Show success message
+                await Swal.fire({
+                    title: 'Berhasil Keluar!',
+                    text: 'Anda telah berhasil keluar dari akun',
+                    icon: 'success',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+
+                // Force page reload to reset all state and redirect to login
+                window.location.href = '/login';
+
+            } catch (error) {
+                console.error('Error during logout:', error);
+                Swal.fire({
+                    title: 'Terjadi Kesalahan',
+                    text: 'Gagal keluar dari akun. Silakan coba lagi.',
+                    icon: 'error',
+                    confirmButtonColor: '#dc2626'
+                });
+            }
+        }
     };
 
     return (
@@ -129,10 +224,7 @@ function Navbar() {
                             </motion.div>
                             <div className="flex flex-col">
                                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-cyan-600 to-teal-600 font-black text-2xl">
-                                    CupangKing
-                                </span>
-                                <span className="text-blue-500 text-xs font-semibold tracking-widest">
-                                    #1 CUPANG INDONESIA
+                                    Bluerim
                                 </span>
                             </div>
                             <div className="flex items-center gap-1">
@@ -301,7 +393,7 @@ function Navbar() {
                                         animate={{ opacity: 1, y: 0, scale: 1 }}
                                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
                                         transition={{ duration: 0.2 }}
-                                        className="absolute right-0 mt-2 w-72 bg-white/95 backdrop-blur-lg rounded-xl shadow-2xl border border-blue-200/50 overflow-hidden"
+                                        className="absolute right-0 mt-5 w-72 bg-white/95 backdrop-blur-lg rounded-xl shadow-2xl border border-blue-200/50 overflow-hidden"
                                     >
                                         <div className="p-4 bg-gradient-to-r from-blue-50 to-cyan-50 border-b border-blue-200/50">
                                             <div className="flex items-center gap-4">
@@ -409,9 +501,17 @@ function Navbar() {
                                 <CardContent className="p-4 space-y-4">
                                     {/* User Info in Mobile */}
                                     <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg border border-blue-200/30">
-                                        <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-full flex items-center justify-center border-2 border-blue-300">
-                                            <User className="w-5 h-5 text-white" />
-                                        </div>
+                                        {profilePicture ? (
+                                            <img
+                                                src={profilePicture}
+                                                alt="Profile"
+                                                className="w-10 h-10 rounded-full object-cover border-2 border-blue-300"
+                                            />
+                                        ) : (
+                                            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-full flex items-center justify-center border-2 border-blue-300">
+                                                <User className="w-5 h-5 text-white" />
+                                            </div>
+                                        )}
                                         <div>
                                             <p className="font-semibold text-slate-700 capitalize">{userName}</p>
                                             <p className="text-sm text-slate-600">Pecinta Cupang</p>
