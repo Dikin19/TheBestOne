@@ -26,25 +26,54 @@ beforeAll(async () => {
     try {
         // seeding user admin and staff
         
-        adminId1 = await User.create({ email: "admin77@mail.com", password: "admin77", role: "admin" })
+        adminId1 = await User.create({ 
+            fullName: "Admin User",
+            email: "admin77@mail.com", 
+            password: "admin77",
+            phoneNumber: "1234567890",
+            address: "Admin Address"
+        })
         access_token_admin = signToken({ id: adminId1.id })
 
-        staffId2 = await User.create({ email: "staff77@gmail.com", password: "staff77", role: 'staff' })
+        staffId2 = await User.create({ 
+            fullName: "Staff User",
+            email: "staff77@gmail.com", 
+            password: "staff77",
+            phoneNumber: "1234567891",
+            address: "Staff Address"
+        })
         access_token_staff = signToken({ id: staffId2.id })
 
-        adminId3 = await User.create({ email: "admin@mail.com", password: "admin777", role: "admin" })
+        adminId3 = await User.create({ 
+            fullName: "Admin User 3",
+            email: "admin@mail.com", 
+            password: "admin777",
+            phoneNumber: "1234567892",
+            address: "Admin Address 3"
+        })
         access_token_admin3 = signToken({ id: adminId3.id })
 
-        adminId4 = await User.create({ email: "admin7@mail.com", password: "admin777", role: "admin" })
+        adminId4 = await User.create({ 
+            fullName: "Admin User 4",
+            email: "admin7@mail.com", 
+            password: "admin777",
+            phoneNumber: "1234567893",
+            address: "Admin Address 4"
+        })
         access_token_admin4 = signToken({ id: adminId4.id })
 
-        adminId5 = await User.create({ email: "admin777@mail.com", password: "admin777", role: "admin" })
+        adminId5 = await User.create({ 
+            fullName: "Admin User 5",
+            email: "admin777@mail.com", 
+            password: "admin777",
+            phoneNumber: "1234567894",
+            address: "Admin Address 5"
+        })
         access_token_admin5 = signToken({ id: adminId5.id })
         
         
         // Seeding table
         await Category.bulkCreate(allCategories)
-        await Cuisine.bulkCreate(allCuisines)
 
     } catch (error) {
       console.log(error); 
@@ -55,6 +84,12 @@ afterAll(async () => {
   console.log('afterAll');
     try {
         
+        await Product.destroy({
+          truncate: true, 
+          restartIdentity: true, 
+          cascade: true
+        })
+
         await Category.destroy({
           truncate: true, // hapus semua data dari db
           restartIdentity: true, // restart primary key (id) mulai dari 1 lg
@@ -62,12 +97,6 @@ afterAll(async () => {
         })
     
         await User.destroy({
-          truncate: true, 
-          restartIdentity: true, 
-          cascade: true
-        })
-      
-        await Cuisine.destroy({
           truncate: true, 
           restartIdentity: true, 
           cascade: true
@@ -98,7 +127,7 @@ afterAll(async () => {
         const response = await request(app).post('/login').send(user)
         expect(response.status).toBe(400)//BadRequest
         expect(response.body).toBeInstanceOf(Object)
-        expect(response.body).toHaveProperty('message', "Email or password is required")
+        expect(response.body).toHaveProperty('message', "Email is required")
       })
       test('gets fail if gets missing password', async () => {
         const user = {
@@ -108,7 +137,7 @@ afterAll(async () => {
         const response = await request(app).post('/login').send(user)
         expect(response.status).toBe(400)//BadRequest
         expect(response.body).toBeInstanceOf(Object)
-        expect(response.body).toHaveProperty('message', "Email or password is required")
+        expect(response.body).toHaveProperty('message', "Password is required")
       })
 
       test('gets fail if email does not complete or match', async () => {
@@ -119,7 +148,7 @@ afterAll(async () => {
         const response = await request(app).post('/login').send(user)
         expect(response.status).toBe(401)//Unauthorized
         expect(response.body).toBeInstanceOf(Object)
-        expect(response.body).toHaveProperty('message', "Email or password is required")
+        expect(response.body).toHaveProperty('message', "Email/Password is invalid")
       })
 
       test('gets fail if password does not complete or match', async () => {
@@ -130,7 +159,7 @@ afterAll(async () => {
       const response = await request(app).post('/login').send(user)
       expect(response.status).toBe(401)//Unauthorized
       expect(response.body).toBeInstanceOf(Object)
-      expect(response.body).toHaveProperty('message', "Email or password is required")
+      expect(response.body).toHaveProperty('message', "Email/Password is invalid")
     })
 
   })
@@ -293,7 +322,7 @@ describe('POST /payment/midtrans/initiate', () => {
   });
 });
 
-describe('GET /customers/products', () => {
+describe('GET /customers/product', () => {
   test('should return a list of products with status 200', async () => {
     const response = await request(app)
         .get('/customers/product')
@@ -322,7 +351,7 @@ describe('GET /customers/products', () => {
 
   test('should return 401 if no token is provided', async () => {
       const response = await request(app)
-          .get('/customers/products');
+          .get('/customers/product');
 
       expect(response.status).toBe(401);
       expect(response.body).toHaveProperty('message', 'Invalid token');
@@ -363,10 +392,10 @@ describe('GET /customers/profile', () => {
   });
 });
 
-describe('GET /customers/product/:id/recommendation', () => {
+describe('GET /customers/product/:id/recomendation', () => {
   // test('should return a list of recommended products with status 200', async () => {
   //     const response = await request(app)
-  //         .get('/customers/product/2/recommendation')
+  //         .get('/customers/product/2/recomendation')
   //         .set('Authorization', `Bearer ${access_token_admin}`);
 
   //     expect(response.status).toBe(200);
@@ -382,7 +411,7 @@ describe('GET /customers/product/:id/recommendation', () => {
 
   test('should return 401 if no token is provided', async () => {
       const response = await request(app)
-          .get('/customers/product/1/recommendation');
+          .get('/customers/product/1/recomendation');
 
       expect(response.status).toBe(401);
       expect(response.body).toHaveProperty('message', 'Invalid token');
@@ -390,7 +419,7 @@ describe('GET /customers/product/:id/recommendation', () => {
 
   test('should return 401 if token is invalid', async () => {
       const response = await request(app)
-          .get('/customers/product/1/recommendation')
+          .get('/customers/product/1/recomendation')
           .set('Authorization', 'Bearer ' + 'invalidtoken');
 
       expect(response.status).toBe(401);
@@ -446,10 +475,10 @@ describe('PUT/profile/:id', ()=>{
 
     }
 
-    const response = await request(app).put('/customers/profile/1').send(data).set('Authorization', 'Bearer ' + access_token_admin )
+    const response = await request(app).put(`/customers/profile/${adminId1.id}`).send(data).set('Authorization', 'Bearer ' + access_token_admin )
     expect(response.status).toBe(200)
     expect(response.body).toBeInstanceOf(Object)
-    expect(response.body).toHaveProperty('id', 1)
+    expect(response.body).toHaveProperty('id', adminId1.id)
     expect(response.body).toHaveProperty('fullName', data.fullName)
     expect(response.body).toHaveProperty('phoneNumber', data.phoneNumber)
     expect(response.body).toHaveProperty('address', data.address)
@@ -492,17 +521,17 @@ describe('PUT/profile/:id', ()=>{
 describe('DELETE/customers/profile/:id', () => {
       test('should delete data successfully', async () => {
       
-        const response = await request(app).delete('/customers/profile/1')
+        const response = await request(app).delete(`/customers/profile/${adminId1.id}`)
         .set('Authorization', 'Bearer ' + access_token_admin)
     
         expect(response.status).toBe(200)
         expect(response.body).toBeInstanceOf(Object)
-        expect(response.body).toHaveProperty('message', "KFC Original Chicken success to delete")
+        expect(response.body).toHaveProperty('message', "Admin User has been deleted.")
       })
     
       test('gets fail if token is invalid', async () => {
       
-        const response = await request(app).delete('/customers/profile/1')
+        const response = await request(app).delete(`/customers/profile/${adminId1.id}`)
         .set('Authorization', 'Bearer ' + "tokensalah")
     
         expect(response.status).toBe(401)

@@ -49,7 +49,7 @@ module.exports = class PaymentController {
             let snap = new midtransClient.Snap({
                 isProduction: process.env.NODE_ENV === 'production',
                 serverKey: process.env.MIDTRANS_SERVER_KEY || 'SB-Mid-server-JTfidMmffExiJKMdJtYF35NW',
-                clientKey: process.env.MIDTRANS_CLIENT_KEY || 'SB-Mid-client-nKsqVar5cn60u2Lv'
+                clientKey: process.env.MIDTRANS_CLIENT_KEY || 'SB-Mid-client-DMc9itJpP5SJbXk3'
             });
                 
             // 5. Prepare transaction parameters

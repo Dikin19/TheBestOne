@@ -26,7 +26,8 @@
     "pg-listen": "^1.7.0",
     "replicate": "^1.1.0",
     "sequelize": "^6.37.7",
-    "sequelize-cli": "^6.6.3"
+    "sequelize-cli": "^6.6.3",
+    "sqlite3": "^5.1.7"
   },
   "devDependencies": {
     "jest": "^29.7.0",

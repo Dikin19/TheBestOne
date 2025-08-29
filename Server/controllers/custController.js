@@ -1,4 +1,4 @@
-const {User, Product, Category} = require("../models")
+const {User, Product, Category, Wishlist} = require("../models")
 const { comparePassword, hashPassword } = require('../helpers/bcrypt')
 const { signToken } = require('../helpers/jwt')
 const fs = require('fs')
@@ -498,6 +498,217 @@ static async ByCategoryId(req, res, next) {
           role: user.role,
           profilePicture: user.profilePicture,
         },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // Get all categories
+  static async getCategories(req, res, next) {
+    try {
+      const categories = await Category.findAll({
+        order: [['id', 'ASC']]
+      });
+      
+      res.status(200).json(categories);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Add product to user's wishlist
+   * @description Adds a product to the authenticated user's wishlist
+   * @route POST /customers/wishlist
+   * @access Private (requires authentication)
+   * @param {Object} req.body - Request body containing productId
+   * @param {number} req.body.productId - ID of the product to add to wishlist
+   * @returns {Object} Success response with wishlist item details
+   */
+  static async addToWishlist(req, res, next) {
+    try {
+      const { productId } = req.body;
+      const userId = req.user.id;
+
+      // Validate request body
+      if (!productId) {
+        return res.status(400).json({
+          success: false,
+          message: "Product ID is required"
+        });
+      }
+
+      // Validate product exists
+      const product = await Product.findByPk(productId);
+      if (!product) {
+        return res.status(404).json({
+          success: false,
+          message: "Product not found"
+        });
+      }
+
+      // Check if already in wishlist to prevent duplicates
+      const existingWishlist = await Wishlist.findOne({
+        where: { UserId: userId, ProductId: productId }
+      });
+
+      if (existingWishlist) {
+        return res.status(409).json({
+          success: false,
+          message: "Product already in wishlist"
+        });
+      }
+
+      // Add to wishlist
+      const newWishlistItem = await Wishlist.create({
+        UserId: userId,
+        ProductId: productId
+      });
+
+      res.status(201).json({
+        success: true,
+        message: "Product added to wishlist successfully",
+        data: {
+          wishlistId: newWishlistItem.id,
+          productId,
+          userId,
+          addedAt: newWishlistItem.createdAt
+        }
+      });
+    } catch (error) {
+      console.error('Add to wishlist error:', error);
+      next(error);
+    }
+  }
+
+  /**
+   * Get user's wishlist with full product details
+   * @description Retrieves all products in the authenticated user's wishlist
+   * @route GET /customers/wishlist
+   * @access Private (requires authentication)
+   * @returns {Object} Success response with wishlist items and product details
+   */
+  static async getWishlist(req, res, next) {
+    try {
+      const userId = req.user.id;
+      
+      const wishlistItems = await Wishlist.findAll({
+        where: { UserId: userId },
+        include: [
+          {
+            model: Product,
+            include: [{ 
+              model: Category, 
+              attributes: ['id', 'name'] 
+            }]
+          }
+        ],
+        order: [['createdAt', 'DESC']] // Most recently added first
+      });
+
+      res.status(200).json({
+        success: true,
+        message: "Wishlist retrieved successfully",
+        data: wishlistItems,
+        meta: {
+          total: wishlistItems.length,
+          userId: userId
+        }
+      });
+    } catch (error) {
+      console.error('Get wishlist error:', error);
+      next(error);
+    }
+  }
+
+  /**
+   * Remove product from user's wishlist
+   * @description Removes a specific product from the authenticated user's wishlist
+   * @route DELETE /customers/wishlist/:productId
+   * @access Private (requires authentication)
+   * @param {string} req.params.productId - ID of the product to remove from wishlist
+   * @returns {Object} Success response confirming removal
+   */
+  static async removeFromWishlist(req, res, next) {
+    try {
+      const { productId } = req.params;
+      const userId = req.user.id;
+
+      // Validate productId
+      if (!productId || isNaN(productId)) {
+        return res.status(400).json({
+          success: false,
+          message: "Valid product ID is required"
+        });
+      }
+
+      const deleted = await Wishlist.destroy({
+        where: { UserId: userId, ProductId: productId }
+      });
+
+      if (deleted === 0) {
+        return res.status(404).json({
+          success: false,
+          message: "Product not found in wishlist"
+        });
+      }
+
+      res.status(200).json({
+        success: true,
+        message: "Product removed from wishlist successfully",
+        data: {
+          productId: parseInt(productId),
+          userId: userId,
+          removedAt: new Date().toISOString()
+        }
+      });
+    } catch (error) {
+      console.error('Remove from wishlist error:', error);
+      next(error);
+    }
+  }
+
+  // Generate WhatsApp checkout URL
+  static async generateWhatsAppCheckout(req, res, next) {
+    try {
+      const { productId, quantity = 1 } = req.body;
+      const userId = req.user.id;
+
+      // Get product details
+      const product = await Product.findByPk(productId, {
+        include: [Category]
+      });
+
+      if (!product) {
+        return res.status(404).json({ message: "Product not found" });
+      }
+
+      // Get user details
+      const user = await User.findByPk(userId);
+
+      // Generate WhatsApp message
+      const message = `Halo! Saya ingin memesan:
+      
+🐠 Produk: ${product.name}
+📦 Kategori: ${product.Category.name}
+💰 Harga: Rp ${product.price.toLocaleString('id-ID')}
+🔢 Jumlah: ${quantity}
+💵 Total: Rp ${(product.price * quantity).toLocaleString('id-ID')}
+
+Nama: ${user.fullName}
+Email: ${user.email}
+No. HP: ${user.phoneNumber || 'Belum diisi'}
+
+Terima kasih!`;
+
+      const whatsappNumber = "6281234567890"; // Replace with your WhatsApp business number
+      const encodedMessage = encodeURIComponent(message);
+      const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
+
+      res.status(200).json({
+        whatsappUrl,
+        message: "WhatsApp checkout URL generated successfully"
       });
     } catch (error) {
       next(error);

@@ -14,9 +14,16 @@ customer.get('/orders/:orderId', PaymentController.getOrderStatus) // Get specif
 customer.put('/orders/:orderId/cancel', PaymentController.cancelOrder) // Cancel order
 
 // Product Routes
+customer.get('/categories', CustController.getCategories)
 customer.get('/product', CustController.listProduct)
 customer.get('/product/:id', CustController.productById)
 customer.get('/product/:id/recomendation', CustController.ByCategoryId)
+
+// Wishlist and Checkout Routes
+customer.post('/wishlist', CustController.addToWishlist)
+customer.get('/wishlist', CustController.getWishlist)
+customer.delete('/wishlist/:productId', CustController.removeFromWishlist)
+customer.post('/checkout/whatsapp', CustController.generateWhatsAppCheckout)
 
 // Profile Routes
 customer.get('/profile', CustController.Profile)
