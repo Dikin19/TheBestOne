@@ -1,12 +1,17 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
-import { ShoppingBag, User, LogOut, Menu, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Fish, User, LogOut, Menu, X, ShoppingBag, Star, Heart, Settings, ChevronDown, Sparkles, Crown, Award } from "lucide-react";
 import { Button } from "./ui/button";
-import { useState } from "react";
+import { Card, CardContent } from "./ui/card";
+import { useState, useRef, useEffect } from "react";
 
 function Navbar() {
     const nav = useNavigate();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isProfileOpen, setIsProfileOpen] = useState(false);
+    const [isMarketplaceOpen, setIsMarketplaceOpen] = useState(false);
+    const profileRef = useRef(null);
+    const marketplaceRef = useRef(null);
 
     function handleLogout() {
         localStorage.removeItem("access_token");
@@ -16,6 +21,24 @@ function Navbar() {
     }
 
     const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+
+    // Close dropdowns when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (profileRef.current && !profileRef.current.contains(event.target)) {
+                setIsProfileOpen(false);
+            }
+            if (marketplaceRef.current && !marketplaceRef.current.contains(event.target)) {
+                setIsMarketplaceOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    const userEmail = localStorage.getItem('email') || 'User';
+    const userName = userEmail.split('@')[0];
 
     return (
         <motion.nav
@@ -33,146 +56,288 @@ function Navbar() {
                     >
                         <NavLink
                             to="/"
-                            className="flex items-center gap-3 text-2xl font-bold bg-gradient-to-r from-slate-900 via-slate-700 to-amber-600 bg-clip-text text-transparent"
+                            className="flex items-center gap-3 text-2xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent"
                         >
                             <motion.div
-                                animate={{ rotate: [0, 10, -10, 0] }}
-                                transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+                                animate={{
+                                    rotate: [0, 10, -10, 0],
+                                    scale: [1, 1.1, 1]
+                                }}
+                                transition={{
+                                    duration: 3,
+                                    repeat: Infinity,
+                                    repeatDelay: 2
+                                }}
+                                className="w-10 h-10 bg-gradient-to-br from-blue-500 via-indigo-600 to-purple-600 rounded-full flex items-center justify-center shadow-lg"
                             >
-                                <ShoppingBag className="h-8 w-8 text-amber-600" />
+                                <Fish className="h-6 w-6 text-white" />
                             </motion.div>
-                            TheBestOne
+                            <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                                TheBestOne
+                            </span>
+                            <Crown className="w-5 h-5 text-yellow-500" />
                         </NavLink>
                     </motion.div>
 
                     {/* Desktop Nav Links */}
                     <div className="hidden md:flex items-center gap-8">
-                        <NavLink
-                            to="/"
-                            className={({ isActive }) =>
-                                `relative text-lg font-medium transition-all duration-300 group ${isActive
-                                    ? "text-amber-600"
-                                    : "text-slate-700 hover:text-amber-600"
-                                }`
-                            }
-                        >
-                            {({ isActive }) => (
-                                <>
-                                    Home
-                                    <motion.div
-                                        className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-amber-400 to-amber-600"
-                                        initial={{ scaleX: 0 }}
-                                        animate={{ scaleX: isActive ? 1 : 0 }}
-                                        whileHover={{ scaleX: 1 }}
-                                        transition={{ duration: 0.3 }}
-                                    />
-                                </>
-                            )}
-                        </NavLink>
+                        {/* Marketplace Dropdown */}
+                        <div className="relative" ref={marketplaceRef}>
+                            <button
+                                onClick={() => {
+                                    setIsMarketplaceOpen(!isMarketplaceOpen);
+                                    setIsProfileOpen(false);
+                                }}
+                                className="flex items-center gap-2 text-lg font-medium text-slate-700 hover:text-blue-600 transition-all duration-300 group"
+                            >
+                                <ShoppingBag className="h-5 w-5 group-hover:scale-110 transition-transform" />
+                                Marketplace
+                                <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isMarketplaceOpen ? 'rotate-180' : ''}`} />
+                            </button>
 
-                        <NavLink
-                            to="/profile"
-                            className={({ isActive }) =>
-                                `relative text-lg font-medium transition-all duration-300 group ${isActive
-                                    ? "text-amber-600"
-                                    : "text-slate-700 hover:text-amber-600"
-                                }`
-                            }
-                        >
-                            {({ isActive }) => (
-                                <>
-                                    <div className="flex items-center gap-2">
-                                        <User className="h-5 w-5" />
-                                        Profile
-                                    </div>
+                            <AnimatePresence>
+                                {isMarketplaceOpen && (
                                     <motion.div
-                                        className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-amber-400 to-amber-600"
-                                        initial={{ scaleX: 0 }}
-                                        animate={{ scaleX: isActive ? 1 : 0 }}
-                                        whileHover={{ scaleX: 1 }}
-                                        transition={{ duration: 0.3 }}
-                                    />
-                                </>
-                            )}
-                        </NavLink>
-                    </div>
+                                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                        transition={{ duration: 0.2 }}
+                                        className="absolute left-0 mt-2 w-80 bg-white/95 backdrop-blur-md rounded-xl shadow-2xl border border-slate-200 overflow-hidden"
+                                    >
+                                        <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-slate-100">
+                                            <h3 className="font-semibold text-slate-800 flex items-center gap-2">
+                                                <Sparkles className="w-4 h-4 text-blue-500" />
+                                                Premium Betta Collection
+                                            </h3>
+                                            <p className="text-sm text-slate-600 mt-1">Discover world-class fighting fish</p>
+                                        </div>
 
-                    {/* Desktop Logout Button */}
-                    <div className="hidden md:block">
-                        <Button
-                            onClick={handleLogout}
-                            variant="outline"
-                            className="flex items-center gap-2 hover:bg-red-50 hover:border-red-200 hover:text-red-600"
-                        >
-                            <LogOut className="h-4 w-4" />
-                            Logout
-                        </Button>
+                                        <div className="p-2">
+                                            <NavLink
+                                                to="/"
+                                                onClick={() => setIsMarketplaceOpen(false)}
+                                                className="flex items-center gap-3 px-4 py-3 text-slate-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all duration-200 group"
+                                            >
+                                                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                                                    <Fish className="w-4 h-4 text-white" />
+                                                </div>
+                                                <div>
+                                                    <p className="font-medium">All Products</p>
+                                                    <p className="text-xs text-slate-500">Browse our entire collection</p>
+                                                </div>
+                                            </NavLink>
+
+                                            <button className="w-full flex items-center gap-3 px-4 py-3 text-slate-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all duration-200 group">
+                                                <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                                                    <Crown className="w-4 h-4 text-white" />
+                                                </div>
+                                                <div>
+                                                    <p className="font-medium">Premium Collection</p>
+                                                    <p className="text-xs text-slate-500">Show-quality specimens</p>
+                                                </div>
+                                            </button>
+
+                                            <button className="w-full flex items-center gap-3 px-4 py-3 text-slate-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all duration-200 group">
+                                                <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                                                    <Award className="w-4 h-4 text-white" />
+                                                </div>
+                                                <div>
+                                                    <p className="font-medium">Champion Bloodlines</p>
+                                                    <p className="text-xs text-slate-500">Competition winners</p>
+                                                </div>
+                                            </button>
+
+                                            <button className="w-full flex items-center gap-3 px-4 py-3 text-slate-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all duration-200 group">
+                                                <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-red-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                                                    <Heart className="w-4 h-4 text-white" />
+                                                </div>
+                                                <div>
+                                                    <p className="font-medium">Beginner Friendly</p>
+                                                    <p className="text-xs text-slate-500">Perfect for new enthusiasts</p>
+                                                </div>
+                                            </button>
+                                        </div>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </div>
+
+                        {/* Profile Dropdown */}
+                        <div className="relative" ref={profileRef}>
+                            <button
+                                onClick={() => {
+                                    setIsProfileOpen(!isProfileOpen);
+                                    setIsMarketplaceOpen(false);
+                                }}
+                                className="flex items-center gap-2 text-lg font-medium text-slate-700 hover:text-blue-600 transition-all duration-300 group"
+                            >
+                                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                                    <User className="h-4 w-4 text-white" />
+                                </div>
+                                Profile
+                                <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isProfileOpen ? 'rotate-180' : ''}`} />
+                            </button>
+
+                            <AnimatePresence>
+                                {isProfileOpen && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                        transition={{ duration: 0.2 }}
+                                        className="absolute right-0 mt-2 w-72 bg-white/95 backdrop-blur-md rounded-xl shadow-2xl border border-slate-200 overflow-hidden"
+                                    >
+                                        <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-slate-100">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
+                                                    <User className="w-6 h-6 text-white" />
+                                                </div>
+                                                <div>
+                                                    <p className="font-semibold text-slate-800 capitalize">
+                                                        {userName}
+                                                    </p>
+                                                    <p className="text-sm text-slate-500">Betta Enthusiast</p>
+                                                    <div className="flex items-center gap-1 mt-1">
+                                                        <Star className="w-3 h-3 text-yellow-400 fill-current" />
+                                                        <span className="text-xs text-slate-500">Premium Member</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="p-2">
+                                            <NavLink
+                                                to="/profile"
+                                                onClick={() => setIsProfileOpen(false)}
+                                                className="flex items-center gap-3 px-3 py-2 text-slate-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all duration-200 group"
+                                            >
+                                                <User className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                                                View Profile
+                                            </NavLink>
+
+                                            <button className="w-full flex items-center gap-3 px-3 py-2 text-slate-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all duration-200 group">
+                                                <Heart className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                                                My Wishlist
+                                            </button>
+
+                                            <button className="w-full flex items-center gap-3 px-3 py-2 text-slate-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all duration-200 group">
+                                                <Star className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                                                My Reviews
+                                            </button>
+
+                                            <button className="w-full flex items-center gap-3 px-3 py-2 text-slate-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all duration-200 group">
+                                                <ShoppingBag className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                                                Order History
+                                            </button>
+
+                                            <button className="w-full flex items-center gap-3 px-3 py-2 text-slate-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all duration-200 group">
+                                                <Settings className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                                                Settings
+                                            </button>
+
+                                            <div className="border-t border-slate-100 mt-2 pt-2">
+                                                <button
+                                                    onClick={() => {
+                                                        setIsProfileOpen(false);
+                                                        handleLogout();
+                                                    }}
+                                                    className="w-full flex items-center gap-3 px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 group"
+                                                >
+                                                    <LogOut className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                                                    Sign Out
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </div>
                     </div>
 
                     {/* Mobile Menu Button */}
-                    <div className="md:hidden">
-                        <Button
-                            onClick={toggleMenu}
-                            variant="ghost"
-                            size="icon"
-                            className="text-slate-700"
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={toggleMenu}
+                        className="md:hidden hover:bg-blue-50"
+                    >
+                        <motion.div
+                            animate={{ rotate: isMenuOpen ? 180 : 0 }}
+                            transition={{ duration: 0.3 }}
                         >
                             {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-                        </Button>
-                    </div>
+                        </motion.div>
+                    </Button>
                 </div>
 
                 {/* Mobile Menu */}
-                <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{
-                        height: isMenuOpen ? "auto" : 0,
-                        opacity: isMenuOpen ? 1 : 0
-                    }}
-                    transition={{ duration: 0.3 }}
-                    className="md:hidden overflow-hidden"
-                >
-                    <div className="py-4 space-y-4 border-t border-slate-200 mt-4">
-                        <NavLink
-                            to="/"
-                            onClick={() => setIsMenuOpen(false)}
-                            className={({ isActive }) =>
-                                `block text-lg font-medium transition-colors ${isActive
-                                    ? "text-amber-600"
-                                    : "text-slate-700 hover:text-amber-600"
-                                }`
-                            }
+                <AnimatePresence>
+                    {isMenuOpen && (
+                        <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.3 }}
+                            className="md:hidden mt-4"
                         >
-                            Home
-                        </NavLink>
+                            <Card className="glass shadow-xl">
+                                <CardContent className="p-4 space-y-4">
+                                    {/* User Info in Mobile */}
+                                    <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg">
+                                        <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
+                                            <User className="w-5 h-5 text-white" />
+                                        </div>
+                                        <div>
+                                            <p className="font-semibold text-slate-800 capitalize">{userName}</p>
+                                            <p className="text-sm text-slate-500">Betta Enthusiast</p>
+                                        </div>
+                                    </div>
 
-                        <NavLink
-                            to="/profile"
-                            onClick={() => setIsMenuOpen(false)}
-                            className={({ isActive }) =>
-                                `flex items-center gap-2 text-lg font-medium transition-colors ${isActive
-                                    ? "text-amber-600"
-                                    : "text-slate-700 hover:text-amber-600"
-                                }`
-                            }
-                        >
-                            <User className="h-5 w-5" />
-                            Profile
-                        </NavLink>
+                                    <NavLink
+                                        to="/"
+                                        onClick={toggleMenu}
+                                        className="flex items-center gap-3 p-3 text-slate-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all duration-200"
+                                    >
+                                        <ShoppingBag className="h-5 w-5" />
+                                        Marketplace
+                                    </NavLink>
 
-                        <Button
-                            onClick={() => {
-                                handleLogout();
-                                setIsMenuOpen(false);
-                            }}
-                            variant="outline"
-                            className="w-full justify-start gap-2 hover:bg-red-50 hover:border-red-200 hover:text-red-600"
-                        >
-                            <LogOut className="h-4 w-4" />
-                            Logout
-                        </Button>
-                    </div>
-                </motion.div>
+                                    <NavLink
+                                        to="/profile"
+                                        onClick={toggleMenu}
+                                        className="flex items-center gap-3 p-3 text-slate-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all duration-200"
+                                    >
+                                        <User className="h-5 w-5" />
+                                        Profile
+                                    </NavLink>
+
+                                    <button className="w-full flex items-center gap-3 p-3 text-slate-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all duration-200">
+                                        <Heart className="w-5 h-5" />
+                                        Wishlist
+                                    </button>
+
+                                    <button className="w-full flex items-center gap-3 p-3 text-slate-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all duration-200">
+                                        <Star className="w-5 h-5" />
+                                        Reviews
+                                    </button>
+
+                                    <div className="border-t border-slate-200 pt-4">
+                                        <button
+                                            onClick={() => {
+                                                toggleMenu();
+                                                handleLogout();
+                                            }}
+                                            className="w-full flex items-center gap-3 p-3 text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200"
+                                        >
+                                            <LogOut className="h-5 w-5" />
+                                            Sign Out
+                                        </button>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
         </motion.nav>
     );

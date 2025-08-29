@@ -1,11 +1,24 @@
 const {User, Product, Category} = require("../models")
-const { comparePassword } = require('../helpers/bcrypt')
+const { comparePassword, hashPassword } = require('../helpers/bcrypt')
 const { signToken } = require('../helpers/jwt')
 const fs = require('fs')
+const path = require('path')
 const { OAuth2Client } = require('google-auth-library');
 const crypto = require('crypto');
 const productJson = require ('../data/product.json')
 const { GoogleGenerativeAI } = require("@google/generative-ai");
+
+// Helper function untuk validasi email
+const isValidEmail = (email) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+
+// Helper function untuk validasi phone number
+const isValidPhoneNumber = (phone) => {
+  const phoneRegex = /^(\+62|62|0)[0-9]{9,12}$/;
+  return phoneRegex.test(phone);
+};
 
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
@@ -77,7 +90,14 @@ module.exports = class CustController {
       } //3. compare password match ga ama yg didb?
 
       const access_token = signToken({ id: dataUser.id })
-      res.status(200).json({ access_token })
+      res.status(200).json({ 
+        access_token,
+        user: {
+          email: dataUser.email,
+          role: dataUser.role,
+          profilePicture: dataUser.profilePicture
+        }
+      })
 
     } catch (err) {
         console.log(err, '<<<<<<<<<');
@@ -121,49 +141,217 @@ module.exports = class CustController {
 
 }
 
-static async Profile (req, res, next){
+static async Profile(req, res, next) {
   try {
+    // Get user data excluding password
+    const user = await User.findByPk(req.user.id, {
+      attributes: { exclude: ['password'] }
+    });
     
-    res.json(req.user)
-} catch (err) {
-   next (err)
-}
+    if (!user) {
+      throw { name: "NotFound", message: 'User not found' };
+    }
+
+    // Add dummy avatar if no profile picture
+    const userData = user.toJSON();
+    if (!userData.profilePicture) {
+      userData.profilePicture = `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.fullName || 'User')}&background=random&size=200`;
+    }
+
+    // Return the user data directly for easier frontend consumption
+    res.status(200).json(userData);
+  } catch (err) {
+    next(err);
+  }
 }
 
-static async updateProfile (req, res, next){
+// Method untuk generate dummy avatar
+static async generateDummyAvatar(req, res, next) {
   try {
-      
-      const data = await User.findByPk(req.params.id)
+    const { name } = req.query;
+    const avatarName = name || req.user.fullName || 'User';
+    
+    const dummyAvatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(avatarName)}&background=random&size=200&font-size=0.6`;
+    
+    res.status(200).json({
+      message: 'Dummy avatar generated successfully',
+      avatarUrl: dummyAvatarUrl
+    });
+  } catch (err) {
+    next(err);
+  }
+}
 
-      if (!data) {
-          throw { name: "NotFound", message: 'Profile is not found' }
-        }
+// Method untuk delete profile picture
+static async deleteProfilePicture(req, res, next) {
+  try {
+    const userId = req.user.id;
+    
+    const user = await User.findByPk(userId);
+    
+    if (!user) {
+      throw { name: "NotFound", message: 'User not found' };
+    }
 
-        const {
-          fullName,
-          phoneNumber,
-          address,
-          profilePicture
-      } = req.body
-
-      const result = await User.update({
-        fullName,
-        phoneNumber,
-        address,
-        profilePicture
-      },
-      {
-          where : {
-                      id: req.params.id
-                  },
-          returning: true
+    // Check if user has profile picture and it's not a dummy avatar
+    if (user.profilePicture && !user.profilePicture.includes('ui-avatars.com')) {
+      // Delete file from server
+      const imagePath = path.join(__dirname, '../uploads/profiles', path.basename(user.profilePicture));
+      if (fs.existsSync(imagePath)) {
+        fs.unlinkSync(imagePath);
       }
-  )
+    }
 
-      res.status(200).json(result[1][0])
+    // Update user profile picture to null
+    await User.update(
+      { profilePicture: null },
+      { where: { id: userId } }
+    );
+
+    // Get updated user data
+    const updatedUser = await User.findByPk(userId, {
+      attributes: { exclude: ['password'] }
+    });
+
+    const userData = updatedUser.toJSON();
+    // Add dummy avatar
+    userData.profilePicture = `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.fullName || 'User')}&background=random&size=200`;
+
+    res.status(200).json({
+      message: 'Profile picture deleted successfully',
+      data: userData
+    });
 
   } catch (err) {
-      next (err)
+    next(err);
+  }
+}
+
+static async updateProfile(req, res, next) {
+  try {
+    const userId = req.user.id; // Menggunakan user ID dari token authentication
+    
+    // Cari user berdasarkan ID
+    const user = await User.findByPk(userId);
+    
+    if (!user) {
+      throw { name: "NotFound", message: 'User not found' };
+    }
+
+    // Siapkan data yang akan diupdate
+    const updateData = {};
+    
+    // Ambil data dari request body
+    const { fullName, phoneNumber, address, email, currentPassword, newPassword } = req.body;
+    
+    // Validasi dan update field yang diberikan
+    if (fullName !== undefined) {
+      if (fullName.trim().length < 2) {
+        throw { name: "BadRequest", message: 'Full name must be at least 2 characters long' };
+      }
+      updateData.fullName = fullName.trim();
+    }
+    
+    if (phoneNumber !== undefined) {
+      if (phoneNumber && !isValidPhoneNumber(phoneNumber)) {
+        throw { name: "BadRequest", message: 'Invalid phone number format' };
+      }
+      updateData.phoneNumber = phoneNumber;
+    }
+    
+    if (address !== undefined) {
+      updateData.address = address;
+    }
+    
+    if (email !== undefined) {
+      if (!isValidEmail(email)) {
+        throw { name: "BadRequest", message: 'Invalid email format' };
+      }
+      
+      // Check if email already exists (excluding current user)
+      const existingUser = await User.findOne({
+        where: {
+          email,
+          id: { [require('sequelize').Op.ne]: userId }
+        }
+      });
+      
+      if (existingUser) {
+        throw { name: "BadRequest", message: 'Email already exists' };
+      }
+      
+      updateData.email = email;
+    }
+    
+    // Handle password update
+    if (newPassword) {
+      if (!currentPassword) {
+        throw { name: "BadRequest", message: 'Current password is required to change password' };
+      }
+      
+      if (newPassword.length < 6) {
+        throw { name: "BadRequest", message: 'New password must be at least 6 characters long' };
+      }
+      
+      // Verify current password
+      const isCurrentPasswordValid = comparePassword(currentPassword, user.password);
+      if (!isCurrentPasswordValid) {
+        throw { name: "Unauthorized", message: 'Current password is incorrect' };
+      }
+      
+      // Hash new password
+      updateData.password = hashPassword(newPassword);
+    }
+    
+    // Handle profile picture upload
+    if (req.file) {
+      // Delete old profile picture if exists and it's not a dummy avatar
+      if (user.profilePicture && !user.profilePicture.includes('ui-avatars.com')) {
+        const oldImagePath = path.join(__dirname, '../uploads/profiles', path.basename(user.profilePicture));
+        if (fs.existsSync(oldImagePath)) {
+          fs.unlinkSync(oldImagePath);
+        }
+      }
+      
+      // Set new profile picture URL
+      updateData.profilePicture = `${req.protocol}://${req.get('host')}/uploads/profiles/${req.file.filename}`;
+    }
+
+    // Check if there's anything to update
+    if (Object.keys(updateData).length === 0) {
+      throw { name: "BadRequest", message: 'No data provided to update' };
+    }
+
+    // Update user data
+    await User.update(updateData, {
+      where: { id: userId }
+    });
+
+    // Fetch updated user data (exclude password)
+    const updatedUser = await User.findByPk(userId, {
+      attributes: { exclude: ['password'] }
+    });
+
+    // Add dummy avatar if no profile picture
+    const userData = updatedUser.toJSON();
+    if (!userData.profilePicture) {
+      userData.profilePicture = `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.fullName || 'User')}&background=random&size=200`;
+    }
+
+    res.status(200).json({
+      message: 'Profile updated successfully',
+      ...userData
+    });
+
+  } catch (err) {
+    // Clean up uploaded file if error occurs
+    if (req.file) {
+      const filePath = path.join(__dirname, '../uploads/profiles', req.file.filename);
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+    }
+    next(err);
   }
 }
 
@@ -265,16 +453,6 @@ static async ByCategoryId(req, res, next) {
   }
 }
 
-
-  static async register(req, res, next) {
-    try {
-      const user = await User.create(req.body);
-      res.status(201).json(user)
-    } catch (err) {
-      next(err);
-    }
-  }
-
   static async googleLogin(req, res, next) {
     try {
       const { googleToken } = req.body;
@@ -325,33 +503,6 @@ static async ByCategoryId(req, res, next) {
       next(error);
     }
   }
-
-  static async login(req, res, next) {
-    try {
-      const { email, password } = req.body
-      if (!email || !password) {
-        throw { name: 'BadRequest', message: 'Email or password is required' }
-      }
-      const user = await User.findOne({ where: { email } })
-      if (!user) {
-        throw { name: 'Unauthorized', message: 'Email or password is required' }
-      }
-
-      const isValidPassword = comparePassword(password, user.password)
-      if (!isValidPassword) {
-        throw { name: 'Unauthorized', message: 'Email or password is required' }
-      }
-
-      const access_token = signToken({ id: user.id })
-      res.status(200).json({ access_token, user: { email: user.email, role: user.role } })
-    } catch (err) {
-      next(err);
-    }
-  }
-
-
-
-
 
 
 }

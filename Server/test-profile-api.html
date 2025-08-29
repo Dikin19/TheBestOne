@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile API Test</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .form-group {
+        margin-bottom: 15px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+
+      input,
+      textarea {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+
+      button {
+        background-color: #007bff;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-right: 10px;
+      }
+
+      button:hover {
+        background-color: #0056b3;
+      }
+
+      .delete-btn {
+        background-color: #dc3545;
+      }
+
+      .delete-btn:hover {
+        background-color: #c82333;
+      }
+
+      .profile-picture {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #ddd;
+      }
+
+      .response {
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        padding: 15px;
+        margin-top: 20px;
+        white-space: pre-wrap;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Profile API Test</h1>
+
+    <!-- Token Input -->
+    <div class="form-group">
+      <label for="token">Access Token:</label>
+      <input
+        type="text"
+        id="token"
+        placeholder="Masukkan access token dari login"
+      />
+    </div>
+
+    <!-- Get Profile Section -->
+    <section>
+      <h2>Get Profile</h2>
+      <button onclick="getProfile()">Get Profile</button>
+
+      <div id="profileDisplay" style="margin-top: 20px; display: none">
+        <div style="display: flex; align-items: center; gap: 20px">
+          <img
+            id="profilePicture"
+            class="profile-picture"
+            src=""
+            alt="Profile Picture"
+          />
+          <div>
+            <p><strong>Name:</strong> <span id="displayName"></span></p>
+            <p><strong>Email:</strong> <span id="displayEmail"></span></p>
+            <p><strong>Phone:</strong> <span id="displayPhone"></span></p>
+            <p><strong>Address:</strong> <span id="displayAddress"></span></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr />
+
+    <!-- Update Profile Section -->
+    <section>
+      <h2>Update Profile</h2>
+      <form id="updateForm">
+        <div class="form-group">
+          <label for="fullName">Full Name:</label>
+          <input type="text" id="fullName" name="fullName" />
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email:</label>
+          <input type="email" id="email" name="email" />
+        </div>
+
+        <div class="form-group">
+          <label for="phoneNumber">Phone Number:</label>
+          <input
+            type="text"
+            id="phoneNumber"
+            name="phoneNumber"
+            placeholder="08123456789"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="address">Address:</label>
+          <textarea id="address" name="address" rows="3"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="profilePicture">Profile Picture:</label>
+          <input
+            type="file"
+            id="profilePictureFile"
+            name="profilePicture"
+            accept="image/*"
+          />
+        </div>
+
+        <h3>Change Password (Optional)</h3>
+        <div class="form-group">
+          <label for="currentPassword">Current Password:</label>
+          <input type="password" id="currentPassword" name="currentPassword" />
+        </div>
+
+        <div class="form-group">
+          <label for="newPassword">New Password:</label>
+          <input type="password" id="newPassword" name="newPassword" />
+        </div>
+
+        <button type="button" onclick="updateProfile()">Update Profile</button>
+        <button type="button" onclick="clearForm()">Clear Form</button>
+      </form>
+    </section>
+
+    <hr />
+
+    <!-- Actions Section -->
+    <section>
+      <h2>Actions</h2>
+      <button onclick="generateDummyAvatar()">Generate Dummy Avatar</button>
+      <button class="delete-btn" onclick="deleteProfilePicture()">
+        Delete Profile Picture
+      </button>
+    </section>
+
+    <!-- Response Display -->
+    <div id="response" class="response" style="display: none"></div>
+
+    <script>
+      const BASE_URL = "http://localhost:3000/customer";
+
+      function getToken() {
+        return document.getElementById("token").value;
+      }
+
+      function showResponse(data) {
+        const responseDiv = document.getElementById("response");
+        responseDiv.textContent = JSON.stringify(data, null, 2);
+        responseDiv.style.display = "block";
+      }
+
+      async function getProfile() {
+        try {
+          const response = await fetch(`${BASE_URL}/profile`, {
+            headers: {
+              Authorization: `Bearer ${getToken()}`,
+            },
+          });
+
+          const data = await response.json();
+          showResponse(data);
+
+          if (response.ok && data.data) {
+            displayProfile(data.data);
+          }
+        } catch (error) {
+          showResponse({ error: error.message });
+        }
+      }
+
+      function displayProfile(profile) {
+        document.getElementById("profileDisplay").style.display = "block";
+        document.getElementById("profilePicture").src =
+          profile.profilePicture || "";
+        document.getElementById("displayName").textContent =
+          profile.fullName || "";
+        document.getElementById("displayEmail").textContent =
+          profile.email || "";
+        document.getElementById("displayPhone").textContent =
+          profile.phoneNumber || "";
+        document.getElementById("displayAddress").textContent =
+          profile.address || "";
+
+        // Fill form with current data
+        document.getElementById("fullName").value = profile.fullName || "";
+        document.getElementById("email").value = profile.email || "";
+        document.getElementById("phoneNumber").value =
+          profile.phoneNumber || "";
+        document.getElementById("address").value = profile.address || "";
+      }
+
+      async function updateProfile() {
+        try {
+          const formData = new FormData();
+
+          // Add text fields
+          const fields = [
+            "fullName",
+            "email",
+            "phoneNumber",
+            "address",
+            "currentPassword",
+            "newPassword",
+          ];
+          fields.forEach((field) => {
+            const value = document.getElementById(field).value;
+            if (value.trim()) {
+              formData.append(field, value);
+            }
+          });
+
+          // Add file if selected
+          const fileInput = document.getElementById("profilePictureFile");
+          if (fileInput.files[0]) {
+            formData.append("profilePicture", fileInput.files[0]);
+          }
+
+          const response = await fetch(`${BASE_URL}/profile`, {
+            method: "PUT",
+            headers: {
+              Authorization: `Bearer ${getToken()}`,
+            },
+            body: formData,
+          });
+
+          const data = await response.json();
+          showResponse(data);
+
+          if (response.ok && data.data) {
+            displayProfile(data.data);
+            // Clear password fields
+            document.getElementById("currentPassword").value = "";
+            document.getElementById("newPassword").value = "";
+            document.getElementById("profilePictureFile").value = "";
+          }
+        } catch (error) {
+          showResponse({ error: error.message });
+        }
+      }
+
+      async function generateDummyAvatar() {
+        try {
+          const name = document.getElementById("fullName").value || "User";
+          const response = await fetch(
+            `${BASE_URL}/profile/dummy-avatar?name=${encodeURIComponent(name)}`,
+            {
+              headers: {
+                Authorization: `Bearer ${getToken()}`,
+              },
+            }
+          );
+
+          const data = await response.json();
+          showResponse(data);
+        } catch (error) {
+          showResponse({ error: error.message });
+        }
+      }
+
+      async function deleteProfilePicture() {
+        if (!confirm("Are you sure you want to delete your profile picture?")) {
+          return;
+        }
+
+        try {
+          const response = await fetch(`${BASE_URL}/profile/picture`, {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${getToken()}`,
+            },
+          });
+
+          const data = await response.json();
+          showResponse(data);
+
+          if (response.ok && data.data) {
+            displayProfile(data.data);
+          }
+        } catch (error) {
+          showResponse({ error: error.message });
+        }
+      }
+
+      function clearForm() {
+        document.getElementById("updateForm").reset();
+      }
+    </script>
+  </body>
+</html>

@@ -21,7 +21,12 @@ async function authentication(req, res, next) {
     const payload = verifyToken(tokenRaw[1])
     console.log(payload)
 
-    const user = await User.findByPk(payload.id)
+    const user = await User.findOne({
+      where: {
+        id: payload.id,
+        isDeleted: false
+      }
+    })
     if (!user) {
       throw { name: "InvalidToken", message: "Invalid token" }
     }

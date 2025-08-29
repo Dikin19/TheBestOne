@@ -145,7 +145,7 @@ export default function ProfileCard({ el }) {
                     {/* Action Buttons */}
                     <div className="flex space-x-3 pt-4">
                         <NavLink
-                            to={`/editprofile/${el._id}`}
+                            to="/update-profile"
                             className="flex-1 bg-[#f53d2d] text-white px-4 py-2.5 rounded-lg hover:bg-[#e03b27] transition duration-300 flex items-center justify-center space-x-2 font-medium"
                         >
                             <Edit3 className="w-4 h-4" />

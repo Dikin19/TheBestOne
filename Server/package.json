@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest --verbose --detectOpenHandles --forceExit --coverage",
-    "dev": "npx nodemon app"
+    "dev": "npx nodemon bin/www"
   },
   "keywords": [],
   "author": "",
@@ -21,6 +21,7 @@
     "google-auth-library": "^9.15.1",
     "jsonwebtoken": "^9.0.2",
     "midtrans-client": "^1.4.2",
+    "multer": "^2.0.2",
     "pg": "^8.13.3",
     "pg-listen": "^1.7.0",
     "replicate": "^1.1.0",
