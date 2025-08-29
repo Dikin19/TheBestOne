@@ -102,8 +102,8 @@ export default function UpdateProfile() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
-            <div className="bg-white rounded-2xl shadow-lg w-full max-w-4xl grid grid-cols-1 md:grid-cols-3 overflow-hidden">
+        <div className="min-h-screen bg-gradient-to-br from-blue-500/20 via-cyan-400/15 to-blue-600/25 flex items-center justify-center px-4">
+            <div className="bg-gradient-to-br from-blue-500/15 via-cyan-400/10 to-blue-600/15 backdrop-blur-lg rounded-2xl shadow-lg w-full max-w-4xl grid grid-cols-1 md:grid-cols-3 overflow-hidden border border-blue-200/30">
                 {/* Sidebar left */}
                 <div className="bg-[#f53d2d] text-white p-6 flex items-center justify-center text-center md:text-left">
                     <h2 className="text-2xl font-bold">Welcome Back!<br />Update your profile below.</h2>

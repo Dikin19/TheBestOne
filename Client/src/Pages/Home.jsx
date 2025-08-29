@@ -101,21 +101,26 @@ export default function Home() {
     });
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-teal-50">
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-cyan-50/40 relative overflow-hidden">
+            {/* Professional Ocean Depth Layers */}
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-blue-500/3 to-cyan-600/8"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-600/2 via-transparent to-teal-600/3"></div>
+
             {/* Hero Section */}
-            <section className="relative py-20 px-4 overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-900/10 to-teal-600/10"></div>
+            <section className="relative py-24 px-4 overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-600/8 to-cyan-500/6"></div>
 
-                {/* Underwater Effect Background with Bubbles */}
+                {/* Enhanced Professional Background Effects */}
                 <div className="absolute inset-0 opacity-10">
-                    <div className="absolute top-10 left-10 w-32 h-32 bg-blue-300 rounded-full blur-3xl animate-pulse"></div>
-                    <div className="absolute top-40 right-20 w-24 h-24 bg-teal-300 rounded-full blur-2xl animate-pulse delay-1000"></div>
-                    <div className="absolute bottom-32 left-1/3 w-40 h-40 bg-cyan-300 rounded-full blur-3xl animate-pulse delay-2000"></div>
+                    <div className="absolute top-16 left-16 w-40 h-40 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full blur-3xl animate-pulse"></div>
+                    <div className="absolute top-48 right-24 w-32 h-32 bg-gradient-to-br from-teal-500 to-blue-600 rounded-full blur-2xl animate-pulse delay-1000"></div>
+                    <div className="absolute bottom-40 left-1/3 w-48 h-48 bg-gradient-to-br from-cyan-500 to-blue-700 rounded-full blur-3xl animate-pulse delay-2000"></div>
 
-                    {/* Floating Bubbles */}
-                    <div className="absolute top-1/4 left-1/4 w-4 h-4 bg-blue-200 rounded-full animate-bounce delay-500"></div>
-                    <div className="absolute top-3/4 right-1/4 w-3 h-3 bg-cyan-200 rounded-full animate-bounce delay-1000"></div>
-                    <div className="absolute top-1/2 left-1/2 w-2 h-2 bg-teal-200 rounded-full animate-bounce delay-1500"></div>
+                    {/* Elegant Ocean Bubbles */}
+                    <div className="absolute top-1/4 left-1/4 w-3 h-3 bg-cyan-400/60 rounded-full animate-bounce delay-500"></div>
+                    <div className="absolute top-3/4 right-1/4 w-2 h-2 bg-blue-400/60 rounded-full animate-bounce delay-1000"></div>
+                    <div className="absolute top-1/2 left-1/2 w-4 h-4 bg-teal-400/60 rounded-full animate-bounce delay-1500"></div>
+                    <div className="absolute top-1/3 right-1/3 w-2 h-2 bg-cyan-300/50 rounded-full animate-bounce delay-700"></div>
                 </div>
 
                 <motion.div
@@ -130,15 +135,15 @@ export default function Home() {
                             initial={{ opacity: 0, scale: 0.8 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ delay: 0.2 }}
-                            className="flex items-center justify-center mb-6"
+                            className="flex items-center justify-center mb-8"
                         >
-                            <div className="flex items-center gap-3 bg-white/90 backdrop-blur-sm px-6 py-3 rounded-full shadow-lg border border-blue-100">
+                            <div className="flex items-center gap-4 card-ocean-premium px-8 py-4 rounded-2xl shadow-lg border border-blue-100/50">
                                 <img
                                     src={profilePicture}
                                     alt="Profile"
-                                    className="w-10 h-10 rounded-full object-cover border-2 border-blue-200"
+                                    className="w-12 h-12 rounded-full object-cover border-3 border-blue-200/70 shadow-md"
                                 />
-                                <span className="text-slate-700 font-medium">
+                                <span className="text-slate-700 font-semibold text-lg">
                                     Welcome back, {localStorage.getItem('email')?.split('@')[0] || 'User'}!
                                 </span>
                             </div>
@@ -150,11 +155,11 @@ export default function Home() {
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
                         transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
-                        className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500 to-teal-500 text-white px-6 py-2 rounded-full text-sm font-semibold mb-6 shadow-lg"
+                        className="inline-flex items-center gap-3 bg-gradient-to-r from-blue-600 to-teal-600 text-white px-8 py-3 rounded-full text-sm font-bold mb-8 shadow-xl"
                     >
-                        <Fish className="h-4 w-4" />
+                        <Fish className="h-5 w-5" />
                         Premium Betta Fish Collection
-                        <Sparkles className="h-4 w-4" />
+                        <Sparkles className="h-5 w-5" />
                     </motion.div>
 
                     {/* Main Title */}
@@ -162,11 +167,11 @@ export default function Home() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.5 }}
-                        className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-blue-900 via-teal-700 to-cyan-600 bg-clip-text text-transparent mb-6"
+                        className="text-6xl md:text-8xl font-black text-gradient-premium mb-8 leading-tight"
                     >
                         Premium Betta Fish
                         <br />
-                        <span className="text-teal-600">Collection</span>
+                        <span className="text-gradient-ocean">Collection</span>
                     </motion.h1>
 
                     {/* Subtitle */}
@@ -174,11 +179,11 @@ export default function Home() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.7 }}
-                        className="text-xl text-slate-600 mb-8 max-w-3xl mx-auto leading-relaxed"
+                        className="text-xl text-slate-600 mb-10 max-w-4xl mx-auto leading-relaxed font-medium"
                     >
-                        Discover the most exquisite betta fish from world-class breeders.
-                        Each fish is carefully selected for its vibrant colors, perfect fins, and championship bloodlines.
-                        Experience the beauty of premium betta ownership.
+                        Discover the world's most exquisite betta fish from championship breeders.
+                        Each specimen is carefully selected for its vibrant colors, perfect fins, and elite bloodlines.
+                        Experience the ultimate in premium betta ownership.
                     </motion.p>
 
                     {/* Action Buttons */}
@@ -186,21 +191,21 @@ export default function Home() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.9 }}
-                        className="flex flex-col sm:flex-row items-center justify-center gap-4"
+                        className="flex flex-col sm:flex-row items-center justify-center gap-6"
                     >
                         <Link
                             to="https://www.selasar.com/ikan-cupang//"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="no-underline hover:no-underline bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700 text-white shadow-lg group px-4 py-2 rounded-lg flex items-center"
+                            className="no-underline hover:no-underline btn-ocean-primary shadow-xl group px-8 py-4 rounded-xl flex items-center text-lg font-bold"
                             style={{ textDecoration: 'none' }}
                         >
-                            <Fish className="mr-2 h-5 w-5" />
-                            Browse About fish
-                            <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                            <Fish className="mr-3 h-6 w-6" />
+                            Explore Collection
+                            <ArrowRight className="ml-3 h-6 w-6 group-hover:translate-x-1 transition-transform" />
                         </Link>
-                        <Button size="lg" variant="outline" className="border-blue-200 text-blue-700 hover:bg-blue-50">
-                            <Award className="mr-2 h-5 w-5" />
+                        <Button size="lg" variant="outline" className="border-2 border-blue-300 text-blue-700 hover:bg-blue-50 px-8 py-4 text-lg font-semibold rounded-xl">
+                            <Award className="mr-3 h-6 w-6" />
                             Champion Bloodlines
                         </Button>
                     </motion.div>
@@ -210,22 +215,22 @@ export default function Home() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 1.1 }}
-                        className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto"
+                        className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto"
                     >
-                        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-blue-100 shadow-lg">
-                            <Crown className="h-8 w-8 text-blue-600 mb-3 mx-auto" />
-                            <h3 className="font-semibold text-slate-800 mb-2">Show Quality</h3>
-                            <p className="text-sm text-slate-600">Championship bloodlines with premium genetics and perfect form</p>
+                        <div className="card-ocean-premium rounded-3xl p-8 border border-blue-100/50 shadow-xl">
+                            <Crown className="h-10 w-10 text-blue-600 mb-4 mx-auto" />
+                            <h3 className="font-bold text-slate-800 mb-3 text-lg">Show Quality</h3>
+                            <p className="text-slate-600 leading-relaxed">Championship bloodlines with premium genetics and perfect form standards</p>
                         </div>
-                        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-teal-100 shadow-lg">
-                            <Heart className="h-8 w-8 text-teal-600 mb-3 mx-auto" />
-                            <h3 className="font-semibold text-slate-800 mb-2">Health Guaranteed</h3>
-                            <p className="text-sm text-slate-600">Every betta comes with health certification and breeding records</p>
+                        <div className="card-ocean-premium rounded-3xl p-8 border border-cyan-100/50 shadow-xl">
+                            <Heart className="h-10 w-10 text-teal-600 mb-4 mx-auto" />
+                            <h3 className="font-bold text-slate-800 mb-3 text-lg">Health Guaranteed</h3>
+                            <p className="text-slate-600 leading-relaxed">Every betta comes with health certification and complete breeding records</p>
                         </div>
-                        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-cyan-100 shadow-lg">
-                            <Sparkles className="h-8 w-8 text-cyan-600 mb-3 mx-auto" />
-                            <h3 className="font-semibold text-slate-800 mb-2">Rare Varieties</h3>
-                            <p className="text-sm text-slate-600">Exclusive colors and patterns from international breeders</p>
+                        <div className="card-ocean-premium rounded-3xl p-8 border border-teal-100/50 shadow-xl">
+                            <Sparkles className="h-10 w-10 text-cyan-600 mb-4 mx-auto" />
+                            <h3 className="font-bold text-slate-800 mb-3 text-lg">Rare Varieties</h3>
+                            <p className="text-slate-600 leading-relaxed">Exclusive colors and patterns from world-renowned international breeders</p>
                         </div>
                     </motion.div>
                 </motion.div>
@@ -282,31 +287,17 @@ export default function Home() {
             </section>
 
             {/* Filters and Search */}
-            <section className="py-8 px-4 border-t border-blue-100">
+            <section className="py-12 px-4 border-t border-blue-100/50">
                 <div className="max-w-7xl mx-auto">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-blue-100"
+                        className="card-ocean-premium rounded-3xl shadow-2xl p-8 border border-blue-100/50"
                     >
-                        {/* Search Bar */}
-                        <div className="relative mb-6">
-                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-400 h-5 w-5" />
-                            <Input
-                                type="text"
-                                placeholder="Search for your perfect betta fish by type, color, or pattern..."
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                className="pl-10 h-12 w-full text-lg rounded-xl border border-blue-400 
-                                focus:border-blue-500 focus:ring-2 focus:ring-blue-400/50 
-                                placeholder:tracking-wide placeholder:text-gray-400 shadow-sm transition-all"
-                            />
-                        </div>
-
                         {/* Filters */}
-                        <div className="flex flex-wrap items-center justify-between gap-4">
+                        <div className="flex flex-wrap items-center justify-between gap-6">
                             {/* Category Filters */}
-                            <div className="flex flex-wrap gap-2">
+                            <div className="flex flex-wrap gap-3">
                                 {categories.map((category) => {
                                     const Icon = category.icon;
                                     return (
@@ -315,9 +306,9 @@ export default function Home() {
                                             variant={selectedCategory === category.id ? "default" : "outline"}
                                             size="sm"
                                             onClick={() => setSelectedCategory(category.id)}
-                                            className={`flex items-center gap-2 ${selectedCategory === category.id
-                                                ? "bg-gradient-to-r from-blue-600 to-teal-600 text-white"
-                                                : "border-blue-200 text-blue-700 hover:bg-blue-50"
+                                            className={`flex items-center gap-2 px-4 py-2 rounded-xl font-semibold transition-all duration-300 ${selectedCategory === category.id
+                                                ? "bg-gradient-to-r from-blue-600 to-teal-600 text-white shadow-lg"
+                                                : "border-2 border-blue-200 text-blue-700 hover:bg-blue-50 hover:border-blue-300"
                                                 }`}
                                         >
                                             <Icon className="h-4 w-4" />
@@ -328,11 +319,11 @@ export default function Home() {
                             </div>
 
                             {/* Sort and View Options */}
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-4">
                                 <select
                                     value={sortBy}
                                     onChange={(e) => setSortBy(e.target.value)}
-                                    className="px-3 py-2 border border-blue-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
+                                    className="px-4 py-3 border-2 border-blue-200 rounded-xl text-sm focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-400 bg-white/90 backdrop-blur-sm font-medium"
                                 >
                                     <option value="newest">New Arrivals</option>
                                     <option value="price-low">Price: Low to High</option>
@@ -340,7 +331,7 @@ export default function Home() {
                                     <option value="name">Name A-Z</option>
                                 </select>
 
-                                <div className="flex border border-blue-200 rounded-xl p-1 bg-white">
+                                <div className="flex border-2 border-blue-200 rounded-xl p-1 bg-white/70 backdrop-blur-sm">
                                     <Button
                                         variant={viewMode === "grid" ? "default" : "ghost"}
                                         size="sm"
@@ -362,7 +353,7 @@ export default function Home() {
                         </div>
 
                         {/* Results Count */}
-                        <div className="mt-4 flex items-center justify-between">
+                        {/* <div className="mt-4 flex items-center justify-between">
                             <Badge variant="secondary" className="text-sm bg-blue-100 text-blue-700">
                                 <Fish className="h-3 w-3 mr-1" />
                                 {sortedProducts.length} premium betta fish available
@@ -377,41 +368,58 @@ export default function Home() {
                                     Clear search
                                 </Button>
                             )}
+                        </div> */}
+                        {/* Search Bar */}
+                        <div className="relative mt-3">
+                            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-blue-500 h-6 w-6" />
+                            <Input
+                                type="text"
+                                placeholder="Search for your perfect betta fish by type, color, or pattern..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="pl-12 h-14 w-full text-lg rounded-2xl border-2 border-blue-200 
+                                focus:border-blue-400 focus:ring-4 focus:ring-blue-100 
+                                placeholder:tracking-wide placeholder:text-slate-400 shadow-lg transition-all duration-300
+                                bg-white/80 backdrop-blur-sm"
+                            />
                         </div>
                     </motion.div>
+
                 </div>
             </section>
 
             {/* Products Grid */}
-            <section className="py-12 px-4">
+            <section className="py-16 px-4">
                 <div className="max-w-7xl mx-auto">
                     {sortedProducts.length > 0 ? (
-                        <motion.div
-                            layout
-                            className={`grid gap-4 ${viewMode === "grid"
-                                ? "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
-                                : "grid grid-cols-1 md:grid-cols-2 place-items-center gap-4"
-                                }`}
-                        >
-                            {sortedProducts.map((product, index) => (
-                                <HomeCard
-                                    key={product.id}
-                                    el={product}
-                                    index={index}
-                                />
-                            ))}
-                        </motion.div>
+                        <>
+                            <motion.div
+                                layout
+                                className={`grid gap-6 ${viewMode === "grid"
+                                    ? "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+                                    : "grid grid-cols-1 md:grid-cols-2 place-items-center gap-6"
+                                    }`}
+                            >
+                                {sortedProducts.map((product, index) => (
+                                    <HomeCard
+                                        key={product.id}
+                                        el={product}
+                                        index={index}
+                                    />
+                                ))}
+                            </motion.div>
+                        </>
                     ) : (
                         <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
-                            className="text-center py-20"
+                            className="text-center py-24 card-ocean-premium rounded-3xl shadow-xl"
                         >
-                            <div className="text-6xl mb-4">🐠</div>
-                            <h3 className="text-2xl font-semibold text-slate-900 mb-2">
+                            <div className="text-8xl mb-6">🐠</div>
+                            <h3 className="text-3xl font-black text-gradient-premium mb-4">
                                 No betta fish found
                             </h3>
-                            <p className="text-slate-600 mb-6">
+                            <p className="text-lg text-slate-600 mb-8 max-w-lg mx-auto leading-relaxed">
                                 Try adjusting your search or filter criteria to find your perfect betta companion
                             </p>
                             <Button
@@ -420,9 +428,9 @@ export default function Home() {
                                     setSelectedCategory("all");
                                 }}
                                 variant="outline"
-                                className="border-blue-200 text-blue-700 hover:bg-blue-50"
+                                className="border-2 border-blue-300 text-blue-700 hover:bg-blue-50 px-6 py-3 text-lg font-semibold rounded-xl"
                             >
-                                <Fish className="mr-2 h-4 w-4" />
+                                <Fish className="mr-2 h-5 w-5" />
                                 Show All Betta Fish
                             </Button>
                         </motion.div>
@@ -431,7 +439,7 @@ export default function Home() {
             </section>
 
             {/* Additional Info Section */}
-            <section className="py-16 px-4 bg-gradient-to-r from-blue-50 to-teal-50 border-t border-blue-100">
+            <section className="py-20 px-4 bg-gradient-to-r from-blue-50/80 via-cyan-50/60 to-teal-50/80 border-t border-blue-100/50">
                 <div className="max-w-7xl mx-auto text-center">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
@@ -439,7 +447,7 @@ export default function Home() {
                         transition={{ duration: 0.6 }}
                         viewport={{ once: true }}
                     >
-                        <h2 className="text-3xl font-bold text-slate-900 mb-4">
+                        <h2 className="text-4xl font-black text-gradient-premium mb-6">
                             Why Choose Our Premium Betta Fish?
                         </h2>
                         <p className="text-xl text-slate-600 mb-12 max-w-3xl mx-auto">
@@ -454,7 +462,7 @@ export default function Home() {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.6, delay: 0.1 }}
                                 viewport={{ once: true }}
-                                className="bg-white rounded-xl p-6 shadow-lg border border-blue-100"
+                                className="bg-gradient-to-br from-blue-500/20 via-cyan-400/15 to-blue-600/20 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-blue-200/40"
                             >
                                 <Award className="h-12 w-12 text-blue-600 mx-auto mb-4" />
                                 <h3 className="font-semibold text-slate-800 mb-2">Championship Bloodlines</h3>
@@ -466,7 +474,7 @@ export default function Home() {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.6, delay: 0.2 }}
                                 viewport={{ once: true }}
-                                className="bg-white rounded-xl p-6 shadow-lg border border-teal-100"
+                                className="bg-gradient-to-br from-cyan-500/20 via-teal-400/15 to-blue-600/20 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-teal-200/40"
                             >
                                 <Heart className="h-12 w-12 text-teal-600 mx-auto mb-4" />
                                 <h3 className="font-semibold text-slate-800 mb-2">Health Guarantee</h3>
@@ -478,7 +486,7 @@ export default function Home() {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.6, delay: 0.3 }}
                                 viewport={{ once: true }}
-                                className="bg-white rounded-xl p-6 shadow-lg border border-cyan-100"
+                                className="bg-gradient-to-br from-teal-500/20 via-cyan-400/15 to-blue-600/20 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-cyan-200/40"
                             >
                                 <Sparkles className="h-12 w-12 text-cyan-600 mx-auto mb-4" />
                                 <h3 className="font-semibold text-slate-800 mb-2">Rare & Exclusive</h3>
@@ -490,7 +498,7 @@ export default function Home() {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.6, delay: 0.4 }}
                                 viewport={{ once: true }}
-                                className="bg-white rounded-xl p-6 shadow-lg border border-purple-100"
+                                className="bg-gradient-to-br from-teal-500/20 via-cyan-400/15 to-blue-600/20 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-cyan-200/40"
                             >
                                 <Crown className="h-12 w-12 text-purple-600 mx-auto mb-4" />
                                 <h3 className="font-semibold text-slate-800 mb-2">Expert Care Support</h3>

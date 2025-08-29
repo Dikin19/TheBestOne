@@ -381,9 +381,9 @@ export default function Profile() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+        <div className="min-h-screen bg-gradient-to-br from-blue-500/20 via-cyan-400/15 to-blue-600/25">
             {/* Header */}
-            <div className="bg-white shadow-sm border-b">
+            <div className="bg-gradient-to-r from-blue-500/20 via-cyan-400/15 to-blue-600/20 backdrop-blur-lg shadow-sm border-b border-blue-200/30">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between py-6">
                         <div className="flex items-center space-x-4">
@@ -411,7 +411,7 @@ export default function Profile() {
             </div>
 
             {/* Navigation Tabs */}
-            <div className="bg-white shadow-sm">
+            <div className="bg-gradient-to-r from-blue-500/15 via-cyan-400/10 to-blue-600/15 backdrop-blur-lg shadow-sm">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <nav className="flex space-x-8">
                         {tabs.map((tab) => {

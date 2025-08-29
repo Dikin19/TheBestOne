@@ -123,7 +123,7 @@ export default function Footer() {
             </div>
 
             {/* Newsletter Section */}
-            <div className="border-t border-slate-800">
+            {/* <div className="border-t border-slate-800">
                 <div className="max-w-7xl mx-auto px-4 py-8">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}

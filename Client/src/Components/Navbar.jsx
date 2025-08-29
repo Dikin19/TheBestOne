@@ -78,7 +78,7 @@ function Navbar() {
             initial={{ y: -100 }}
             animate={{ y: 0 }}
             transition={{ type: "spring", stiffness: 100, damping: 20 }}
-            className="bg-white/95 backdrop-blur-md shadow-lg sticky top-0 z-50 border-b border-slate-200"
+            className="bg-ocean-navbar shadow-2xl sticky top-0 z-50 border-b border-blue-200/40"
         >
             <div className="max-w-7xl mx-auto px-4 py-4">
                 <div className="flex items-center justify-between">
@@ -89,7 +89,7 @@ function Navbar() {
                     >
                         <NavLink
                             to="/"
-                            className="flex items-center gap-3 text-2xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent"
+                            className="flex items-center gap-3 text-2xl font-bold text-gradient-premium"
                         >
                             <motion.div
                                 animate={{
@@ -101,14 +101,14 @@ function Navbar() {
                                     repeat: Infinity,
                                     repeatDelay: 2
                                 }}
-                                className="w-10 h-10 bg-gradient-to-br from-blue-500 via-indigo-600 to-purple-600 rounded-full flex items-center justify-center shadow-lg"
+                                className="w-12 h-12 bg-gradient-to-br from-blue-600 via-cyan-600 to-teal-600 rounded-full flex items-center justify-center shadow-xl"
                             >
-                                <Fish className="h-6 w-6 text-white" />
+                                <Fish className="h-7 w-7 text-white" />
                             </motion.div>
-                            <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                            <span className="text-gradient-premium">
                                 TheBestOne
                             </span>
-                            <Crown className="w-5 h-5 text-yellow-500" />
+                            <Crown className="w-6 h-6 text-yellow-500" />
                         </NavLink>
                     </motion.div>
 
@@ -183,9 +183,9 @@ function Navbar() {
                                         animate={{ opacity: 1, y: 0, scale: 1 }}
                                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
                                         transition={{ duration: 0.2 }}
-                                        className="absolute left-0 mt-2 w-80 bg-white/95 backdrop-blur-md rounded-xl shadow-2xl border border-slate-200 overflow-hidden"
+                                        className="absolute left-0 mt-2 w-80 bg-gradient-to-br from-blue-500/25 via-cyan-400/20 to-blue-600/25 backdrop-blur-lg rounded-xl shadow-2xl border border-blue-300/30 overflow-hidden"
                                     >
-                                        <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-slate-100">
+                                        <div className="p-4 bg-gradient-to-r from-blue-400/20 to-cyan-300/15 border-b border-blue-300/30">
                                             <h3 className="font-semibold text-slate-800 flex items-center gap-2">
                                                 <Sparkles className="w-4 h-4 text-blue-500" />
                                                 Premium Food Collection
@@ -197,7 +197,7 @@ function Navbar() {
                                             <NavLink
                                                 to="/"
                                                 onClick={() => setIsMarketplaceOpen(false)}
-                                                className="flex items-center gap-3 px-4 py-3 text-slate-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all duration-200 group"
+                                                className="flex items-center gap-3 px-4 py-3 text-slate-700 hover:bg-blue-400/10 hover:text-blue-600 rounded-lg transition-all duration-200 group"
                                             >
                                                 <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
                                                     <Fish className="w-4 h-4 text-white" />
@@ -267,20 +267,22 @@ function Navbar() {
                                     setIsProfileOpen(!isProfileOpen);
                                     setIsMarketplaceOpen(false);
                                 }}
-                                className="flex items-center gap-2 text-lg font-medium text-slate-700 hover:text-blue-600 transition-all duration-300 group"
+                                className="flex items-center gap-3 text-lg font-semibold text-slate-700 hover:text-blue-600 transition-all duration-300 group"
                             >
                                 {profilePicture ? (
-                                    <img
+                                    <motion.img
+                                        whileHover={{ scale: 1.1 }}
+                                        whileTap={{ scale: 0.95 }}
                                         src={profilePicture}
                                         alt="Profile"
-                                        className="w-8 h-8 rounded-full object-cover border-2 border-blue-200 group-hover:border-blue-300 transition-colors"
+                                        className="w-10 h-10 rounded-full object-cover border-3 border-blue-200 group-hover:border-blue-400 transition-colors shadow-lg"
                                     />
                                 ) : (
-                                    <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                                        <User className="h-4 w-4 text-white" />
+                                    <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-teal-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg">
+                                        <User className="h-5 w-5 text-white" />
                                     </div>
                                 )}
-                                Profile
+                                <span className="hidden lg:block">Profile</span>
                                 <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isProfileOpen ? 'rotate-180' : ''}`} />
                             </button>
 
@@ -291,29 +293,29 @@ function Navbar() {
                                         animate={{ opacity: 1, y: 0, scale: 1 }}
                                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
                                         transition={{ duration: 0.2 }}
-                                        className="absolute right-0 mt-2 w-72 bg-white/95 backdrop-blur-md rounded-xl shadow-2xl border border-slate-200 overflow-hidden"
+                                        className="absolute right-0 mt-2 w-72 bg-gradient-to-br from-blue-500/25 via-cyan-400/20 to-blue-600/25 backdrop-blur-lg rounded-xl shadow-2xl border border-blue-300/30 overflow-hidden"
                                     >
-                                        <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-slate-100">
-                                            <div className="flex items-center gap-3">
+                                        <div className="p-4 bg-gradient-to-r from-blue-50 to-cyan-50 border-b border-blue-100">
+                                            <div className="flex items-center gap-4">
                                                 {profilePicture ? (
                                                     <img
                                                         src={profilePicture}
                                                         alt="Profile"
-                                                        className="w-12 h-12 rounded-full object-cover border-2 border-blue-200"
+                                                        className="w-14 h-14 rounded-full object-cover border-3 border-blue-300 shadow-lg"
                                                     />
                                                 ) : (
-                                                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
-                                                        <User className="w-6 h-6 text-white" />
+                                                    <div className="w-14 h-14 bg-gradient-to-br from-blue-600 to-teal-600 rounded-full flex items-center justify-center shadow-lg">
+                                                        <User className="w-7 h-7 text-white" />
                                                     </div>
                                                 )}
                                                 <div>
-                                                    <p className="font-semibold text-slate-800 capitalize">
+                                                    <p className="font-bold text-slate-800 capitalize text-lg">
                                                         {userName}
                                                     </p>
-                                                    <p className="text-sm text-slate-500">Food Enthusiast</p>
+                                                    <p className="text-sm text-slate-600">Betta Fish Enthusiast</p>
                                                     <div className="flex items-center gap-1 mt-1">
-                                                        <Star className="w-3 h-3 text-yellow-400 fill-current" />
-                                                        <span className="text-xs text-slate-500">Premium Member</span>
+                                                        <Star className="w-4 h-4 text-yellow-500 fill-current" />
+                                                        <span className="text-xs text-slate-500 font-medium">Premium Member</span>
                                                     </div>
                                                 </div>
                                             </div>

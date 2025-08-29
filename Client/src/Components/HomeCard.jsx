@@ -21,12 +21,12 @@ export default function HomeCard({ el, index }) {
     // const discount = Math.floor(Math.random() * 30) + 10; // Random discount 10-40%
     // const originalPrice = el.price * (1 + discount / 100);
 
-    // Food quality indicators
+    // Food quality indicators - updated for betta fish theme
     const qualityBadges = [
-        { label: "Premium", icon: Crown, color: "bg-amber-500" },
-        { label: "Chef's Special", icon: Award, color: "bg-purple-500" },
-        { label: "Popular", icon: Star, color: "bg-pink-500" },
-        { label: "Fresh", icon: Fish, color: "bg-blue-500" }
+        { label: "Premium", icon: Crown, color: "bg-gradient-to-r from-yellow-400 to-yellow-600" },
+        { label: "Champion", icon: Award, color: "bg-gradient-to-r from-purple-500 to-purple-700" },
+        { label: "Popular", icon: Star, color: "bg-gradient-to-r from-pink-500 to-pink-700" },
+        { label: "Show Quality", icon: Fish, color: "bg-gradient-to-r from-blue-500 to-blue-700" }
     ];
 
     const randomBadge = qualityBadges[Math.floor(Math.random() * qualityBadges.length)];
@@ -148,50 +148,20 @@ export default function HomeCard({ el, index }) {
             }}
             className="group h-full max-w-sm w-full"
         >
-            <Card className="overflow-hidden border-0 shadow-md hover:shadow-lg transition-all duration-500 bg-white/90 backdrop-blur-sm border border-blue-100/50 h-full flex flex-col">
+            <Card className="overflow-hidden border-0 shadow-2xl hover:shadow-3xl transition-all duration-500 card-ocean-premium border-2 border-blue-100/60 h-full flex flex-col bg-white/95 backdrop-blur-sm">
                 <div className="relative overflow-hidden">
                     {/* Premium Quality Badge */}
                     <motion.div
                         initial={{ scale: 0, rotate: -45 }}
                         animate={{ scale: 1, rotate: 0 }}
                         transition={{ delay: 0.5 + index * 0.1 }}
-                        className="absolute top-2 left-2 z-10"
+                        className="absolute top-3 left-3 z-10"
                     >
-                        <Badge className={`text-xs font-bold text-white ${randomBadge.color} flex items-center gap-1`}>
-                            <randomBadge.icon className="h-2 w-2" />
+                        <Badge className={`text-xs font-bold text-white ${randomBadge.color} flex items-center gap-1 px-3 py-1 rounded-full shadow-lg`}>
+                            <randomBadge.icon className="h-3 w-3" />
                             {randomBadge.label}
                         </Badge>
                     </motion.div>
-
-                    {/* Discount Badge */}
-                    {/* <motion.div
-                        initial={{ scale: 0, rotate: 45 }}
-                        animate={{ scale: 1, rotate: 0 }}
-                        transition={{ delay: 0.7 + index * 0.1 }}
-                        className="absolute top-2 right-10 z-10"
-                    >
-                        <Badge variant="destructive" className="text-xs font-bold">
-                            -{discount}%
-                        </Badge>
-                    </motion.div> */}
-
-                    {/* Like Button */}
-                    <motion.button
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                        onClick={handleAddToWishlist}
-                        disabled={isWishlistLoading}
-                        className={`absolute top-2 right-2 z-10 p-1.5 rounded-full bg-white/90 backdrop-blur-sm shadow-md opacity-0 group-hover:opacity-100 transition-all duration-300 border border-blue-100 ${isWishlistLoading ? 'cursor-not-allowed opacity-50' : ''}`}
-                    >
-                        {isWishlistLoading ? (
-                            <div className="w-2.5 h-2.5 border-2 border-red-300 border-t-red-500 rounded-full animate-spin"></div>
-                        ) : (
-                            <Heart
-                                className={`h-2.5 w-2.5 transition-colors ${isInWishlist ? 'text-red-500 fill-red-500' : 'text-slate-600 hover:text-red-500'
-                                    }`}
-                            />
-                        )}
-                    </motion.button>
 
                     {/* Product Image */}
                     <Link to={`/detail/${el.id}`} className="block relative group">
@@ -276,7 +246,7 @@ export default function HomeCard({ el, index }) {
                     </p>
 
                     {/* Food Specific Info */}
-                    <div className="flex items-center gap-1 mt-auto mb-1">
+                    {/* <div className="flex items-center gap-1 mt-auto mb-1">
                         <Badge variant="outline" className="text-xs border-blue-200 text-blue-700 px-1 py-0">
                             <Waves className="h-1 w-1 mr-1" />
                             Fresh
@@ -285,7 +255,7 @@ export default function HomeCard({ el, index }) {
                             <Crown className="h-1 w-1 mr-1" />
                             Premium
                         </Badge>
-                    </div>
+                    </div> */}
                 </CardContent>
 
                 <CardFooter className="p-2 pt-0 flex gap-2 mt-auto">
@@ -305,8 +275,8 @@ export default function HomeCard({ el, index }) {
                         onClick={handleAddToWishlist}
                         disabled={isWishlistLoading}
                         className={`h-8 w-8 rounded-full transition-all duration-300 shadow-sm hover:shadow-md flex items-center justify-center p-0 border-0 ${isInWishlist
-                                ? 'text-red-500 bg-red-100 hover:bg-red-200'
-                                : 'text-slate-600 bg-slate-100 hover:text-red-500 hover:bg-red-50'
+                            ? 'text-red-500 bg-red-100 hover:bg-red-200'
+                            : 'text-slate-600 bg-slate-100 hover:text-red-500 hover:bg-red-50'
                             } ${isWishlistLoading ? 'opacity-60 cursor-not-allowed' : 'hover:scale-110 active:scale-95'}`}
                     >
                         {isWishlistLoading ? (
@@ -314,8 +284,8 @@ export default function HomeCard({ el, index }) {
                         ) : (
                             <Heart
                                 className={`w-4 h-4 transition-all duration-200 ${isInWishlist
-                                        ? 'fill-red-500 text-red-500'
-                                        : 'stroke-slate-600 hover:stroke-red-500 hover:fill-red-200'
+                                    ? 'fill-red-500 text-red-500'
+                                    : 'stroke-slate-600 hover:stroke-red-500 hover:fill-red-200'
                                     }`}
                                 strokeWidth={2}
                             />
