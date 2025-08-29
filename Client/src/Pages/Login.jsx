@@ -76,35 +76,35 @@ function Login() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
-                className="relative z-10 w-full max-w-lg"
+                className="relative z-10 w-full max-w-md"
             >
-                <Card className="glass shadow-2xl border-0 backdrop-blur-xl">
-                    <CardHeader className="text-center pb-8">
+                <Card className="glass shadow-xl border-0 backdrop-blur-xl">
+                    <CardHeader className="text-center pb-6">
                         <motion.div
                             initial={{ scale: 0 }}
                             animate={{ scale: 1 }}
                             transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-                            className="mx-auto w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mb-4 shadow-lg"
+                            className="mx-auto w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mb-3 shadow-lg"
                         >
-                            <Fish className="w-8 h-8 text-white" />
+                            <Fish className="w-6 h-6 text-white" />
                         </motion.div>
-                        <CardTitle className="text-3xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                        <CardTitle className="text-2xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
                             Welcome Back
                         </CardTitle>
-                        <CardDescription className="text-lg text-gray-600 mt-2">
-                            Sign in to explore premium betta fish
+                        <CardDescription className="text-sm text-gray-600 mt-1">
+                            Sign in to your account
                         </CardDescription>
                     </CardHeader>
 
-                    <CardContent className="space-y-6">
-                        <form onSubmit={handleSubmit} className="space-y-6">
+                    <CardContent className="space-y-4 px-6 pb-6">
+                        <form onSubmit={handleSubmit} className="space-y-4">
                             <motion.div
                                 initial={{ opacity: 0, x: -20 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: 0.3 }}
-                                className="space-y-2"
+                                className="space-y-1"
                             >
-                                <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                                <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
                                     <Mail className="w-4 h-4 text-blue-500" />
                                     Email Address
                                 </label>
@@ -113,7 +113,7 @@ function Login() {
                                     placeholder="Enter your email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="h-12 border-2 border-gray-200 focus:border-blue-500 focus:ring-blue-500/20 transition-all duration-200"
+                                    className="h-10 border border-gray-300 focus:border-blue-500 focus:ring-blue-500/20 transition-all duration-200"
                                     required
                                 />
                             </motion.div>
@@ -122,9 +122,9 @@ function Login() {
                                 initial={{ opacity: 0, x: -20 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: 0.4 }}
-                                className="space-y-2"
+                                className="space-y-1"
                             >
-                                <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                                <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
                                     <Lock className="w-4 h-4 text-blue-500" />
                                     Password
                                 </label>
@@ -134,7 +134,7 @@ function Login() {
                                         placeholder="Enter your password"
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
-                                        className="h-12 border-2 border-gray-200 focus:border-blue-500 focus:ring-blue-500/20 transition-all duration-200 pr-12"
+                                        className="h-10 border border-gray-300 focus:border-blue-500 focus:ring-blue-500/20 transition-all duration-200 pr-10"
                                         required
                                     />
                                     <button
@@ -142,7 +142,7 @@ function Login() {
                                         onClick={() => setShowPassword(!showPassword)}
                                         className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
                                     >
-                                        {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                                     </button>
                                 </div>
                             </motion.div>
@@ -151,20 +151,21 @@ function Login() {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.5 }}
+                                className="pt-2"
                             >
                                 <Button
                                     type="submit"
                                     disabled={isLoading}
-                                    className="w-full h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 text-lg"
+                                    className="w-full h-10 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
                                 >
                                     {isLoading ? (
                                         <div className="flex items-center gap-2">
-                                            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                                             Signing In...
                                         </div>
                                     ) : (
                                         <div className="flex items-center gap-2">
-                                            <Sparkles className="w-5 h-5" />
+                                            <Sparkles className="w-4 h-4" />
                                             Sign In
                                         </div>
                                     )}
@@ -176,13 +177,13 @@ function Login() {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ delay: 0.6 }}
-                            className="relative"
+                            className="relative pt-3"
                         >
                             <div className="absolute inset-0 flex items-center">
                                 <div className="w-full border-t border-gray-300"></div>
                             </div>
-                            <div className="relative flex justify-center text-sm">
-                                <span className="px-4 bg-white text-gray-500 font-medium">Or continue with</span>
+                            <div className="relative flex justify-center text-xs">
+                                <span className="px-3 bg-white text-gray-500 font-medium">Or continue with</span>
                             </div>
                         </motion.div>
 
@@ -194,7 +195,7 @@ function Login() {
                             <Button
                                 type="button"
                                 variant="outline"
-                                className="w-full h-12 border-2 border-gray-200 hover:border-gray-300 text-gray-700 font-semibold rounded-lg transition-all duration-200"
+                                className="w-full h-9 border border-gray-300 hover:border-gray-400 text-gray-700 font-medium rounded-lg transition-all duration-200 text-sm"
                                 onClick={() => {
                                     Swal.fire({
                                         title: 'Google Sign-In',
@@ -204,7 +205,7 @@ function Login() {
                                     });
                                 }}
                             >
-                                <Chrome className="w-5 h-5 mr-2" />
+                                <Chrome className="w-4 h-4 mr-2" />
                                 Continue with Google
                             </Button>
                         </motion.div>
@@ -213,13 +214,13 @@ function Login() {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ delay: 0.8 }}
-                            className="text-center pt-4 border-t border-gray-200"
+                            className="text-center pt-3 border-t border-gray-200"
                         >
-                            <p className="text-gray-600">
+                            <p className="text-sm text-gray-600">
                                 Don't have an account?{" "}
                                 <Link
                                     to="/register"
-                                    className="font-semibold text-blue-600 hover:text-blue-700 transition-colors hover:underline"
+                                    className="font-medium text-blue-600 hover:text-blue-700 transition-colors hover:underline"
                                 >
                                     Create one here
                                 </Link>

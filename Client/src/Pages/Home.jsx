@@ -28,7 +28,7 @@ export default function Home() {
     const dispatch = useDispatch();
     const products = useSelector((state) => state.product.items);
     const location = useLocation();
-    
+
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("all");
     const [viewMode, setViewMode] = useState("grid");
@@ -42,15 +42,15 @@ export default function Home() {
         const searchParams = new URLSearchParams(location.search);
         const categoryParam = searchParams.get('category');
         const viewParam = searchParams.get('view');
-        
+
         console.log('Category param:', categoryParam);
         console.log('View param:', viewParam);
-        
+
         if (categoryParam) {
             console.log('Setting category to:', categoryParam);
             setSelectedCategory(categoryParam);
         }
-        
+
         if (viewParam === 'products') {
             console.log('Scrolling to products section');
             // Optionally scroll to products section or set a flag to highlight products
