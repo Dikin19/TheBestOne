@@ -53,6 +53,11 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: "customer",
   },
 
+  isDeleted: {
+  type: DataTypes.BOOLEAN,
+  defaultValue: false
+},
+
     phoneNumber: DataTypes.STRING,
     address: DataTypes.STRING,
     profilePicture: DataTypes.STRING,
