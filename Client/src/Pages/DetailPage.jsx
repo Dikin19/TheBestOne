@@ -46,6 +46,7 @@ export default function DetailPage() {
     const [isLiked, setIsLiked] = useState(false);
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
+    const [isAddingToWishlist, setIsAddingToWishlist] = useState(false);
     const [showAnalysis, setShowAnalysis] = useState(false);
     const params = useParams();
 
@@ -64,7 +65,26 @@ export default function DetailPage() {
     useEffect(() => {
         dispatch(fetchById(params.id));
         fetchGeminiRecommendations();
+        checkIfInWishlist();
     }, [dispatch, params.id]);
+
+    // Check if product is already in user's wishlist
+    async function checkIfInWishlist() {
+        try {
+            const response = await axios({
+                method: "get",
+                url: "/customers/wishlist",
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('access_token')}`
+                }
+            });
+
+            const isInWishlist = response.data.data.some(item => item.ProductId === parseInt(params.id));
+            setIsLiked(isInWishlist);
+        } catch (error) {
+            console.error('Error checking wishlist status:', error);
+        }
+    }
 
     async function fetchGeminiRecommendations() {
         try {
@@ -260,6 +280,89 @@ Thank you for your excellent service! 🙏
         }
     };
 
+    // Handle wishlist toggle functionality
+    const handleWishlistToggle = async () => {
+        if (!localStorage.getItem('access_token')) {
+            Swal.fire({
+                title: 'Login Required',
+                text: 'Please login to add items to your wishlist',
+                icon: 'warning',
+                confirmButtonColor: '#3b82f6',
+                confirmButtonText: 'Go to Login'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '/login';
+                }
+            });
+            return;
+        }
+
+        setIsAddingToWishlist(true);
+
+        try {
+            if (isLiked) {
+                // Remove from wishlist
+                await axios({
+                    method: "delete",
+                    url: `/customers/wishlist/${params.id}`,
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('access_token')}`
+                    }
+                });
+
+                setIsLiked(false);
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 2000,
+                    icon: 'success',
+                    title: '💔 Removed from wishlist',
+                    background: '#fee2e2',
+                    color: '#dc2626'
+                });
+            } else {
+                // Add to wishlist
+                await axios({
+                    method: "post",
+                    url: "/customers/wishlist",
+                    data: { productId: parseInt(params.id) },
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('access_token')}`
+                    }
+                });
+
+                setIsLiked(true);
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 2000,
+                    icon: 'success',
+                    title: '❤️ Added to wishlist!',
+                    background: '#dcfce7',
+                    color: '#16a34a'
+                });
+            }
+        } catch (error) {
+            console.error('Wishlist error:', error);
+
+            let errorMessage = 'Something went wrong. Please try again.';
+            if (error.response?.data?.message) {
+                errorMessage = error.response.data.message;
+            }
+
+            Swal.fire({
+                title: 'Error',
+                text: errorMessage,
+                icon: 'error',
+                confirmButtonColor: '#ef4444'
+            });
+        } finally {
+            setIsAddingToWishlist(false);
+        }
+    };
+
     if (!detail.id) {
         return (
             <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center">
@@ -354,8 +457,8 @@ Thank you for your excellent service! 🙏
                                     whileTap={{ scale: 0.95 }}
                                     onClick={() => setSelectedImageIndex(index)}
                                     className={`w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${selectedImageIndex === index
-                                            ? 'border-blue-500 ring-4 ring-blue-200'
-                                            : 'border-gray-200 hover:border-blue-300'
+                                        ? 'border-blue-500 ring-4 ring-blue-200'
+                                        : 'border-gray-200 hover:border-blue-300'
                                         }`}
                                 >
                                     <img
@@ -534,13 +637,18 @@ Thank you for your excellent service! 🙏
                                 <Button
                                     variant="outline"
                                     size="icon"
-                                    onClick={() => setIsLiked(!isLiked)}
+                                    onClick={handleWishlistToggle}
+                                    disabled={isAddingToWishlist}
                                     className={`h-12 w-12 transition-all duration-300 ${isLiked
-                                            ? 'text-red-500 border-red-500 bg-red-50'
-                                            : 'hover:text-red-500 hover:border-red-300'
-                                        }`}
+                                        ? 'text-red-500 border-red-500 bg-red-50 hover:bg-red-100'
+                                        : 'hover:text-red-500 hover:border-red-300 hover:bg-red-50'
+                                        } ${isAddingToWishlist ? 'opacity-50 cursor-not-allowed' : ''}`}
                                 >
-                                    <Heart className={`w-5 h-5 transition-all ${isLiked ? 'fill-current scale-110' : ''}`} />
+                                    {isAddingToWishlist ? (
+                                        <div className="w-5 h-5 border-2 border-red-300 border-t-red-500 rounded-full animate-spin"></div>
+                                    ) : (
+                                        <Heart className={`w-5 h-5 transition-all ${isLiked ? 'fill-current scale-110' : ''}`} />
+                                    )}
                                 </Button>
                                 <Button
                                     variant="outline"

@@ -13,13 +13,6 @@ function Navbar() {
     const profileRef = useRef(null);
     const marketplaceRef = useRef(null);
 
-    function handleLogout() {
-        localStorage.removeItem("access_token");
-        localStorage.removeItem("email");
-        localStorage.removeItem("profilePicture");
-        nav("/login");
-    }
-
     const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
     // Close dropdowns when clicking outside
@@ -39,6 +32,7 @@ function Navbar() {
 
     const userEmail = localStorage.getItem('email') || 'User';
     const userName = userEmail.split('@')[0];
+    const profilePicture = localStorage.getItem('profilePicture') || '';
 
     return (
         <motion.nav
@@ -107,9 +101,9 @@ function Navbar() {
                                         <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-slate-100">
                                             <h3 className="font-semibold text-slate-800 flex items-center gap-2">
                                                 <Sparkles className="w-4 h-4 text-blue-500" />
-                                                Premium Betta Collection
+                                                Premium Food Collection
                                             </h3>
-                                            <p className="text-sm text-slate-600 mt-1">Discover world-class fighting fish</p>
+                                            <p className="text-sm text-slate-600 mt-1">Discover delicious food items</p>
                                         </div>
 
                                         <div className="p-2">
@@ -147,15 +141,19 @@ function Navbar() {
                                                 </div>
                                             </button>
 
-                                            <button className="w-full flex items-center gap-3 px-4 py-3 text-slate-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all duration-200 group">
-                                                <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-red-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                                            <NavLink
+                                                to="/wishlist"
+                                                onClick={() => setIsMarketplaceOpen(false)}
+                                                className="w-full flex items-center gap-3 px-4 py-3 text-slate-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all duration-200 group"
+                                            >
+                                                <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-pink-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
                                                     <Heart className="w-4 h-4 text-white" />
                                                 </div>
                                                 <div>
-                                                    <p className="font-medium">Beginner Friendly</p>
-                                                    <p className="text-xs text-slate-500">Perfect for new enthusiasts</p>
+                                                    <p className="font-medium">My Wishlist</p>
+                                                    <p className="text-xs text-slate-500">Your favorite bettas</p>
                                                 </div>
-                                            </button>
+                                            </NavLink>
                                         </div>
                                     </motion.div>
                                 )}
@@ -171,9 +169,17 @@ function Navbar() {
                                 }}
                                 className="flex items-center gap-2 text-lg font-medium text-slate-700 hover:text-blue-600 transition-all duration-300 group"
                             >
-                                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                                    <User className="h-4 w-4 text-white" />
-                                </div>
+                                {profilePicture ? (
+                                    <img
+                                        src={profilePicture}
+                                        alt="Profile"
+                                        className="w-8 h-8 rounded-full object-cover border-2 border-blue-200 group-hover:border-blue-300 transition-colors"
+                                    />
+                                ) : (
+                                    <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                                        <User className="h-4 w-4 text-white" />
+                                    </div>
+                                )}
                                 Profile
                                 <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isProfileOpen ? 'rotate-180' : ''}`} />
                             </button>
@@ -189,14 +195,22 @@ function Navbar() {
                                     >
                                         <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-slate-100">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
-                                                    <User className="w-6 h-6 text-white" />
-                                                </div>
+                                                {profilePicture ? (
+                                                    <img
+                                                        src={profilePicture}
+                                                        alt="Profile"
+                                                        className="w-12 h-12 rounded-full object-cover border-2 border-blue-200"
+                                                    />
+                                                ) : (
+                                                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
+                                                        <User className="w-6 h-6 text-white" />
+                                                    </div>
+                                                )}
                                                 <div>
                                                     <p className="font-semibold text-slate-800 capitalize">
                                                         {userName}
                                                     </p>
-                                                    <p className="text-sm text-slate-500">Betta Enthusiast</p>
+                                                    <p className="text-sm text-slate-500">Food Enthusiast</p>
                                                     <div className="flex items-center gap-1 mt-1">
                                                         <Star className="w-3 h-3 text-yellow-400 fill-current" />
                                                         <span className="text-xs text-slate-500">Premium Member</span>
@@ -215,10 +229,14 @@ function Navbar() {
                                                 View Profile
                                             </NavLink>
 
-                                            <button className="w-full flex items-center gap-3 px-3 py-2 text-slate-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all duration-200 group">
+                                            <NavLink
+                                                to="/wishlist"
+                                                onClick={() => setIsProfileOpen(false)}
+                                                className="w-full flex items-center gap-3 px-3 py-2 text-slate-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all duration-200 group"
+                                            >
                                                 <Heart className="w-4 h-4 group-hover:scale-110 transition-transform" />
                                                 My Wishlist
-                                            </button>
+                                            </NavLink>
 
                                             <button className="w-full flex items-center gap-3 px-3 py-2 text-slate-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all duration-200 group">
                                                 <Star className="w-4 h-4 group-hover:scale-110 transition-transform" />

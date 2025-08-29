@@ -6,6 +6,7 @@ import HomeCard from "../Components/HomeCard";
 import { Button } from "../Components/ui/button";
 import { Input } from "../Components/ui/input";
 import { Badge } from "../Components/ui/badge";
+import axios from "../config/axiosInstance";
 import {
     Search,
     Filter,
@@ -29,24 +30,59 @@ export default function Home() {
     const [selectedCategory, setSelectedCategory] = useState("all");
     const [viewMode, setViewMode] = useState("grid");
     const [sortBy, setSortBy] = useState("newest");
+    const [categories, setCategories] = useState([]);
+    const [profilePicture, setProfilePicture] = useState(localStorage.getItem('profilePicture') || '');
 
     useEffect(() => {
         dispatch(fetchProduct());
+        fetchCategories();
     }, [dispatch]);
 
-    const categories = [
-        { id: "all", name: "All Betta Fish", icon: Fish },
-        { id: "halfmoon", name: "Halfmoon", icon: Crown },
-        { id: "plakat", name: "Plakat", icon: Award },
-        { id: "crowntail", name: "Crowntail", icon: Star },
-        { id: "veiltail", name: "Veiltail", icon: Waves },
-        { id: "premium", name: "Premium Collection", icon: Sparkles },
-    ];
+    const fetchCategories = async () => {
+        try {
+            const response = await axios.get('/customer/categories');
+            const dbCategories = response.data;
+
+            // Add "All" category and map database categories
+            const allCategories = [
+                { id: "all", name: "All Products", icon: Fish },
+                ...dbCategories.map(cat => ({
+                    id: cat.id.toString(),
+                    name: cat.name,
+                    icon: getCategoryIcon(cat.name)
+                }))
+            ];
+
+            setCategories(allCategories);
+        } catch (error) {
+            console.error('Error fetching categories:', error);
+            // Fallback categories if API fails
+            setCategories([
+                { id: "all", name: "All Products", icon: Fish },
+                { id: "1", name: "Chicken", icon: Crown },
+                { id: "2", name: "Snacks", icon: Award },
+                { id: "3", name: "Sides", icon: Star },
+                { id: "4", name: "Drinks", icon: Waves },
+                { id: "5", name: "Desserts", icon: Sparkles },
+            ]);
+        }
+    };
+
+    const getCategoryIcon = (categoryName) => {
+        const iconMap = {
+            'Chicken': Crown,
+            'Snacks': Award,
+            'Sides': Star,
+            'Drinks': Waves,
+            'Desserts': Sparkles,
+        };
+        return iconMap[categoryName] || Fish;
+    };
 
     const filteredProducts = products.filter(product => {
         const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
             product.description.toLowerCase().includes(searchQuery.toLowerCase());
-        const matchesCategory = selectedCategory === "all" || product.category === selectedCategory;
+        const matchesCategory = selectedCategory === "all" || product.CategoryId?.toString() === selectedCategory;
         return matchesSearch && matchesCategory;
     });
 
@@ -82,6 +118,27 @@ export default function Home() {
                     transition={{ duration: 0.8 }}
                     className="max-w-7xl mx-auto text-center relative z-10"
                 >
+                    {/* User Welcome Section */}
+                    {profilePicture && (
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ delay: 0.2 }}
+                            className="flex items-center justify-center mb-6"
+                        >
+                            <div className="flex items-center gap-3 bg-white/90 backdrop-blur-sm px-6 py-3 rounded-full shadow-lg border border-blue-100">
+                                <img
+                                    src={profilePicture}
+                                    alt="Profile"
+                                    className="w-10 h-10 rounded-full object-cover border-2 border-blue-200"
+                                />
+                                <span className="text-slate-700 font-medium">
+                                    Welcome back, {localStorage.getItem('email')?.split('@')[0] || 'User'}!
+                                </span>
+                            </div>
+                        </motion.div>
+                    )}
+
                     {/* Premium Badge */}
                     <motion.div
                         initial={{ scale: 0 }}
@@ -90,7 +147,7 @@ export default function Home() {
                         className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500 to-teal-500 text-white px-6 py-2 rounded-full text-sm font-semibold mb-6 shadow-lg"
                     >
                         <Fish className="h-4 w-4" />
-                        World's Finest Betta Fish Collection
+                        World's Finest Food Collection
                         <Sparkles className="h-4 w-4" />
                     </motion.div>
 
@@ -101,7 +158,7 @@ export default function Home() {
                         transition={{ delay: 0.5 }}
                         className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-blue-900 via-teal-700 to-cyan-600 bg-clip-text text-transparent mb-6"
                     >
-                        Premium Betta Fish
+                        Premium Food
                         <br />
                         <span className="text-teal-600">Marketplace</span>
                     </motion.h1>
@@ -113,9 +170,9 @@ export default function Home() {
                         transition={{ delay: 0.7 }}
                         className="text-xl text-slate-600 mb-8 max-w-3xl mx-auto leading-relaxed"
                     >
-                        Discover the most exquisite betta fish from world-renowned breeders.
-                        Each fish is carefully selected for its unique beauty, vibrant colors, and champion bloodlines.
-                        Experience luxury aquatic excellence.
+                        Discover the most delicious food from world-renowned chefs.
+                        Each dish is carefully prepared with fresh ingredients and authentic recipes.
+                        Experience culinary excellence.
                     </motion.p>
 
                     {/* Action Buttons */}
@@ -127,12 +184,12 @@ export default function Home() {
                     >
                         <Button size="lg" className="bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700 text-white shadow-lg group">
                             <Fish className="mr-2 h-5 w-5" />
-                            Explore Collection
+                            Explore Menu
                             <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                         </Button>
                         <Button size="lg" variant="outline" className="border-blue-200 text-blue-700 hover:bg-blue-50">
                             <Award className="mr-2 h-5 w-5" />
-                            Championship Winners
+                            Chef's Special
                         </Button>
                     </motion.div>
 
@@ -145,18 +202,18 @@ export default function Home() {
                     >
                         <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-blue-100 shadow-lg">
                             <Crown className="h-8 w-8 text-blue-600 mb-3 mx-auto" />
-                            <h3 className="font-semibold text-slate-800 mb-2">Champion Bloodlines</h3>
-                            <p className="text-sm text-slate-600">Premium genetics from award-winning breeders worldwide</p>
+                            <h3 className="font-semibold text-slate-800 mb-2">Chef's Signature</h3>
+                            <p className="text-sm text-slate-600">Premium recipes from award-winning chefs worldwide</p>
                         </div>
                         <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-teal-100 shadow-lg">
                             <Heart className="h-8 w-8 text-teal-600 mb-3 mx-auto" />
-                            <h3 className="font-semibold text-slate-800 mb-2">Healthy & Happy</h3>
-                            <p className="text-sm text-slate-600">Each fish comes with health guarantee and care instructions</p>
+                            <h3 className="font-semibold text-slate-800 mb-2">Fresh & Healthy</h3>
+                            <p className="text-sm text-slate-600">Each dish prepared with fresh ingredients and love</p>
                         </div>
                         <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-cyan-100 shadow-lg">
                             <Sparkles className="h-8 w-8 text-cyan-600 mb-3 mx-auto" />
-                            <h3 className="font-semibold text-slate-800 mb-2">Rare & Exotic</h3>
-                            <p className="text-sm text-slate-600">Exclusive varieties you won't find anywhere else</p>
+                            <h3 className="font-semibold text-slate-800 mb-2">Special Menu</h3>
+                            <p className="text-sm text-slate-600">Exclusive dishes you won't find anywhere else</p>
                         </div>
                     </motion.div>
                 </motion.div>
@@ -228,7 +285,9 @@ export default function Home() {
                                 placeholder="Search for your perfect betta fish..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="pl-10 h-12 text-lg border-blue-200 focus:border-blue-400 focus:ring-blue-400"
+                                className="pl-10 h-12 w-full text-lg rounded-xl border border-blue-400 
+                                focus:border-blue-500 focus:ring-2 focus:ring-blue-400/50 
+                                placeholder:tracking-wide placeholder:text-gray-400 shadow-sm transition-all"
                             />
                         </div>
 
@@ -245,8 +304,8 @@ export default function Home() {
                                             size="sm"
                                             onClick={() => setSelectedCategory(category.id)}
                                             className={`flex items-center gap-2 ${selectedCategory === category.id
-                                                    ? "bg-gradient-to-r from-blue-600 to-teal-600 text-white"
-                                                    : "border-blue-200 text-blue-700 hover:bg-blue-50"
+                                                ? "bg-gradient-to-r from-blue-600 to-teal-600 text-white"
+                                                : "border-blue-200 text-blue-700 hover:bg-blue-50"
                                                 }`}
                                         >
                                             <Icon className="h-4 w-4" />

@@ -9,6 +9,7 @@ import Register from "./Pages/Register"
 import DetailPage from "./Pages/DetailPage";
 import Profile from "./Pages/Profile";
 import UpdateProfile from "./Pages/UpdateProfile";
+import Wishlist from "./Pages/Wishlist";
 import store from "./store";
 import { Provider } from "react-redux";
 import { PageLoader } from "./Components/ui/loading";
@@ -95,6 +96,14 @@ ReactDOM.createRoot(root).render(
                 element={
                   <AnimatedPage>
                     <UpdateProfile />
+                  </AnimatedPage>
+                }
+              />
+              <Route
+                path="/wishlist"
+                element={
+                  <AnimatedPage>
+                    <Wishlist />
                   </AnimatedPage>
                 }
               />

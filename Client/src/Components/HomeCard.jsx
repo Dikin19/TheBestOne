@@ -1,29 +1,152 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Star, Heart, ShoppingCart, Eye, Fish, Crown, Award, Waves } from "lucide-react";
+import { Star, Heart, ShoppingCart, Eye, Fish, Crown, Award, Waves, Plus } from "lucide-react";
 import { Card, CardContent, CardFooter } from "./ui/card";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import { formatPrice, truncateText } from "../lib/utils";
 import { useState } from "react";
+import axios from "../config/axiosInstance";
+import Swal from 'sweetalert2';
 
 export default function HomeCard({ el, index }) {
     const [isLiked, setIsLiked] = useState(false);
     const [isImageLoaded, setIsImageLoaded] = useState(false);
+    const [isAddingToWishlist, setIsAddingToWishlist] = useState(false);
+    const [isCheckingOut, setIsCheckingOut] = useState(false);
 
     const rating = Math.floor(Math.random() * 2) + 4; // Random rating 4-5
     const discount = Math.floor(Math.random() * 30) + 10; // Random discount 10-40%
     const originalPrice = el.price * (1 + discount / 100);
 
-    // Betta fish quality indicators
+    // Food quality indicators
     const qualityBadges = [
         { label: "Premium", icon: Crown, color: "bg-amber-500" },
-        { label: "Champion", icon: Award, color: "bg-purple-500" },
-        { label: "Rare", icon: Star, color: "bg-pink-500" },
-        { label: "Show Quality", icon: Fish, color: "bg-blue-500" }
+        { label: "Chef's Special", icon: Award, color: "bg-purple-500" },
+        { label: "Popular", icon: Star, color: "bg-pink-500" },
+        { label: "Fresh", icon: Fish, color: "bg-blue-500" }
     ];
 
     const randomBadge = qualityBadges[Math.floor(Math.random() * qualityBadges.length)];
+
+    const handleAddToWishlist = async (e) => {
+        e.preventDefault();
+
+        // Check if user is logged in
+        if (!localStorage.getItem('access_token')) {
+            Swal.fire({
+                title: 'Login Required',
+                text: 'Please login to add items to your wishlist',
+                icon: 'warning',
+                confirmButtonColor: '#3b82f6',
+                confirmButtonText: 'Go to Login'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '/login';
+                }
+            });
+            return;
+        }
+
+        setIsAddingToWishlist(true);
+
+        try {
+            if (isLiked) {
+                // Remove from wishlist
+                await axios({
+                    method: "delete",
+                    url: `/customers/wishlist/${el.id}`,
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('access_token')}`
+                    }
+                });
+
+                setIsLiked(false);
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 2000,
+                    icon: 'success',
+                    title: '💔 Removed from wishlist'
+                });
+            } else {
+                // Add to wishlist
+                await axios({
+                    method: "post",
+                    url: "/customers/wishlist",
+                    data: { productId: el.id },
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('access_token')}`
+                    }
+                });
+
+                setIsLiked(true);
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 2000,
+                    icon: 'success',
+                    title: '❤️ Added to wishlist!'
+                });
+            }
+        } catch (error) {
+            console.error('Error with wishlist:', error);
+
+            let errorMessage = 'Something went wrong. Please try again.';
+            if (error.response?.data?.message) {
+                errorMessage = error.response.data.message;
+            }
+
+            Swal.fire({
+                title: 'Error',
+                text: errorMessage,
+                icon: 'error',
+                confirmButtonColor: '#ef4444'
+            });
+        } finally {
+            setIsAddingToWishlist(false);
+        }
+    };
+
+    const handleCheckout = async (e) => {
+        e.preventDefault();
+        setIsCheckingOut(true);
+
+        try {
+            const response = await axios({
+                method: "post",
+                url: "/customers/checkout/whatsapp",
+                data: {
+                    productId: el.id,
+                    quantity: 1
+                },
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('access_token')}`
+                }
+            });
+
+            // Open WhatsApp URL
+            window.open(response.data.whatsappUrl, '_blank');
+        } catch (error) {
+            console.error('Error generating checkout URL:', error);
+
+            let errorMessage = 'Failed to generate WhatsApp checkout. Please try again.';
+            if (error.response?.data?.message) {
+                errorMessage = error.response.data.message;
+            }
+
+            Swal.fire({
+                title: 'Error',
+                text: errorMessage,
+                icon: 'error',
+                confirmButtonColor: '#ef4444'
+            });
+        } finally {
+            setIsCheckingOut(false);
+        }
+    };
 
     return (
         <motion.div
@@ -72,16 +195,18 @@ export default function HomeCard({ el, index }) {
                     <motion.button
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
-                        onClick={(e) => {
-                            e.preventDefault();
-                            setIsLiked(!isLiked);
-                        }}
-                        className="absolute top-3 right-3 z-10 p-2 rounded-full bg-white/90 backdrop-blur-sm shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 border border-blue-100"
+                        onClick={handleAddToWishlist}
+                        disabled={isAddingToWishlist}
+                        className={`absolute top-3 right-3 z-10 p-2 rounded-full bg-white/90 backdrop-blur-sm shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 border border-blue-100 ${isAddingToWishlist ? 'cursor-not-allowed opacity-50' : ''}`}
                     >
-                        <Heart
-                            className={`h-4 w-4 transition-colors ${isLiked ? 'text-red-500 fill-red-500' : 'text-slate-600'
-                                }`}
-                        />
+                        {isAddingToWishlist ? (
+                            <div className="w-4 h-4 border-2 border-red-300 border-t-red-500 rounded-full animate-spin"></div>
+                        ) : (
+                            <Heart
+                                className={`h-4 w-4 transition-colors ${isLiked ? 'text-red-500 fill-red-500' : 'text-slate-600 hover:text-red-500'
+                                    }`}
+                            />
+                        )}
                     </motion.button>
 
                     {/* Product Image */}
@@ -165,15 +290,15 @@ export default function HomeCard({ el, index }) {
                         {truncateText(el.description, 80)}
                     </p>
 
-                    {/* Betta Fish Specific Info */}
+                    {/* Food Specific Info */}
                     <div className="flex items-center gap-2 mt-2">
                         <Badge variant="outline" className="text-xs border-blue-200 text-blue-700">
                             <Waves className="h-2 w-2 mr-1" />
-                            Healthy
+                            Fresh
                         </Badge>
                         <Badge variant="outline" className="text-xs border-teal-200 text-teal-700">
                             <Crown className="h-2 w-2 mr-1" />
-                            Show Quality
+                            Premium
                         </Badge>
                     </div>
                 </CardContent>
@@ -185,18 +310,20 @@ export default function HomeCard({ el, index }) {
                             className="w-full hover:bg-blue-50 border-blue-200 text-blue-700"
                         >
                             <Eye className="h-4 w-4 mr-2" />
-                            View Betta
+                            View Details
                         </Button>
                     </Link>
                     <Button
-                        className="shrink-0 bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700 text-white"
+                        className="shrink-0 bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700 text-white disabled:opacity-50"
                         size="icon"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            // Add to cart logic here
-                        }}
+                        onClick={handleCheckout}
+                        disabled={isCheckingOut}
                     >
-                        <ShoppingCart className="h-4 w-4" />
+                        {isCheckingOut ? (
+                            <Plus className="h-4 w-4 animate-spin" />
+                        ) : (
+                            <ShoppingCart className="h-4 w-4" />
+                        )}
                     </Button>
                 </CardFooter>
             </Card>
