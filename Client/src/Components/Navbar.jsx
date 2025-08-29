@@ -1,9 +1,12 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Fish, User, LogOut, Menu, X, ShoppingBag, Star, Heart, Settings, ChevronDown, Sparkles, Crown, Award } from "lucide-react";
+import { Fish, User, LogOut, Menu, X, ShoppingBag, Star, Heart, Settings, ChevronDown, Sparkles, Crown, Award, ShoppingCart } from "lucide-react";
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
+import { Badge } from "./ui/badge";
 import { useState, useRef, useEffect } from "react";
+import { useWishlistEnhanced } from "../hooks/useWishlistEnhanced";
+import { useNavbarWishlistCount } from "../hooks/useNavbarWishlistCount";
 
 function Navbar() {
     const nav = useNavigate();
@@ -12,6 +15,35 @@ function Navbar() {
     const [isMarketplaceOpen, setIsMarketplaceOpen] = useState(false);
     const profileRef = useRef(null);
     const marketplaceRef = useRef(null);
+
+    // Use enhanced wishlist hook for initialization and synchronization
+    const { forceSynchronize } = useWishlistEnhanced();
+
+    // Use specialized hook for real-time wishlist count updates
+    const wishlistCount = useNavbarWishlistCount();
+
+    // Initialize and maintain synchronization
+    useEffect(() => {
+        const initializeWishlist = async () => {
+            try {
+                await forceSynchronize();
+                console.log('Navbar: Wishlist initialized and synchronized');
+            } catch (error) {
+                console.error('Navbar: Failed to initialize wishlist:', error);
+            }
+        };
+
+        // Initialize on mount
+        initializeWishlist();
+
+        // Set up periodic synchronization (every 60 seconds for maintenance)
+        const syncInterval = setInterval(() => {
+            console.log('Navbar: Performing periodic wishlist sync');
+            forceSynchronize();
+        }, 60000);
+
+        return () => clearInterval(syncInterval);
+    }, [forceSynchronize]);
 
     const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
@@ -33,6 +65,13 @@ function Navbar() {
     const userEmail = localStorage.getItem('email') || 'User';
     const userName = userEmail.split('@')[0];
     const profilePicture = localStorage.getItem('profilePicture') || '';
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('email');
+        localStorage.removeItem('profilePicture');
+        nav('/login');
+    };
 
     return (
         <motion.nav
@@ -75,6 +114,54 @@ function Navbar() {
 
                     {/* Desktop Nav Links */}
                     <div className="hidden md:flex items-center gap-8">
+                        {/* Wishlist Cart Icon */}
+                        <motion.div
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                        >
+                            <NavLink
+                                to="/wishlist"
+                                className="relative flex items-center gap-2 text-lg font-medium text-slate-700 hover:text-blue-600 transition-all duration-300 group no-underline"
+                                style={{ textDecoration: "none" }}
+                            >
+                                <div className="relative">
+                                    <ShoppingCart className="h-6 w-6 group-hover:scale-110 transition-transform" />
+                                    {wishlistCount > 0 && (
+                                        <motion.div
+                                            key={wishlistCount} // Key changes trigger re-animation
+                                            initial={{ scale: 0, rotate: -180 }}
+                                            animate={{ scale: 1, rotate: 0 }}
+                                            transition={{
+                                                type: "spring",
+                                                stiffness: 500,
+                                                damping: 15,
+                                                duration: 0.6
+                                            }}
+                                            className="no-underline absolute -top-2 -right-2"
+
+
+                                        >
+                                            <Badge
+                                                variant="destructive"
+                                                style={{ textDecoration: "none" }}
+                                                className="h-5 w-5 flex items-center justify-center text-xs bg-red-500 hover:bg-red-600 rounded-full animate-pulse shadow-lg border-2 border-white"
+                                            >
+                                                <motion.span
+                                                    key={`count-${wishlistCount}`}
+                                                    initial={{ scale: 0.5, opacity: 0 }}
+                                                    animate={{ scale: 1, opacity: 1 }}
+                                                    transition={{ delay: 0.2, duration: 0.3 }}
+                                                >
+                                                    {wishlistCount > 99 ? '99+' : wishlistCount}
+                                                </motion.span>
+                                            </Badge>
+                                        </motion.div>
+                                    )}
+                                </div>
+                                <span className="hidden lg:block">Wishlist</span>
+                            </NavLink>
+                        </motion.div>
+
                         {/* Marketplace Dropdown */}
                         <div className="relative" ref={marketplaceRef}>
                             <button
@@ -146,12 +233,25 @@ function Navbar() {
                                                 onClick={() => setIsMarketplaceOpen(false)}
                                                 className="w-full flex items-center gap-3 px-4 py-3 text-slate-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all duration-200 group"
                                             >
-                                                <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-pink-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                                                <div className="relative w-8 h-8 bg-gradient-to-br from-red-500 to-pink-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
                                                     <Heart className="w-4 h-4 text-white" />
+                                                    {wishlistCount > 0 && (
+                                                        <motion.div
+                                                            key={`marketplace-${wishlistCount}`}
+                                                            initial={{ scale: 0, rotate: 180 }}
+                                                            animate={{ scale: 1, rotate: 0 }}
+                                                            transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                                                            className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full flex items-center justify-center shadow-md"
+                                                        >
+                                                            <span className="text-xs font-bold text-slate-800">
+                                                                {wishlistCount > 9 ? '9+' : wishlistCount}
+                                                            </span>
+                                                        </motion.div>
+                                                    )}
                                                 </div>
                                                 <div>
                                                     <p className="font-medium">My Wishlist</p>
-                                                    <p className="text-xs text-slate-500">Your favorite bettas</p>
+                                                    <p className="text-xs text-slate-500">Your favorite items ({wishlistCount})</p>
                                                 </div>
                                             </NavLink>
                                         </div>
@@ -234,8 +334,23 @@ function Navbar() {
                                                 onClick={() => setIsProfileOpen(false)}
                                                 className="w-full flex items-center gap-3 px-3 py-2 text-slate-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all duration-200 group"
                                             >
-                                                <Heart className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                                                My Wishlist
+                                                <div className="relative">
+                                                    <Heart className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                                                    {wishlistCount > 0 && (
+                                                        <motion.div
+                                                            key={`profile-${wishlistCount}`}
+                                                            initial={{ scale: 0, rotate: -90 }}
+                                                            animate={{ scale: 1, rotate: 0 }}
+                                                            transition={{ type: "spring", stiffness: 500, damping: 12 }}
+                                                            className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full flex items-center justify-center shadow-sm"
+                                                        >
+                                                            <span className="text-xs font-bold text-white">
+                                                                {wishlistCount > 9 ? '9+' : wishlistCount}
+                                                            </span>
+                                                        </motion.div>
+                                                    )}
+                                                </div>
+                                                My Wishlist ({wishlistCount})
                                             </NavLink>
 
                                             <button className="w-full flex items-center gap-3 px-3 py-2 text-slate-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all duration-200 group">
@@ -329,10 +444,29 @@ function Navbar() {
                                         Profile
                                     </NavLink>
 
-                                    <button className="w-full flex items-center gap-3 p-3 text-slate-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all duration-200">
-                                        <Heart className="w-5 h-5" />
-                                        Wishlist
-                                    </button>
+                                    <NavLink
+                                        to="/wishlist"
+                                        onClick={toggleMenu}
+                                        className="flex items-center gap-3 p-3 text-slate-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all duration-200"
+                                    >
+                                        <div className="relative">
+                                            <Heart className="h-5 w-5" />
+                                            {wishlistCount > 0 && (
+                                                <motion.div
+                                                    key={`mobile-${wishlistCount}`}
+                                                    initial={{ scale: 0, rotate: 360 }}
+                                                    animate={{ scale: 1, rotate: 0 }}
+                                                    transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                                                    className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center shadow-lg"
+                                                >
+                                                    <span className="text-xs font-bold text-white">
+                                                        {wishlistCount > 9 ? '9+' : wishlistCount}
+                                                    </span>
+                                                </motion.div>
+                                            )}
+                                        </div>
+                                        Wishlist ({wishlistCount})
+                                    </NavLink>
 
                                     <button className="w-full flex items-center gap-3 p-3 text-slate-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all duration-200">
                                         <Star className="w-5 h-5" />

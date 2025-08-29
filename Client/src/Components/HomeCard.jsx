@@ -8,7 +8,7 @@ import { formatPrice, truncateText } from "../lib/utils";
 import { useState } from "react";
 import axios from "../config/axiosInstance";
 import Swal from 'sweetalert2';
-import { useProductWishlistStatus } from "../hooks/useWishlist";
+import { useProductWishlistStatus } from "../hooks/useWishlistEnhanced";
 
 export default function HomeCard({ el, index }) {
     // Use the wishlist hook to manage wishlist status
@@ -18,8 +18,8 @@ export default function HomeCard({ el, index }) {
     const [isCheckingOut, setIsCheckingOut] = useState(false);
 
     const rating = Math.floor(Math.random() * 2) + 4; // Random rating 4-5
-    const discount = Math.floor(Math.random() * 30) + 10; // Random discount 10-40%
-    const originalPrice = el.price * (1 + discount / 100);
+    // const discount = Math.floor(Math.random() * 30) + 10; // Random discount 10-40%
+    // const originalPrice = el.price * (1 + discount / 100);
 
     // Food quality indicators
     const qualityBadges = [
@@ -146,34 +146,34 @@ export default function HomeCard({ el, index }) {
                 y: -8,
                 transition: { duration: 0.3 }
             }}
-            className="group"
+            className="group h-full max-w-sm w-full"
         >
-            <Card className="overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 bg-white/90 backdrop-blur-sm border border-blue-100/50">
+            <Card className="overflow-hidden border-0 shadow-md hover:shadow-lg transition-all duration-500 bg-white/90 backdrop-blur-sm border border-blue-100/50 h-full flex flex-col">
                 <div className="relative overflow-hidden">
                     {/* Premium Quality Badge */}
                     <motion.div
                         initial={{ scale: 0, rotate: -45 }}
                         animate={{ scale: 1, rotate: 0 }}
                         transition={{ delay: 0.5 + index * 0.1 }}
-                        className="absolute top-3 left-3 z-10"
+                        className="absolute top-2 left-2 z-10"
                     >
                         <Badge className={`text-xs font-bold text-white ${randomBadge.color} flex items-center gap-1`}>
-                            <randomBadge.icon className="h-3 w-3" />
+                            <randomBadge.icon className="h-2 w-2" />
                             {randomBadge.label}
                         </Badge>
                     </motion.div>
 
                     {/* Discount Badge */}
-                    <motion.div
+                    {/* <motion.div
                         initial={{ scale: 0, rotate: 45 }}
                         animate={{ scale: 1, rotate: 0 }}
                         transition={{ delay: 0.7 + index * 0.1 }}
-                        className="absolute top-3 right-12 z-10"
+                        className="absolute top-2 right-10 z-10"
                     >
                         <Badge variant="destructive" className="text-xs font-bold">
                             -{discount}%
                         </Badge>
-                    </motion.div>
+                    </motion.div> */}
 
                     {/* Like Button */}
                     <motion.button
@@ -181,13 +181,13 @@ export default function HomeCard({ el, index }) {
                         whileTap={{ scale: 0.9 }}
                         onClick={handleAddToWishlist}
                         disabled={isWishlistLoading}
-                        className={`absolute top-3 right-3 z-10 p-2 rounded-full bg-white/90 backdrop-blur-sm shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 border border-blue-100 ${isWishlistLoading ? 'cursor-not-allowed opacity-50' : ''}`}
+                        className={`absolute top-2 right-2 z-10 p-1.5 rounded-full bg-white/90 backdrop-blur-sm shadow-md opacity-0 group-hover:opacity-100 transition-all duration-300 border border-blue-100 ${isWishlistLoading ? 'cursor-not-allowed opacity-50' : ''}`}
                     >
                         {isWishlistLoading ? (
-                            <div className="w-4 h-4 border-2 border-red-300 border-t-red-500 rounded-full animate-spin"></div>
+                            <div className="w-2.5 h-2.5 border-2 border-red-300 border-t-red-500 rounded-full animate-spin"></div>
                         ) : (
                             <Heart
-                                className={`h-4 w-4 transition-colors ${isInWishlist ? 'text-red-500 fill-red-500' : 'text-slate-600 hover:text-red-500'
+                                className={`h-2.5 w-2.5 transition-colors ${isInWishlist ? 'text-red-500 fill-red-500' : 'text-slate-600 hover:text-red-500'
                                     }`}
                             />
                         )}
@@ -207,8 +207,8 @@ export default function HomeCard({ el, index }) {
                             {!isImageLoaded && (
                                 <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-teal-100 animate-pulse flex items-center justify-center">
                                     <div className="flex flex-col items-center gap-2">
-                                        <Fish className="h-8 w-8 text-blue-400 animate-bounce" />
-                                        <div className="w-12 h-12 border-4 border-blue-300 border-t-blue-600 rounded-full animate-spin"></div>
+                                        <Fish className="h-5 w-5 text-blue-400 animate-bounce" />
+                                        <div className="w-6 h-6 border-2 border-blue-300 border-t-blue-600 rounded-full animate-spin"></div>
                                     </div>
                                 </div>
                             )}
@@ -228,8 +228,8 @@ export default function HomeCard({ el, index }) {
                                     whileHover={{ scale: 1.1 }}
                                     whileTap={{ scale: 0.9 }}
                                 >
-                                    <Button size="sm" className="rounded-full bg-white/90 text-blue-700 hover:bg-white border border-blue-200">
-                                        <Eye className="h-4 w-4 mr-2" />
+                                    <Button size="sm" className="rounded-full bg-white/90 text-blue-700 hover:bg-white border border-blue-200 text-xs py-1 h-6">
+                                        <Eye className="h-2.5 w-2.5 mr-1" />
                                         View Details
                                     </Button>
                                 </motion.div>
@@ -238,81 +238,90 @@ export default function HomeCard({ el, index }) {
                     </Link>
                 </div>
 
-                <CardContent className="p-4">
+                <CardContent className="p-2 flex-grow flex flex-col">
                     {/* Rating */}
-                    <div className="flex items-center gap-1 mb-2">
+                    <div className="flex items-center gap-1 mb-1">
                         {[...Array(5)].map((_, i) => (
                             <Star
                                 key={i}
-                                className={`h-3 w-3 ${i < rating ? 'text-blue-400 fill-blue-400' : 'text-slate-300'
+                                className={`h-2 w-2 ${i < rating ? 'text-blue-400 fill-blue-400' : 'text-slate-300'
                                     }`}
                             />
                         ))}
                         <span className="text-xs text-slate-500 ml-1">({rating}.0)</span>
-                        <Fish className="h-3 w-3 text-blue-400 ml-1" />
+                        <Fish className="h-2 w-2 text-blue-400 ml-1" />
                     </div>
 
                     {/* Product Name */}
-                    <Link to={`/detail/${el.id}`}>
-                        <h3 className="text-lg font-semibold text-slate-900 hover:text-blue-600 transition-colors line-clamp-2 mb-2">
-                            {truncateText(el.name, 50)}
+                    <div className="mb-1">
+                        <h3 className="text-sm font-semibold text-slate-900 hover:text-blue-600 transition-colors line-clamp-2 cursor-pointer"
+                            onClick={() => window.location.href = `/detail/${el.id}`}>
+                            {truncateText(el.name, 35)}
                         </h3>
-                    </Link>
+                    </div>
 
                     {/* Price */}
-                    <div className="flex items-center gap-2 mb-3">
+                    {/* <div className="flex items-center gap-2 mb-3">
                         <span className="text-xl font-bold text-blue-700">
                             {formatPrice(el.price)}
                         </span>
                         <span className="text-sm text-slate-500 line-through">
                             {formatPrice(originalPrice)}
                         </span>
-                    </div>
+                    </div> */}
 
                     {/* Description */}
-                    <p className="text-sm text-slate-600 line-clamp-2">
-                        {truncateText(el.description, 80)}
+                    <p className="text-xs text-slate-600 line-clamp-2 mb-1">
+                        {truncateText(el.description, 50)}
                     </p>
 
                     {/* Food Specific Info */}
-                    <div className="flex items-center gap-2 mt-2">
-                        <Badge variant="outline" className="text-xs border-blue-200 text-blue-700">
-                            <Waves className="h-2 w-2 mr-1" />
+                    <div className="flex items-center gap-1 mt-auto mb-1">
+                        <Badge variant="outline" className="text-xs border-blue-200 text-blue-700 px-1 py-0">
+                            <Waves className="h-1 w-1 mr-1" />
                             Fresh
                         </Badge>
-                        <Badge variant="outline" className="text-xs border-teal-200 text-teal-700">
-                            <Crown className="h-2 w-2 mr-1" />
+                        <Badge variant="outline" className="text-xs border-teal-200 text-teal-700 px-1 py-0">
+                            <Crown className="h-1 w-1 mr-1" />
                             Premium
                         </Badge>
                     </div>
                 </CardContent>
 
-                <CardFooter className="p-4 pt-0 flex gap-2">
+                <CardFooter className="p-2 pt-0 flex gap-2 mt-auto">
                     <Link to={`/detail/${el.id}`} className="flex-1">
                         <Button
                             variant="outline"
-                            className="w-full hover:bg-blue-50 border-blue-200 text-blue-700"
+                            size="sm"
+                            className="w-full hover:bg-blue-50 border-blue-200 text-blue-700 text-xs py-1 h-6"
                         >
-                            <Eye className="h-4 w-4 mr-2" />
+                            <Eye className="h-2.5 w-2.5 mr-1" />
                             View Details
                         </Button>
                     </Link>
                     <Button
                         variant="outline"
-                        size="icon"
+                        size="sm"
                         onClick={handleAddToWishlist}
                         disabled={isWishlistLoading}
-                        className={`h-12 w-12 transition-all duration-300 ${isInWishlist
-                            ? 'text-red-500 border-red-500 bg-red-50 hover:bg-red-100'
-                            : 'hover:text-red-500 hover:border-red-300 hover:bg-red-50'
-                            } ${isWishlistLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        className={`h-8 w-8 rounded-full transition-all duration-300 shadow-sm hover:shadow-md flex items-center justify-center p-0 border-0 ${isInWishlist
+                                ? 'text-red-500 bg-red-100 hover:bg-red-200'
+                                : 'text-slate-600 bg-slate-100 hover:text-red-500 hover:bg-red-50'
+                            } ${isWishlistLoading ? 'opacity-60 cursor-not-allowed' : 'hover:scale-110 active:scale-95'}`}
                     >
                         {isWishlistLoading ? (
-                            <div className="w-5 h-5 border-2 border-red-300 border-t-red-500 rounded-full animate-spin"></div>
+                            <div className="w-3.5 h-3.5 border-2 border-red-300 border-t-red-500 rounded-full animate-spin"></div>
                         ) : (
-                            <Heart className={`w-5 h-5 transition-all ${isInWishlist ? 'fill-current scale-110' : ''}`} />
+                            <Heart
+                                className={`w-4 h-4 transition-all duration-200 ${isInWishlist
+                                        ? 'fill-red-500 text-red-500'
+                                        : 'stroke-slate-600 hover:stroke-red-500 hover:fill-red-200'
+                                    }`}
+                                strokeWidth={2}
+                            />
                         )}
                     </Button>
+
                 </CardFooter>
             </Card>
         </motion.div>

@@ -22,6 +22,7 @@ import {
     Waves,
     Fish
 } from "lucide-react";
+import { Link } from "react-router";
 
 export default function Home() {
     const dispatch = useDispatch();
@@ -187,11 +188,17 @@ export default function Home() {
                         transition={{ delay: 0.9 }}
                         className="flex flex-col sm:flex-row items-center justify-center gap-4"
                     >
-                        <Button size="lg" className="bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700 text-white shadow-lg group">
+                        <Link
+                            to="https://www.selasar.com/ikan-cupang//"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="no-underline hover:no-underline bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700 text-white shadow-lg group px-4 py-2 rounded-lg flex items-center"
+                            style={{ textDecoration: 'none' }}
+                        >
                             <Fish className="mr-2 h-5 w-5" />
-                            Browse Collection
+                            Browse About fish
                             <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                        </Button>
+                        </Link>
                         <Button size="lg" variant="outline" className="border-blue-200 text-blue-700 hover:bg-blue-50">
                             <Award className="mr-2 h-5 w-5" />
                             Champion Bloodlines
@@ -381,9 +388,9 @@ export default function Home() {
                     {sortedProducts.length > 0 ? (
                         <motion.div
                             layout
-                            className={`grid gap-6 ${viewMode === "grid"
-                                ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-                                : "grid-cols-1 md:grid-cols-2"
+                            className={`grid gap-4 ${viewMode === "grid"
+                                ? "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+                                : "grid grid-cols-1 md:grid-cols-2 place-items-center gap-4"
                                 }`}
                         >
                             {sortedProducts.map((product, index) => (

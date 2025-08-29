@@ -4,50 +4,28 @@ import { Link } from "react-router-dom";
 import { Heart, Trash2, ShoppingCart, Fish, Star, ArrowLeft } from "lucide-react";
 import { Button } from "../Components/ui/button";
 import { Badge } from "../Components/ui/badge";
-import axios from "../config/axiosInstance";
+import { useWishlistEnhanced } from "../hooks/useWishlistEnhanced";
 import Swal from 'sweetalert2';
 
 export default function Wishlist() {
-    const [wishlistItems, setWishlistItems] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(null);
+    // Use the enhanced wishlist hook for better real-time synchronization
+    const {
+        wishlistItems,
+        isLoading,
+        error,
+        removeFromWishlist: removeFromWishlistHook,
+        fetchWishlist,
+        clearWishlist,
+        getWishlistStats
+    } = useWishlistEnhanced();
 
     useEffect(() => {
-        fetchWishlist();
-    }, []);
+        // Initial fetch will be handled by the hook automatically
+        // But we can force a fresh fetch here if needed
+        fetchWishlist(false);
+    }, [fetchWishlist]);
 
-    const fetchWishlist = async () => {
-        try {
-            setIsLoading(true);
-            setError(null);
-
-            const response = await axios({
-                method: "get",
-                url: "/customers/wishlist",
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('access_token')}`
-                }
-            });
-
-            setWishlistItems(response.data.data);
-        } catch (error) {
-            console.error('Error fetching wishlist:', error);
-
-            const errorMessage = error.response?.data?.message || 'Failed to load your wishlist. Please try again.';
-            setError(errorMessage);
-
-            Swal.fire({
-                title: 'Error',
-                text: errorMessage,
-                icon: 'error',
-                confirmButtonColor: '#ef4444'
-            });
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const removeFromWishlist = async (productId) => {
+    const handleRemoveFromWishlist = async (productId) => {
         try {
             const result = await Swal.fire({
                 title: 'Remove from Wishlist?',
@@ -61,34 +39,25 @@ export default function Wishlist() {
             });
 
             if (result.isConfirmed) {
-                await axios({
-                    method: "delete",
-                    url: `/customers/wishlist/${productId}`,
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('access_token')}`
-                    }
-                });
+                const success = await removeFromWishlistHook(productId);
 
-                // Update local state immediately for better UX
-                setWishlistItems(prev => prev.filter(item => item.ProductId !== productId));
-
-                Swal.fire({
-                    title: 'Removed!',
-                    text: 'The betta has been removed from your wishlist.',
-                    icon: 'success',
-                    confirmButtonColor: '#10b981',
-                    timer: 2000,
-                    showConfirmButton: false
-                });
+                if (success) {
+                    Swal.fire({
+                        title: 'Removed!',
+                        text: 'The betta has been removed from your wishlist.',
+                        icon: 'success',
+                        confirmButtonColor: '#10b981',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                }
             }
         } catch (error) {
             console.error('Error removing from wishlist:', error);
 
-            const errorMessage = error.response?.data?.message || 'Failed to remove from wishlist. Please try again.';
-
             Swal.fire({
                 title: 'Error',
-                text: errorMessage,
+                text: 'Failed to remove from wishlist. Please try again.',
                 icon: 'error',
                 confirmButtonColor: '#ef4444'
             });
@@ -178,7 +147,7 @@ export default function Wishlist() {
 
                                             {/* Remove Button */}
                                             <button
-                                                onClick={() => removeFromWishlist(item.Product.id)}
+                                                onClick={() => handleRemoveFromWishlist(item.Product.id)}
                                                 className="absolute top-4 right-4 p-2 bg-red-500 text-white rounded-full shadow-lg transition-all duration-300 hover:bg-red-600 hover:scale-110"
                                             >
                                                 <Trash2 className="w-4 h-4" />
@@ -228,7 +197,7 @@ export default function Wishlist() {
                                                 </Link>
 
                                                 <Button
-                                                    onClick={() => removeFromWishlist(item.Product.id)}
+                                                    onClick={() => handleRemoveFromWishlist(item.Product.id)}
                                                     variant="outline"
                                                     className="w-full border-2 border-red-500 text-red-600 hover:bg-red-500 hover:text-white font-semibold py-3 rounded-xl transition-all duration-300"
                                                 >

@@ -14,6 +14,7 @@ import {
   getCachedWishlistData,
   clearWishlistCache
 } from '../utils/wishlistUtils';
+import { emitRealtimeEvent, REALTIME_EVENTS } from './useRealtimeSubscription';
 
 /**
  * Custom hook for managing wishlist functionality
@@ -30,7 +31,7 @@ export const useWishlist = () => {
   const fetchWishlist = useCallback(async (useCache = true) => {
     if (!isAuthenticated()) {
       setError(WISHLIST_MESSAGES.ERROR.AUTH_REQUIRED);
-      return;
+      return [];
     }
 
     // Try to get cached data first
@@ -38,7 +39,7 @@ export const useWishlist = () => {
       const cachedData = getCachedWishlistData();
       if (cachedData) {
         setWishlistItems(cachedData);
-        return;
+        return cachedData;
       }
     }
 
@@ -58,10 +59,13 @@ export const useWishlist = () => {
       // Cache the data
       cacheWishlistData(items);
       
+      return items;
+      
     } catch (error) {
       const errorMessage = parseErrorMessage(error);
       setError(errorMessage);
       console.error('Fetch wishlist error:', error);
+      return [];
     } finally {
       setIsLoading(false);
     }
@@ -93,8 +97,18 @@ export const useWishlist = () => {
         headers: getAuthHeaders()
       });
 
-      // Update local state immediately
-      await fetchWishlist(false); // Force refresh without cache
+      // Update local state immediately and get the updated items
+      const updatedItems = await fetchWishlist(false); // Force refresh without cache
+      
+      // Emit real-time event with correct count
+      emitRealtimeEvent(REALTIME_EVENTS.WISHLIST_ITEM_ADDED, {
+        productId: parseInt(productId),
+        totalCount: updatedItems.length
+      });
+      emitRealtimeEvent(REALTIME_EVENTS.WISHLIST_UPDATED, {
+        items: updatedItems,
+        totalCount: updatedItems.length
+      });
       
       showSuccessToast(WISHLIST_MESSAGES.SUCCESS.ADDED);
       return true;
@@ -107,7 +121,7 @@ export const useWishlist = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [fetchWishlist]);
+  }, [fetchWishlist, wishlistItems]);
 
   /**
    * Remove product from wishlist
@@ -133,10 +147,21 @@ export const useWishlist = () => {
       });
 
       // Update local state immediately
-      setWishlistItems(prev => prev.filter(item => item.ProductId !== parseInt(productId)));
+      const updatedItems = wishlistItems.filter(item => item.ProductId !== parseInt(productId));
+      setWishlistItems(updatedItems);
       
       // Clear cache to ensure fresh data
       clearWishlistCache();
+      
+      // Emit real-time event
+      emitRealtimeEvent(REALTIME_EVENTS.WISHLIST_ITEM_REMOVED, {
+        productId: parseInt(productId),
+        totalCount: updatedItems.length
+      });
+      emitRealtimeEvent(REALTIME_EVENTS.WISHLIST_UPDATED, {
+        items: updatedItems,
+        totalCount: updatedItems.length
+      });
       
       showSuccessToast(WISHLIST_MESSAGES.SUCCESS.REMOVED);
       return true;
@@ -149,7 +174,7 @@ export const useWishlist = () => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [wishlistItems]);
 
   /**
    * Toggle product in wishlist (add if not present, remove if present)
@@ -263,6 +288,11 @@ export const useProductWishlistStatus = (productId) => {
    */
   const checkWishlistStatus = useCallback(async () => {
     if (!isAuthenticated() || !isValidProductId(productId)) {
+      console.log('useProductWishlistStatus: Not authenticated or invalid product ID', { 
+        isAuth: isAuthenticated(), 
+        productId, 
+        isValid: isValidProductId(productId) 
+      });
       return;
     }
 
@@ -275,8 +305,15 @@ export const useProductWishlistStatus = (productId) => {
         headers: getAuthHeaders()
       });
 
-      const items = response.data || response.data.data || [];
-      const inWishlist = items.some(item => item.ProductId === parseInt(productId) || item.productId === parseInt(productId));
+      const items = response.data.data || [];
+      const inWishlist = items.some(item => item.ProductId === parseInt(productId));
+      
+      console.log('useProductWishlistStatus: Check result', { 
+        productId, 
+        items: items.map(item => ({ ProductId: item.ProductId, ProductName: item.Product?.name })), 
+        inWishlist 
+      });
+      
       setIsInWishlist(inWishlist);
       
     } catch (error) {
@@ -327,6 +364,14 @@ export const useProductWishlistStatus = (productId) => {
         setIsInWishlist(true);
         showSuccessToast(WISHLIST_MESSAGES.SUCCESS.ADDED);
       }
+      
+      // Clear cache to ensure fresh data on next fetch
+      clearWishlistCache();
+      
+      console.log('useProductWishlistStatus: Toggle completed', { 
+        productId, 
+        newStatus: !isInWishlist 
+      });
       
       return true;
     } catch (error) {

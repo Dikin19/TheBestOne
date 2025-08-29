@@ -23,6 +23,15 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Remove underline from links */
+a {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
 /* Premium gradients for betta fish theme */
 .gradient-betta-blue {
   background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 50%, #0369a1 100%);
