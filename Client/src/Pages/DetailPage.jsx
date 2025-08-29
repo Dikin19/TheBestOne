@@ -239,21 +239,21 @@ export default function DetailPage() {
     }
 
     const handleWhatsAppOrder = () => {
-        const finalPrice = detail.price * quantity * (1 - discount / 100);
-        const message = `🐠 *TheBestOne - Betta Fish Order Inquiry*
+        const finalPrice = detail.price * quantity
+        const message = `🐠 *Bluerim - Betta Fish Order Inquiry*
 
 Hello! I'm interested in purchasing this beautiful betta fish:
 
 🏷️ *Product Details:*
 • Name: ${detail.name}
-• Price: ${formatPrice(detail.price)} ➜ ${formatPrice(finalPrice)} (${discount}% OFF!)
+• Price: ${formatPrice(detail.price)}
 • Quantity: ${quantity}
 • Total Amount: *${formatPrice(finalPrice)}*
 
 📋 *Product Description:*
 ${detail.description}
 
-🌟 *Why I chose TheBestOne:*
+🌟 *Why I chose Bluerim:*
 • Premium quality betta fish
 • World-renowned bloodlines
 • Professional breeding standards
@@ -799,7 +799,7 @@ Thank you for your excellent service! 🙏
                                     <Input
                                         type="number"
                                         value={quantity}
-                                        onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                                        onChange={(e) => setQuantity((e.target.value))}
                                         className="w-20 h-12 border-0 text-center text-lg font-semibold bg-transparent"
                                         min="1"
                                     />
@@ -814,7 +814,7 @@ Thank you for your excellent service! 🙏
                                 </div>
                                 <div className="text-sm text-gray-600">
                                     Total: <span className="font-bold text-blue-600 text-lg">
-                                        {formatPrice(detail.price * quantity * (1 - discount / 100))}
+                                        {formatPrice(detail.price * quantity)}
                                     </span>
                                 </div>
                             </div>
