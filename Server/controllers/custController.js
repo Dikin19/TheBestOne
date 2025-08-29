@@ -554,9 +554,25 @@ static async ByCategoryId(req, res, next) {
       });
 
       if (existingWishlist) {
-        return res.status(409).json({
-          success: false,
-          message: "Product already in wishlist"
+        // Return a friendly response instead of error
+        return res.status(200).json({
+          success: true,
+          alreadyExists: true,
+          message: "Great news! This product is already in your wishlist",
+          data: {
+            wishlistId: existingWishlist.id,
+            productId,
+            userId,
+            addedAt: existingWishlist.createdAt,
+            status: "already_exists"
+          },
+          meta: {
+            notification: {
+              type: "info",
+              title: "Already in Favorites!",
+              description: "This amazing product is already saved in your wishlist. You have great taste! 🌟"
+            }
+          }
         });
       }
 

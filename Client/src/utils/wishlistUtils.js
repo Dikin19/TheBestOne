@@ -1,4 +1,5 @@
 // Wishlist utility functions and constants
+import Swal from 'sweetalert2';
 
 /**
  * Wishlist API endpoints
@@ -82,18 +83,16 @@ export const parseErrorMessage = (error) => {
  * @param {string} message - Success message to display
  */
 export const showSuccessToast = (message) => {
-  if (typeof Swal !== 'undefined') {
-    Swal.fire({
-      toast: true,
-      position: 'top-end',
-      showConfirmButton: false,
-      timer: 2000,
-      icon: 'success',
-      title: message,
-      background: '#dcfce7',
-      color: '#16a34a'
-    });
-  }
+  Swal.fire({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 2000,
+    icon: 'success',
+    title: message,
+    background: '#dcfce7',
+    color: '#16a34a'
+  });
 };
 
 /**
@@ -101,18 +100,16 @@ export const showSuccessToast = (message) => {
  * @param {string} message - Error message to display
  */
 export const showErrorToast = (message) => {
-  if (typeof Swal !== 'undefined') {
-    Swal.fire({
-      toast: true,
-      position: 'top-end',
-      showConfirmButton: false,
-      timer: 3000,
-      icon: 'error',
-      title: message,
-      background: '#fee2e2',
-      color: '#dc2626'
-    });
-  }
+  Swal.fire({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000,
+    icon: 'error',
+    title: message,
+    background: '#fee2e2',
+    color: '#dc2626'
+  });
 };
 
 /**
@@ -120,21 +117,19 @@ export const showErrorToast = (message) => {
  * @param {Function} onConfirm - Callback when user confirms
  */
 export const showLoginRequired = (onConfirm) => {
-  if (typeof Swal !== 'undefined') {
-    Swal.fire({
-      title: 'Login Required',
-      text: 'Please login to add items to your wishlist',
-      icon: 'warning',
-      confirmButtonColor: '#3b82f6',
-      confirmButtonText: 'Go to Login',
-      showCancelButton: true,
-      cancelButtonText: 'Cancel'
-    }).then((result) => {
-      if (result.isConfirmed && onConfirm) {
-        onConfirm();
-      }
-    });
-  }
+  Swal.fire({
+    title: 'Login Required',
+    text: 'Please login to add items to your wishlist',
+    icon: 'warning',
+    confirmButtonColor: '#3b82f6',
+    confirmButtonText: 'Go to Login',
+    showCancelButton: true,
+    cancelButtonText: 'Cancel'
+  }).then((result) => {
+    if (result.isConfirmed && onConfirm) {
+      onConfirm();
+    }
+  });
 };
 
 /**

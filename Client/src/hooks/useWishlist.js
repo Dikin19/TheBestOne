@@ -275,8 +275,8 @@ export const useProductWishlistStatus = (productId) => {
         headers: getAuthHeaders()
       });
 
-      const items = response.data.data || [];
-      const inWishlist = items.some(item => item.ProductId === parseInt(productId));
+      const items = response.data || response.data.data || [];
+      const inWishlist = items.some(item => item.ProductId === parseInt(productId) || item.productId === parseInt(productId));
       setIsInWishlist(inWishlist);
       
     } catch (error) {

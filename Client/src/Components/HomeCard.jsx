@@ -8,11 +8,13 @@ import { formatPrice, truncateText } from "../lib/utils";
 import { useState } from "react";
 import axios from "../config/axiosInstance";
 import Swal from 'sweetalert2';
+import { useProductWishlistStatus } from "../hooks/useWishlist";
 
 export default function HomeCard({ el, index }) {
-    const [isLiked, setIsLiked] = useState(false);
+    // Use the wishlist hook to manage wishlist status
+    const { isInWishlist, isLoading: isWishlistLoading, toggleWishlist } = useProductWishlistStatus(el.id);
+
     const [isImageLoaded, setIsImageLoaded] = useState(false);
-    const [isAddingToWishlist, setIsAddingToWishlist] = useState(false);
     const [isCheckingOut, setIsCheckingOut] = useState(false);
 
     const rating = Math.floor(Math.random() * 2) + 4; // Random rating 4-5
@@ -48,65 +50,47 @@ export default function HomeCard({ el, index }) {
             return;
         }
 
-        setIsAddingToWishlist(true);
-
-        try {
-            if (isLiked) {
-                // Remove from wishlist
-                await axios({
-                    method: "delete",
-                    url: `/customers/wishlist/${el.id}`,
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('access_token')}`
-                    }
-                });
-
-                setIsLiked(false);
-                Swal.fire({
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 2000,
-                    icon: 'success',
-                    title: '💔 Removed from wishlist'
-                });
-            } else {
-                // Add to wishlist
-                await axios({
-                    method: "post",
-                    url: "/customers/wishlist",
-                    data: { productId: el.id },
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('access_token')}`
-                    }
-                });
-
-                setIsLiked(true);
-                Swal.fire({
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 2000,
-                    icon: 'success',
-                    title: '❤️ Added to wishlist!'
-                });
-            }
-        } catch (error) {
-            console.error('Error with wishlist:', error);
-
-            let errorMessage = 'Something went wrong. Please try again.';
-            if (error.response?.data?.message) {
-                errorMessage = error.response.data.message;
-            }
-
-            Swal.fire({
-                title: 'Error',
-                text: errorMessage,
-                icon: 'error',
-                confirmButtonColor: '#ef4444'
+        // Show confirmation dialog before removing from wishlist
+        if (isInWishlist) {
+            const result = await Swal.fire({
+                title: 'Remove from Wishlist?',
+                text: 'This product will be removed from your wishlist',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Yes, remove it',
+                cancelButtonText: 'Cancel'
             });
-        } finally {
-            setIsAddingToWishlist(false);
+
+            if (!result.isConfirmed) {
+                return;
+            }
+        }
+
+        // Use the hook's toggle function
+        const success = await toggleWishlist();
+
+        if (success && !isInWishlist) {
+            // Show success message for adding to wishlist
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 2000,
+                icon: 'success',
+                title: '❤️ Added to wishlist!'
+            });
+        } else if (success && isInWishlist) {
+            // Show success message for removing from wishlist
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 2000,
+                icon: 'success',
+                title: '💔 Removed from wishlist'
+            });
         }
     };
 
@@ -196,14 +180,14 @@ export default function HomeCard({ el, index }) {
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
                         onClick={handleAddToWishlist}
-                        disabled={isAddingToWishlist}
-                        className={`absolute top-3 right-3 z-10 p-2 rounded-full bg-white/90 backdrop-blur-sm shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 border border-blue-100 ${isAddingToWishlist ? 'cursor-not-allowed opacity-50' : ''}`}
+                        disabled={isWishlistLoading}
+                        className={`absolute top-3 right-3 z-10 p-2 rounded-full bg-white/90 backdrop-blur-sm shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 border border-blue-100 ${isWishlistLoading ? 'cursor-not-allowed opacity-50' : ''}`}
                     >
-                        {isAddingToWishlist ? (
+                        {isWishlistLoading ? (
                             <div className="w-4 h-4 border-2 border-red-300 border-t-red-500 rounded-full animate-spin"></div>
                         ) : (
                             <Heart
-                                className={`h-4 w-4 transition-colors ${isLiked ? 'text-red-500 fill-red-500' : 'text-slate-600 hover:text-red-500'
+                                className={`h-4 w-4 transition-colors ${isInWishlist ? 'text-red-500 fill-red-500' : 'text-slate-600 hover:text-red-500'
                                     }`}
                             />
                         )}
@@ -314,15 +298,19 @@ export default function HomeCard({ el, index }) {
                         </Button>
                     </Link>
                     <Button
-                        className="shrink-0 bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700 text-white disabled:opacity-50"
+                        variant="outline"
                         size="icon"
-                        onClick={handleCheckout}
-                        disabled={isCheckingOut}
+                        onClick={handleAddToWishlist}
+                        disabled={isWishlistLoading}
+                        className={`h-12 w-12 transition-all duration-300 ${isInWishlist
+                            ? 'text-red-500 border-red-500 bg-red-50 hover:bg-red-100'
+                            : 'hover:text-red-500 hover:border-red-300 hover:bg-red-50'
+                            } ${isWishlistLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
-                        {isCheckingOut ? (
-                            <Plus className="h-4 w-4 animate-spin" />
+                        {isWishlistLoading ? (
+                            <div className="w-5 h-5 border-2 border-red-300 border-t-red-500 rounded-full animate-spin"></div>
                         ) : (
-                            <ShoppingCart className="h-4 w-4" />
+                            <Heart className={`w-5 h-5 transition-all ${isInWishlist ? 'fill-current scale-110' : ''}`} />
                         )}
                     </Button>
                 </CardFooter>
