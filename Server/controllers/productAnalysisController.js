@@ -54,7 +54,7 @@ class ProductAnalysisController {
         });
       }
 
-      const prompt = `Sebagai seorang reviewer produk profesional yang berpengalaman, buatlah review yang sangat menarik dan persuasif untuk produk berikut yang akan membuat customer tertarik untuk membeli:
+      const prompt = `Sebagai seorang reviewer produk profesional yang berpengalaman, buatlah penjelasan yang sangat menarik dan persuasif untuk produk berikut yang akan membuat customer tertarik untuk membeli:
 
 Nama Produk: ${product.name}
 Kategori: ${product.Category?.name || 'Tidak ada kategori'}
@@ -62,21 +62,18 @@ Harga: Rp ${product.price?.toLocaleString('id-ID')}
 Deskripsi: ${product.description}
 Stok: ${product.stock}
 
-Buatlah review yang mencakup:
-1. Keunggulan produk yang menonjol dan menarik
-2. Mengapa produk ini worth it untuk dibeli (value for money)
-3. Siapa yang cocok menggunakan produk ini
-4. Benefit dan manfaat yang akan didapat customer
-5. Perbandingan dengan produk sejenis (lebih unggul)
-6. Rating 8-10 dengan alasan yang meyakinkan
-7. Call to action yang mendorong untuk membeli
+Buatlah penjasan singkat sebagai reviewer profesional:
 
-Tuliskan review dengan gaya bahasa yang:
+jelaskan product ini menurut ${product.imgUrl} dan ${product.name}
+Cukup bikin penjelasan 1 kalimat saja.
+
+Tuliskan penjelasan dengan gaya bahasa yang:
 - Antusias dan engaging
 - Meyakinkan tapi tetap natural
 - Mudah dipahami
 - Membuat pembaca excited untuk membeli
 - Fokus pada benefit dan value yang didapat customer
+- Cukup bikin penjelasan 1 kalimat saja.
 
 Gunakan bahasa Indonesia yang menarik dan persuasif.`;
 

@@ -851,7 +851,7 @@ Thank you for your excellent service! 🙏
                                     className="flex-1 h-12 hover:text-purple-500 hover:border-purple-300 transition-all duration-300 bg-white/80 backdrop-blur-sm border-slate-300"
                                 >
                                     <Sparkles className="w-5 h-5 mr-2" />
-                                    {showAnalysis ? 'Hide' : 'Show'} AI Analysis
+                                    {showAnalysis ? 'Hide' : 'Show'} Explanation
                                 </Button>
                             </div>
                         </div>
@@ -869,15 +869,6 @@ Thank you for your excellent service! 🙏
                             className="mb-16"
                         >
                             <Card className="bg-gradient-to-r from-purple-50/80 to-pink-50/80 backdrop-blur-sm border-purple-200/60 shadow-2xl">
-                                <CardHeader>
-                                    <CardTitle className="flex items-center gap-2 text-purple-800">
-                                        <Sparkles className="w-5 h-5" />
-                                        AI-Powered Analysis
-                                    </CardTitle>
-                                    <CardDescription className="text-purple-600">
-                                        IBM Granite AI provides expert insights about this betta fish
-                                    </CardDescription>
-                                </CardHeader>
                                 <CardContent>
                                     <ProductAnalysis productId={params.id} />
                                 </CardContent>
