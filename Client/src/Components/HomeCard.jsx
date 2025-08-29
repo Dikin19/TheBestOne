@@ -193,7 +193,7 @@ export default function HomeCard({ el, index }) {
                             whileHover={{ opacity: 1 }}
                             className="absolute inset-0 bg-gradient-to-t from-blue-900/40 via-transparent to-transparent flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300"
                         >
-                            <div className="flex gap-3">
+                            <div className="flex gap-3 m-lg-3">
                                 <motion.div
                                     whileHover={{ scale: 1.1 }}
                                     whileTap={{ scale: 0.9 }}

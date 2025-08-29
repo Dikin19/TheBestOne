@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Fish, User, LogOut, Menu, X, ShoppingBag, Star, Heart, Settings, ChevronDown, Sparkles, Crown, Award, ShoppingCart } from "lucide-react";
+import { Fish, User, LogOut, Menu, X, ShoppingBag, Star, Heart, Settings, ChevronDown, Sparkles, Crown, Award, ShoppingCart, Trophy, Medal, Target, Waves } from "lucide-react";
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import { Badge } from "./ui/badge";
@@ -78,9 +78,26 @@ function Navbar() {
             initial={{ y: -100 }}
             animate={{ y: 0 }}
             transition={{ type: "spring", stiffness: 100, damping: 20 }}
-            className="bg-ocean-navbar shadow-2xl sticky top-0 z-50 border-b border-blue-200/40"
+            className="bg-gradient-to-r from-slate-50/95 via-blue-50/90 to-cyan-50/95 backdrop-blur-lg shadow-xl sticky top-0 z-50 border-b border-blue-200/50"
         >
-            <div className="max-w-7xl mx-auto px-4 py-4">
+            {/* Background wave effect */}
+            <div className="absolute inset-0 overflow-hidden">
+                <motion.div
+                    animate={{
+                        x: ['-100%', '100%'],
+                    }}
+                    transition={{
+                        duration: 20,
+                        repeat: Infinity,
+                        ease: "linear"
+                    }}
+                    className="absolute top-0 left-0 w-full h-full opacity-5"
+                >
+                    <Waves className="w-full h-full text-blue-500" />
+                </motion.div>
+            </div>
+
+            <div className="max-w-7xl mx-auto px-4 py-4 relative z-10">
                 <div className="flex items-center justify-between">
                     {/* Brand */}
                     <motion.div
@@ -89,7 +106,7 @@ function Navbar() {
                     >
                         <NavLink
                             to="/"
-                            className="flex items-center gap-3 text-2xl font-bold text-gradient-premium"
+                            className="flex items-center gap-3 text-2xl font-bold"
                         >
                             <motion.div
                                 animate={{
@@ -101,14 +118,27 @@ function Navbar() {
                                     repeat: Infinity,
                                     repeatDelay: 2
                                 }}
-                                className="w-12 h-12 bg-gradient-to-br from-blue-600 via-cyan-600 to-teal-600 rounded-full flex items-center justify-center shadow-xl"
+                                className="relative w-14 h-14 bg-gradient-to-br from-blue-500 via-cyan-500 to-teal-500 rounded-full flex items-center justify-center shadow-xl border-3 border-blue-300"
                             >
-                                <Fish className="h-7 w-7 text-white" />
+                                <Fish className="h-8 w-8 text-white animate-pulse" />
+                                <motion.div
+                                    animate={{ scale: [1, 1.2, 1] }}
+                                    transition={{ duration: 2, repeat: Infinity }}
+                                    className="absolute inset-0 bg-gradient-to-br from-blue-400/20 to-cyan-500/20 rounded-full"
+                                />
                             </motion.div>
-                            <span className="text-gradient-premium">
-                                TheBestOne
-                            </span>
-                            <Crown className="w-6 h-6 text-yellow-500" />
+                            <div className="flex flex-col">
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-cyan-600 to-teal-600 font-black text-2xl">
+                                    CupangKing
+                                </span>
+                                <span className="text-blue-500 text-xs font-semibold tracking-widest">
+                                    #1 CUPANG INDONESIA
+                                </span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                                <Crown className="w-6 h-6 text-yellow-500 animate-bounce" />
+                                <Trophy className="w-5 h-5 text-yellow-600" />
+                            </div>
                         </NavLink>
                     </motion.div>
 
@@ -125,7 +155,7 @@ function Navbar() {
                                 style={{ textDecoration: "none" }}
                             >
                                 <div className="relative">
-                                    <ShoppingCart className="h-6 w-6 group-hover:scale-110 transition-transform" />
+                                    <ShoppingCart className="h-6 w-6 group-hover:scale-110 transition-transform group-hover:text-blue-600" />
                                     {wishlistCount > 0 && (
                                         <motion.div
                                             key={wishlistCount} // Key changes trigger re-animation
@@ -138,13 +168,11 @@ function Navbar() {
                                                 duration: 0.6
                                             }}
                                             className="no-underline absolute -top-2 -right-2"
-
-
                                         >
                                             <Badge
                                                 variant="destructive"
                                                 style={{ textDecoration: "none" }}
-                                                className="h-5 w-5 flex items-center justify-center text-xs bg-red-500 hover:bg-red-600 rounded-full animate-pulse shadow-lg border-2 border-white"
+                                                className="h-5 w-5 flex items-center justify-center text-xs bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 rounded-full animate-pulse shadow-lg border-2 border-white"
                                             >
                                                 <motion.span
                                                     key={`count-${wishlistCount}`}
@@ -158,7 +186,7 @@ function Navbar() {
                                         </motion.div>
                                     )}
                                 </div>
-                                <span className="hidden lg:block">Wishlist</span>
+                                <span className="hidden lg:block font-semibold">Keranjang</span>
                             </NavLink>
                         </motion.div>
 
@@ -172,7 +200,7 @@ function Navbar() {
                                 className="flex items-center gap-2 text-lg font-medium text-slate-700 hover:text-blue-600 transition-all duration-300 group"
                             >
                                 <ShoppingBag className="h-5 w-5 group-hover:scale-110 transition-transform" />
-                                Marketplace
+                                <span className="font-semibold">Toko Cupang</span>
                                 <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isMarketplaceOpen ? 'rotate-180' : ''}`} />
                             </button>
 
@@ -183,50 +211,30 @@ function Navbar() {
                                         animate={{ opacity: 1, y: 0, scale: 1 }}
                                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
                                         transition={{ duration: 0.2 }}
-                                        className="absolute left-0 mt-2 w-80 bg-gradient-to-br from-blue-500/25 via-cyan-400/20 to-blue-600/25 backdrop-blur-lg rounded-xl shadow-2xl border border-blue-300/30 overflow-hidden"
+                                        className="absolute left-0 mt-5 w-80 bg-white/95 backdrop-blur-lg rounded-xl shadow-2xl border border-blue-200/50 overflow-hidden"
                                     >
-                                        <div className="p-4 bg-gradient-to-r from-blue-400/20 to-cyan-300/15 border-b border-blue-300/30">
-                                            <h3 className="font-semibold text-slate-800 flex items-center gap-2">
+                                        <div className="p-4 bg-gradient-to-r from-blue-50 to-cyan-50 border-b border-blue-200/50">
+                                            <h3 className="font-bold text-slate-700 flex items-center gap-2">
                                                 <Sparkles className="w-4 h-4 text-blue-500" />
-                                                Premium Food Collection
+                                                Koleksi Cupang Premium
                                             </h3>
-                                            <p className="text-sm text-slate-600 mt-1">Discover delicious food items</p>
+                                            <p className="text-sm text-slate-600 mt-1">Temukan cupang terbaik di Indonesia</p>
                                         </div>
 
                                         <div className="p-2">
                                             <NavLink
-                                                to="/"
+                                                to="/?category=all&view=products"
                                                 onClick={() => setIsMarketplaceOpen(false)}
-                                                className="flex items-center gap-3 px-4 py-3 text-slate-700 hover:bg-blue-400/10 hover:text-blue-600 rounded-lg transition-all duration-200 group"
+                                                className="flex items-center gap-3 px-4 py-3 text-slate-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all duration-200 group"
                                             >
                                                 <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
                                                     <Fish className="w-4 h-4 text-white" />
                                                 </div>
                                                 <div>
-                                                    <p className="font-medium">All Products</p>
-                                                    <p className="text-xs text-slate-500">Browse our entire collection</p>
+                                                    <p className="font-medium">Semua Cupang</p>
+                                                    <p className="text-xs text-slate-500">Jelajahi koleksi lengkap</p>
                                                 </div>
                                             </NavLink>
-
-                                            <button className="w-full flex items-center gap-3 px-4 py-3 text-slate-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all duration-200 group">
-                                                <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                                                    <Crown className="w-4 h-4 text-white" />
-                                                </div>
-                                                <div>
-                                                    <p className="font-medium">Premium Collection</p>
-                                                    <p className="text-xs text-slate-500">Show-quality specimens</p>
-                                                </div>
-                                            </button>
-
-                                            <button className="w-full flex items-center gap-3 px-4 py-3 text-slate-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all duration-200 group">
-                                                <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                                                    <Award className="w-4 h-4 text-white" />
-                                                </div>
-                                                <div>
-                                                    <p className="font-medium">Champion Bloodlines</p>
-                                                    <p className="text-xs text-slate-500">Competition winners</p>
-                                                </div>
-                                            </button>
 
                                             <NavLink
                                                 to="/wishlist"
@@ -250,8 +258,8 @@ function Navbar() {
                                                     )}
                                                 </div>
                                                 <div>
-                                                    <p className="font-medium">My Wishlist</p>
-                                                    <p className="text-xs text-slate-500">Your favorite items ({wishlistCount})</p>
+                                                    <p className="font-medium">Favorit Saya</p>
+                                                    <p className="text-xs text-slate-500">Cupang favorit ({wishlistCount})</p>
                                                 </div>
                                             </NavLink>
                                         </div>
@@ -275,14 +283,14 @@ function Navbar() {
                                         whileTap={{ scale: 0.95 }}
                                         src={profilePicture}
                                         alt="Profile"
-                                        className="w-10 h-10 rounded-full object-cover border-3 border-blue-200 group-hover:border-blue-400 transition-colors shadow-lg"
+                                        className="w-10 h-10 rounded-full object-cover border-3 border-blue-300 group-hover:border-blue-400 transition-colors shadow-lg"
                                     />
                                 ) : (
-                                    <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-teal-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg">
+                                    <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg border-2 border-blue-300">
                                         <User className="h-5 w-5 text-white" />
                                     </div>
                                 )}
-                                <span className="hidden lg:block">Profile</span>
+                                <span className="hidden lg:block">Profil</span>
                                 <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isProfileOpen ? 'rotate-180' : ''}`} />
                             </button>
 
@@ -293,9 +301,9 @@ function Navbar() {
                                         animate={{ opacity: 1, y: 0, scale: 1 }}
                                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
                                         transition={{ duration: 0.2 }}
-                                        className="absolute right-0 mt-2 w-72 bg-gradient-to-br from-blue-500/25 via-cyan-400/20 to-blue-600/25 backdrop-blur-lg rounded-xl shadow-2xl border border-blue-300/30 overflow-hidden"
+                                        className="absolute right-0 mt-2 w-72 bg-white/95 backdrop-blur-lg rounded-xl shadow-2xl border border-blue-200/50 overflow-hidden"
                                     >
-                                        <div className="p-4 bg-gradient-to-r from-blue-50 to-cyan-50 border-b border-blue-100">
+                                        <div className="p-4 bg-gradient-to-r from-blue-50 to-cyan-50 border-b border-blue-200/50">
                                             <div className="flex items-center gap-4">
                                                 {profilePicture ? (
                                                     <img
@@ -304,18 +312,16 @@ function Navbar() {
                                                         className="w-14 h-14 rounded-full object-cover border-3 border-blue-300 shadow-lg"
                                                     />
                                                 ) : (
-                                                    <div className="w-14 h-14 bg-gradient-to-br from-blue-600 to-teal-600 rounded-full flex items-center justify-center shadow-lg">
+                                                    <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-full flex items-center justify-center shadow-lg border-2 border-blue-300">
                                                         <User className="w-7 h-7 text-white" />
                                                     </div>
                                                 )}
                                                 <div>
-                                                    <p className="font-bold text-slate-800 capitalize text-lg">
+                                                    <p className="font-bold text-slate-700 capitalize text-lg">
                                                         {userName}
                                                     </p>
-                                                    <p className="text-sm text-slate-600">Betta Fish Enthusiast</p>
+                                                    <p className="text-sm text-slate-600">Pecinta Cupang Indonesia</p>
                                                     <div className="flex items-center gap-1 mt-1">
-                                                        <Star className="w-4 h-4 text-yellow-500 fill-current" />
-                                                        <span className="text-xs text-slate-500 font-medium">Premium Member</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -328,7 +334,7 @@ function Navbar() {
                                                 className="flex items-center gap-3 px-3 py-2 text-slate-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all duration-200 group"
                                             >
                                                 <User className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                                                View Profile
+                                                Lihat Profil
                                             </NavLink>
 
                                             <NavLink
@@ -352,34 +358,18 @@ function Navbar() {
                                                         </motion.div>
                                                     )}
                                                 </div>
-                                                My Wishlist ({wishlistCount})
+                                                Favorit Saya ({wishlistCount})
                                             </NavLink>
-
-                                            <button className="w-full flex items-center gap-3 px-3 py-2 text-slate-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all duration-200 group">
-                                                <Star className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                                                My Reviews
-                                            </button>
-
-                                            <button className="w-full flex items-center gap-3 px-3 py-2 text-slate-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all duration-200 group">
-                                                <ShoppingBag className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                                                Order History
-                                            </button>
-
-                                            <button className="w-full flex items-center gap-3 px-3 py-2 text-slate-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all duration-200 group">
-                                                <Settings className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                                                Settings
-                                            </button>
-
-                                            <div className="border-t border-slate-100 mt-2 pt-2">
+                                            <div className="border-t border-blue-200/50 mt-2 pt-2">
                                                 <button
                                                     onClick={() => {
                                                         setIsProfileOpen(false);
                                                         handleLogout();
                                                     }}
-                                                    className="w-full flex items-center gap-3 px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 group"
+                                                    className="w-full flex items-center gap-3 px-3 py-2 text-red-600 hover:bg-red-50 hover:text-red-700 rounded-lg transition-all duration-200 group"
                                                 >
                                                     <LogOut className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                                                    Sign Out
+                                                    Keluar
                                                 </button>
                                             </div>
                                         </div>
@@ -394,7 +384,7 @@ function Navbar() {
                         variant="ghost"
                         size="icon"
                         onClick={toggleMenu}
-                        className="md:hidden hover:bg-blue-50"
+                        className="md:hidden hover:bg-blue-50 text-slate-700"
                     >
                         <motion.div
                             animate={{ rotate: isMenuOpen ? 180 : 0 }}
@@ -415,16 +405,16 @@ function Navbar() {
                             transition={{ duration: 0.3 }}
                             className="md:hidden mt-4"
                         >
-                            <Card className="glass shadow-xl">
+                            <Card className="bg-white/95 backdrop-blur-lg border border-blue-200/50 shadow-xl">
                                 <CardContent className="p-4 space-y-4">
                                     {/* User Info in Mobile */}
-                                    <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg">
-                                        <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
+                                    <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg border border-blue-200/30">
+                                        <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-full flex items-center justify-center border-2 border-blue-300">
                                             <User className="w-5 h-5 text-white" />
                                         </div>
                                         <div>
-                                            <p className="font-semibold text-slate-800 capitalize">{userName}</p>
-                                            <p className="text-sm text-slate-500">Betta Enthusiast</p>
+                                            <p className="font-semibold text-slate-700 capitalize">{userName}</p>
+                                            <p className="text-sm text-slate-600">Pecinta Cupang</p>
                                         </div>
                                     </div>
 
@@ -434,7 +424,7 @@ function Navbar() {
                                         className="flex items-center gap-3 p-3 text-slate-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all duration-200"
                                     >
                                         <ShoppingBag className="h-5 w-5" />
-                                        Marketplace
+                                        Toko Cupang
                                     </NavLink>
 
                                     <NavLink
@@ -443,7 +433,7 @@ function Navbar() {
                                         className="flex items-center gap-3 p-3 text-slate-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all duration-200"
                                     >
                                         <User className="h-5 w-5" />
-                                        Profile
+                                        Profil
                                     </NavLink>
 
                                     <NavLink
@@ -467,24 +457,24 @@ function Navbar() {
                                                 </motion.div>
                                             )}
                                         </div>
-                                        Wishlist ({wishlistCount})
+                                        Favorit ({wishlistCount})
                                     </NavLink>
 
                                     <button className="w-full flex items-center gap-3 p-3 text-slate-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all duration-200">
                                         <Star className="w-5 h-5" />
-                                        Reviews
+                                        Ulasan
                                     </button>
 
-                                    <div className="border-t border-slate-200 pt-4">
+                                    <div className="border-t border-blue-200/50 pt-4">
                                         <button
                                             onClick={() => {
                                                 toggleMenu();
                                                 handleLogout();
                                             }}
-                                            className="w-full flex items-center gap-3 p-3 text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200"
+                                            className="w-full flex items-center gap-3 p-3 text-red-600 hover:bg-red-50 hover:text-red-700 rounded-lg transition-all duration-200"
                                         >
                                             <LogOut className="h-5 w-5" />
-                                            Sign Out
+                                            Keluar
                                         </button>
                                     </div>
                                 </CardContent>

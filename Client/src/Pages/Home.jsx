@@ -22,17 +22,47 @@ import {
     Waves,
     Fish
 } from "lucide-react";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 
 export default function Home() {
     const dispatch = useDispatch();
     const products = useSelector((state) => state.product.items);
+    const location = useLocation();
+    
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("all");
     const [viewMode, setViewMode] = useState("grid");
     const [sortBy, setSortBy] = useState("newest");
     const [categories, setCategories] = useState([]);
     const [profilePicture, setProfilePicture] = useState(localStorage.getItem('profilePicture') || '');
+
+    // Handle URL parameters
+    useEffect(() => {
+        console.log('URL changed:', location.search);
+        const searchParams = new URLSearchParams(location.search);
+        const categoryParam = searchParams.get('category');
+        const viewParam = searchParams.get('view');
+        
+        console.log('Category param:', categoryParam);
+        console.log('View param:', viewParam);
+        
+        if (categoryParam) {
+            console.log('Setting category to:', categoryParam);
+            setSelectedCategory(categoryParam);
+        }
+        
+        if (viewParam === 'products') {
+            console.log('Scrolling to products section');
+            // Optionally scroll to products section or set a flag to highlight products
+            setTimeout(() => {
+                const productsSection = document.getElementById('products-section');
+                console.log('Products section element:', productsSection);
+                if (productsSection) {
+                    productsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 100);
+        }
+    }, [location.search]);
 
     useEffect(() => {
         dispatch(fetchProduct());
@@ -129,7 +159,7 @@ export default function Home() {
                     transition={{ duration: 0.8 }}
                     className="max-w-7xl mx-auto text-center relative z-10"
                 >
-                    {/* User Welcome Section */}
+                    {/* User Welcome Section
                     {profilePicture && (
                         <motion.div
                             initial={{ opacity: 0, scale: 0.8 }}
@@ -148,7 +178,7 @@ export default function Home() {
                                 </span>
                             </div>
                         </motion.div>
-                    )}
+                    )} */}
 
                     {/* Premium Badge */}
                     <motion.div
@@ -389,7 +419,7 @@ export default function Home() {
             </section>
 
             {/* Products Grid */}
-            <section className="py-16 px-4">
+            <section id="products-section" className="py-16 px-4">
                 <div className="max-w-7xl mx-auto">
                     {sortedProducts.length > 0 ? (
                         <>

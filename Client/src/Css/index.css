@@ -148,6 +148,106 @@ a:hover {
   color: #0f766e;
 }
 
+/* CupangKing Premium Theme - Styling khusus untuk website cupang nomor 1 Indonesia */
+.cupang-gradient-primary {
+  background: linear-gradient(
+    135deg,
+    #f97316 0%,
+    #ef4444 25%,
+    #dc2626 50%,
+    #b91c1c 75%,
+    #7c2d12 100%
+  );
+}
+
+.cupang-gradient-navbar {
+  background: linear-gradient(
+    90deg,
+    #1e3a8a 0%,
+    #1e40af 25%,
+    #0891b2 50%,
+    #0d9488 75%,
+    #059669 100%
+  );
+}
+
+.cupang-text-gold {
+  background: linear-gradient(
+    135deg,
+    #fbbf24 0%,
+    #f59e0b 25%,
+    #d97706 50%,
+    #b45309 75%,
+    #92400e 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.cupang-border-premium {
+  border: 2px solid transparent;
+  background: linear-gradient(white, white) padding-box,
+    linear-gradient(135deg, #fbbf24, #f59e0b, #ef4444) border-box;
+}
+
+.cupang-shadow-premium {
+  box-shadow: 0 4px 14px 0 rgba(251, 191, 36, 0.2),
+    0 10px 20px 0 rgba(239, 68, 68, 0.15),
+    0 20px 25px -5px rgba(220, 38, 38, 0.1);
+}
+
+.cupang-wave-animation {
+  animation: cupang-wave 3s ease-in-out infinite;
+}
+
+@keyframes cupang-wave {
+  0%,
+  100% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(100%);
+  }
+}
+
+.cupang-float {
+  animation: cupang-float 4s ease-in-out infinite;
+}
+
+@keyframes cupang-float {
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-10px) rotate(2deg);
+  }
+  75% {
+    transform: translateY(5px) rotate(-1deg);
+  }
+}
+
+.cupang-glow {
+  box-shadow: 0 0 20px rgba(251, 191, 36, 0.3), 0 0 40px rgba(239, 68, 68, 0.2),
+    0 0 60px rgba(220, 38, 38, 0.1);
+}
+
+.cupang-gradient-text {
+  background: linear-gradient(
+    135deg,
+    #fbbf24 0%,
+    #f59e0b 25%,
+    #ef4444 50%,
+    #dc2626 75%,
+    #b91c1c 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 900;
+}
+
 .text-ocean-dark {
   color: #164e63;
 }
