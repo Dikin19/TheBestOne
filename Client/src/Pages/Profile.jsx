@@ -3,47 +3,48 @@ import ProfileCard from "../Components/ProfileCard";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProfile } from "../store/productSlice";
 
+
 export default function Profile() {
     const dispatch = useDispatch();
     const profile = useSelector((state) => state.product.Profile);
+    const [activeTab, setActiveTab] = useState('profile');
 
     useEffect(() => {
-        dispatch(fetchProfile())
+        const fetchProfileData = async () => {
+            await dispatch(fetchProfile());
+            // Trigger update navbar setelah fetch profile
+            window.dispatchEvent(new Event('profilePictureUpdated'));
+        };
+        fetchProfileData();
     }, [dispatch])
 
-    // const [profile, setProfile] = useState({});
-    // async function fetchProfile() {
-    //     try {
-    //         const { data } = await axios({
-    //             method: "get",
-    //             url: "/customers/profile",
-    //             headers: {
-    //                 Authorization: 'Bearer ' + localStorage.getItem('access_token')
-    //             }
-    //         });
-    //         setProfile(data);
-    //     } catch (error) {
-    //         console.log(error);
-    //     }
-    // }
+    const renderTabContent = () => {
+        switch (activeTab) {
+            case 'profile':
+                return (
+                    <div className="bg-gradient-to-br from-blue-600/10 via-blue-500/8 to-cyan-600/12 py-4">
+                        <div className="container mx-auto px-4 max-w-6xl">
+                            {/* Header Section */}
+                            <div className="text-center mb-6">
+                                <h1 className="text-3xl font-bold text-blue-800 mb-2">Professional Breeder Profile</h1>
+                                <p className="text-blue-600/80 text-lg">Advanced Betta Fish Breeding Management Dashboard</p>
+                            </div>
 
-    // useEffect(() => {
-    //     fetchProfile();
-    // }, []);
+                            {/* Profile Card - Compact Row Layout */}
+                            <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-blue-200/50 overflow-hidden mb-14">
+                                <ProfileCard el={profile} />
+                            </div>
+                        </div>
+                    </div>
+                );
+        };
+    }
 
     return (
-        <div className="min-h-screen bg-gray-100 p-6">
-            <header className="bg-[#f53d2d] text-white flex items-center px-6 py-4 rounded-lg shadow-md mb-6">
-                <img
-                    src={profile.profilePicture}
-                    alt="avatar"
-                    className="w-16 h-16 rounded-full object-cover mr-4"
-                />
-                <h2 className="text-xl font-semibold">{profile.fullName}</h2>
-            </header>
-
-            <div className="flex justify-center">
-                <ProfileCard el={profile} />
+        <div className="bg-gradient-to-br from-blue-600/15 via-blue-700/10 to-cyan-600/15">
+            {/* Content */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                {renderTabContent()}
             </div>
         </div>
     );

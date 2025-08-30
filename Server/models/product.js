@@ -12,6 +12,8 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       Product.belongsTo(models.Category, {foreignKey : 'CategoryId'})
+      Product.hasMany(models.Order, { foreignKey: 'ProductId' });
+      Product.hasMany(models.Wishlist, { foreignKey: 'ProductId' });
     }
   }
   Product.init({
@@ -85,10 +87,10 @@ module.exports = (sequelize, DataTypes) => {
         }
       },
 
-      stock: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      }
+    stock: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    }
       
   }, {
     sequelize,

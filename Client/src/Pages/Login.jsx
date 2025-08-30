@@ -1,12 +1,19 @@
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import axios from '../config/axiosInstance';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { motion } from 'framer-motion';
 import Swal from 'sweetalert2';
+import { Button } from '../Components/ui/button';
+import { Input } from '../Components/ui/input';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../Components/ui/card';
+import { Eye, EyeOff, Mail, Lock, Fish, Sparkles, Chrome } from 'lucide-react';
 
 function Login() {
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     if (localStorage.getItem('access_token')) {
         return <Navigate to="/" />;
@@ -14,18 +21,28 @@ function Login() {
 
     async function handleSubmit(e) {
         e.preventDefault();
+        setIsLoading(true);
+
         try {
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('email');
+            localStorage.removeItem('profilePicture');
+
             const { data } = await axios.post('/login', { email, password });
 
             localStorage.setItem('access_token', data.access_token);
             localStorage.setItem('email', data.user.email);
-            localStorage.setItem('profilePicture', data.user.profilePicture);
+            localStorage.setItem('profilePicture', data.user.profilePicture || '');
+
+            // Trigger custom event untuk memperbarui navbar
+            window.dispatchEvent(new Event('profilePictureUpdated'));
 
             Swal.fire({
                 toast: true,
                 position: 'top-end',
                 icon: 'success',
-                title: 'Signed in successfully',
+                title: 'Welcome back to TheBestOne!',
+                text: 'Signed in successfully',
                 showConfirmButton: false,
                 timer: 3000,
                 timerProgressBar: true,
@@ -33,98 +50,188 @@ function Login() {
 
             navigate('/');
         } catch (error) {
-            let message = 'Oops something went wrong!';
-            if (error.response) {
+            let message = 'Invalid email or password';
+            if (error.response?.data?.message) {
                 message = error.response.data.message;
             }
 
             Swal.fire({
-                title: 'Error',
+                title: 'Login Failed',
                 text: message,
                 icon: 'error',
+                confirmButtonColor: '#dc2626'
             });
+        } finally {
+            setIsLoading(false);
         }
     }
-
-    async function handleCredentialResponse(response) {
-        try {
-            const { data } = await axios.post('/google-login', {
-                googleToken: response.credential,
-            });
-
-            localStorage.setItem('access_token', data.access_token);
-            localStorage.setItem('email', data.user.email);
-            localStorage.setItem('profilePicture', data.user.profilePicture);
-
-            navigate('/');
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
-    useEffect(() => {
-        /* global google */
-        google.accounts.id.initialize({
-            client_id: '350708614453-fefamno8l97ct80hlbto5lno30rtev9i.apps.googleusercontent.com',
-            callback: handleCredentialResponse,
-        });
-
-        google.accounts.id.renderButton(document.getElementById('google-button'), {
-            theme: 'outline',
-            size: 'large',
-        });
-
-        google.accounts.id.prompt();
-    }, []);
 
     return (
-        <div className="flex justify-center items-center min-h-screen bg-[#fef3f3] px-4">
-            <div className="bg-white shadow-xl border-t-8 border-[#d8191f] rounded-md p-8 w-full max-w-md">
-                <div className="mb-6 text-center">
-                    <h1 className="text-4xl font-extrabold text-[#D3232A] tracking-wide">TheBestOne Login</h1>
-                    <p className="text-sm text-gray-500 mt-1">Welcome back! Please login to continue.</p>
-                </div>
-
-                <form onSubmit={handleSubmit} className="space-y-5">
-                    <div>
-                        <label className="block text-sm font-semibold text-gray-700">Email</label>
-                        <input
-                            type="text"
-                            placeholder="your@gmail.com"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            className="mt-1 w-full px-4 py-2 border-2 border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D3232A] shadow-sm"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-semibold text-gray-700">Password</label>
-                        <input
-                            type="password"
-                            placeholder="••••••••"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            className="mt-1 w-full px-4 py-2 border-2 border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D3232A] shadow-sm"
-                        />
-                    </div>
-
-                    <button
-                        type="submit"
-                        className="w-full bg-[#D3232A] hover:bg-red-700 text-white font-bold py-2 rounded-md transition duration-300 shadow-md"
-                    >
-                        Login
-                    </button>
-                </form>
-
-                <div id="google-button" className="mt-5 flex justify-center"></div>
-
-                <p className="mt-6 text-center text-sm text-gray-600">
-                    Don’t have an account yet?{' '}
-                    <Link to="/register" className="text-[#D3232A] font-semibold hover:underline">
-                        Register
-                    </Link>
-                </p>
+        <div className="min-h-screen bg-gradient-to-br from-blue-500/20 via-cyan-400/15 to-blue-600/25 flex items-center justify-center p-4">
+            {/* Background decoration */}
+            <div className="absolute inset-0 overflow-hidden">
+                <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-3xl"></div>
+                <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-indigo-400/20 to-blue-400/20 rounded-full blur-3xl"></div>
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-br from-purple-300/10 to-pink-300/10 rounded-full blur-3xl"></div>
             </div>
+
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+                className="relative z-10 w-full max-w-md"
+            >
+                <Card className="glass shadow-xl border-0 backdrop-blur-xl">
+                    <CardHeader className="text-center pb-6">
+                        <motion.div
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+                            className="mx-auto w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mb-3 shadow-lg"
+                        >
+                            <Fish className="w-6 h-6 text-white" />
+                        </motion.div>
+                        <CardTitle className="text-2xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                            Welcome Back
+                        </CardTitle>
+                        <CardDescription className="text-sm text-gray-600 mt-1">
+                            Sign in to your account
+                        </CardDescription>
+                    </CardHeader>
+
+                    <CardContent className="space-y-4 px-6 pb-6">
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            <motion.div
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: 0.3 }}
+                                className="space-y-1"
+                            >
+                                <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                                    <Mail className="w-4 h-4 text-blue-500" />
+                                    Email Address
+                                </label>
+                                <Input
+                                    type="email"
+                                    placeholder="Enter your email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    className="h-10 border border-gray-300 focus:border-blue-500 focus:ring-blue-500/20 transition-all duration-200"
+                                    required
+                                />
+                            </motion.div>
+
+                            <motion.div
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: 0.4 }}
+                                className="space-y-1"
+                            >
+                                <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                                    <Lock className="w-4 h-4 text-blue-500" />
+                                    Password
+                                </label>
+                                <div className="relative">
+                                    <Input
+                                        type={showPassword ? "text" : "password"}
+                                        placeholder="Enter your password"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        className="h-10 border border-gray-300 focus:border-blue-500 focus:ring-blue-500/20 transition-all duration-200 pr-10"
+                                        required
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+                                    >
+                                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                    </button>
+                                </div>
+                            </motion.div>
+
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.5 }}
+                                className="pt-2"
+                            >
+                                <Button
+                                    type="submit"
+                                    disabled={isLoading}
+                                    className="w-full h-10 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
+                                >
+                                    {isLoading ? (
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                            Signing In...
+                                        </div>
+                                    ) : (
+                                        <div className="flex items-center gap-2">
+                                            <Sparkles className="w-4 h-4" />
+                                            Sign In
+                                        </div>
+                                    )}
+                                </Button>
+                            </motion.div>
+                        </form>
+
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.6 }}
+                            className="relative pt-3"
+                        >
+                            <div className="absolute inset-0 flex items-center">
+                                <div className="w-full border-t border-gray-300"></div>
+                            </div>
+                            <div className="relative flex justify-center text-xs">
+                                <span className="px-3 bg-white text-gray-500 font-medium">Or continue with</span>
+                            </div>
+                        </motion.div>
+
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.7 }}
+                        >
+                            <Button
+                                type="button"
+                                variant="outline"
+                                className="w-full h-9 border border-gray-300 hover:border-gray-400 text-gray-700 font-medium rounded-lg transition-all duration-200 text-sm"
+                                onClick={() => {
+                                    Swal.fire({
+                                        title: 'Google Sign-In',
+                                        text: 'Google Sign-In will be available soon. Please use email/password for now.',
+                                        icon: 'info',
+                                        confirmButtonColor: '#3b82f6'
+                                    });
+                                }}
+                            >
+                                <Chrome className="w-4 h-4 mr-2" />
+                                Continue with Google
+                            </Button>
+                        </motion.div>
+
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.8 }}
+                            className="text-center pt-3 border-t border-gray-200"
+                        >
+                            <p className="text-sm text-gray-600">
+                                Don't have an account?{" "}
+                                <Link
+                                    to="/register"
+                                    className="font-medium text-blue-600 hover:text-blue-700 transition-colors hover:underline"
+                                >
+                                    Create one here
+                                </Link>
+                            </p>
+                        </motion.div>
+                    </CardContent>
+                </Card>
+            </motion.div>
         </div>
     );
 }
