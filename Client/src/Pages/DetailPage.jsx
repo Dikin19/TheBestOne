@@ -240,7 +240,7 @@ export default function DetailPage() {
 
     const handleWhatsAppOrder = () => {
         const finalPrice = detail.price * quantity
-        const message = `🐠 *Bluerim - Betta Fish Order Inquiry*
+        const message = `🐠 *Bluerim Betta- Betta Fish Order Inquiry*
 
 Hello! I'm interested in purchasing this beautiful betta fish:
 
@@ -253,7 +253,7 @@ Hello! I'm interested in purchasing this beautiful betta fish:
 📋 *Product Description:*
 ${detail.description}
 
-🌟 *Why I chose Bluerim:*
+🌟 *Why I chose Bluerim Betta:*
 • Premium quality betta fish
 • World-renowned bloodlines
 • Professional breeding standards

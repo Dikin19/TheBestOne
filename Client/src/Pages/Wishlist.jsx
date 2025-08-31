@@ -15,8 +15,6 @@ export default function Wishlist() {
         error,
         removeFromWishlist: removeFromWishlistHook,
         fetchWishlist,
-        clearWishlist,
-        getWishlistStats
     } = useWishlistEnhanced();
 
     useEffect(() => {
@@ -46,7 +44,7 @@ export default function Wishlist() {
 
         message += "Mohon informasi lebih lanjut mengenai ketersediaan dan cara pemesanannya. Terima kasih!";
 
-        const whatsappUrl = `https://wa.me/6281234567890?text=${encodeURIComponent(message)}`;
+        const whatsappUrl = `https://wa.me/6285885239791?text=${encodeURIComponent(message)}`;
         window.open(whatsappUrl, '_blank');
     };
 
@@ -180,7 +178,7 @@ export default function Wishlist() {
             <section className="py-12 relative">
                 <div className="max-w-7xl mx-auto px-6">
                     {wishlistItems.length > 0 ? (
-                        <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                             {wishlistItems.map((item, index) => (
                                 <motion.div
                                     key={item.id}
@@ -189,88 +187,123 @@ export default function Wishlist() {
                                     transition={{ duration: 0.4, delay: index * 0.05 }}
                                     className="group h-full"
                                 >
-                                    <div className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 h-full flex flex-col">
-                                        {/* Image Container - Diperkecil */}
+                                    <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-200 h-full flex flex-col backdrop-blur-sm">
+                                        {/* Image Container */}
                                         <div className="relative overflow-hidden">
                                             <Link to={`/detail/${item.Product.id}`}>
-                                                <div className="relative h-40 overflow-hidden bg-gradient-to-br from-blue-50 to-cyan-50">
+                                                <div className="relative h-56 overflow-hidden bg-gradient-to-br from-blue-50 to-cyan-50">
                                                     <img
                                                         src={item.Product.imgUrl}
                                                         alt={item.Product.name}
-                                                        className="w-full h-full object-cover transition-all duration-500 group-hover:scale-105"
+                                                        className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
+                                                        onError={(e) => {
+                                                            e.target.src = '/api/placeholder/300/300';
+                                                        }}
                                                     />
-                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                                                 </div>
                                             </Link>
 
-                                            {/* Remove Button - Diperkecil */}
+                                            {/* Remove Button */}
                                             <button
                                                 onClick={() => handleRemoveFromWishlist(item.Product.id)}
-                                                className="absolute top-2 right-2 p-1.5 bg-white text-red-500 rounded-full shadow-md transition-all duration-300 hover:bg-red-500 hover:text-white hover:scale-110 opacity-0 group-hover:opacity-100 border border-red-100"
+                                                className="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm text-red-500 rounded-full shadow-lg transition-all duration-300 hover:bg-red-500 hover:text-white hover:scale-110 opacity-0 group-hover:opacity-100 border border-red-100"
                                             >
-                                                <Trash2 className="w-3 h-3" />
+                                                <Trash2 className="w-4 h-4" />
                                             </button>
 
-                                            {/* Wishlist Badge - Diperkecil */}
-                                            <div className="absolute top-2 left-2">
-                                                <Badge className="bg-gradient-to-r from-red-500 to-pink-500 text-white px-2 py-1 text-xs font-semibold rounded-full shadow-md border-0">
-                                                    <Heart className="w-2.5 h-2.5 mr-1 fill-current" />
+                                            {/* Wishlist Badge */}
+                                            <div className="absolute top-3 left-3">
+                                                <Badge className="bg-gradient-to-r from-red-500 to-pink-500 text-white px-3 py-1.5 text-xs font-semibold rounded-full shadow-lg border-0 backdrop-blur-sm">
+                                                    <Heart className="w-3 h-3 mr-1.5 fill-current" />
                                                     Favorit
                                                 </Badge>
                                             </div>
 
-                                            {/* Quality Badge - Diperkecil */}
-                                            <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                                <Badge className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-2 py-0.5 text-xs font-semibold rounded-full border-0">
-                                                    <Star className="w-2.5 h-2.5 mr-1 fill-current" />
+                                            {/* Quality Badge */}
+                                            <div className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                                                <Badge className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-3 py-1 text-xs font-semibold rounded-full border-0 backdrop-blur-sm shadow-lg">
+                                                    <Star className="w-3 h-3 mr-1 fill-current" />
                                                     Premium
                                                 </Badge>
                                             </div>
                                         </div>
 
-                                        {/* Content - Diperkecil */}
-                                        <div className="p-3 flex-1 flex flex-col justify-between">
+                                        {/* Content */}
+                                        <div className="p-5 flex-1 flex flex-col justify-between">
                                             <div className="flex-1">
                                                 <Link to={`/detail/${item.Product.id}`}>
-                                                    <h3 className="font-semibold text-sm text-gray-800 mb-1 line-clamp-2 group-hover:text-blue-600 transition-colors duration-300 leading-tight min-h-[2.5rem]">
+                                                    <h3 className="font-bold text-lg text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors duration-300 leading-tight min-h-[3.5rem]">
                                                         {item.Product.name}
                                                     </h3>
                                                 </Link>
 
-                                                <p className="text-xs text-gray-500 mb-2 flex items-center">
-                                                    <Fish className="w-3 h-3 mr-1 text-blue-500" />
-                                                    {item.Product.Category?.name || 'Premium Betta'}
-                                                </p>
+                                                <div className="flex items-center mb-3">
+                                                    <Fish className="w-4 h-4 mr-2 text-blue-500" />
+                                                    <p className="text-sm text-gray-600 font-medium">
+                                                        {item.Product.Category?.name || 'Premium Betta'}
+                                                    </p>
+                                                </div>
 
-                                                <div className="mb-2">
-                                                    <span className="text-sm font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+                                                <div className="mb-4">
+                                                    <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
                                                         Rp {item.Product.price?.toLocaleString('id-ID')}
+                                                    </span>
+                                                    <p className="text-xs text-gray-500 mt-1">Harga sudah termasuk perawatan</p>
+                                                </div>
+
+                                                {/* Features Tags */}
+                                                <div className="flex flex-wrap gap-2 mb-4 min-h-[2rem]">
+                                                    <span className="text-xs bg-blue-50 text-blue-700 px-3 py-1.5 rounded-full font-semibold border border-blue-200 transition-colors hover:bg-blue-100">
+                                                        🏆 Show Quality
+                                                    </span>
+                                                    <span className="text-xs bg-green-50 text-green-700 px-3 py-1.5 rounded-full font-semibold border border-green-200 transition-colors hover:bg-green-100">
+                                                        ✨ Sehat
+                                                    </span>
+                                                    <span className="text-xs bg-purple-50 text-purple-700 px-3 py-1.5 rounded-full font-semibold border border-purple-200 transition-colors hover:bg-purple-100">
+                                                        🎨 Rare Color
                                                     </span>
                                                 </div>
 
-                                                {/* Features Tags - Diperkecil */}
-                                                <div className="flex flex-wrap gap-1 mb-2 min-h-[1.5rem]">
-                                                    <span className="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full font-medium border border-blue-100">🏆 Show</span>
-                                                    <span className="text-xs bg-green-50 text-green-600 px-2 py-0.5 rounded-full font-medium border border-green-100">✨ Sehat</span>
+                                                {/* Product Stats */}
+                                                <div className="bg-gray-50 rounded-lg p-3 mb-4">
+                                                    <div className="grid grid-cols-2 gap-2 text-xs">
+                                                        <div className="flex items-center">
+                                                            <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+                                                            <span className="text-gray-600">Size: Premium</span>
+                                                        </div>
+                                                        <div className="flex items-center">
+                                                            <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                                                            <span className="text-gray-600">Health: Excellent</span>
+                                                        </div>
+                                                        <div className="flex items-center">
+                                                            <div className="w-2 h-2 bg-purple-500 rounded-full mr-2"></div>
+                                                            <span className="text-gray-600">Age: 3-6 months</span>
+                                                        </div>
+                                                        <div className="flex items-center">
+                                                            <div className="w-2 h-2 bg-yellow-500 rounded-full mr-2"></div>
+                                                            <span className="text-gray-600">Grade: A+</span>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
 
-                                            {/* Action Buttons - Diperkecil */}
-                                            <div className="space-y-2 mt-auto">
+                                            {/* Action Buttons */}
+                                            <div className="space-y-3 mt-auto">
                                                 <Link to={`/detail/${item.Product.id}`} className="block">
-                                                    <Button className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-medium py-2 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-md border-0 text-xs">
-                                                        <ShoppingCart className="w-3 h-3 mr-1" />
-                                                        Lihat Detail
+                                                    <Button className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-semibold py-3 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl border-0 text-sm">
+                                                        <ShoppingCart className="w-4 h-4 mr-2" />
+                                                        Lihat Detail Lengkap
                                                     </Button>
                                                 </Link>
 
                                                 <Button
                                                     onClick={() => handleRemoveFromWishlist(item.Product.id)}
                                                     variant="outline"
-                                                    className="w-full border border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 font-medium py-2 rounded-lg transition-all duration-300 text-xs"
+                                                    className="w-full border-2 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 hover:text-red-700 font-semibold py-3 rounded-xl transition-all duration-300 transform hover:scale-105 text-sm"
                                                 >
-                                                    <Trash2 className="w-3 h-3 mr-1" />
-                                                    Hapus
+                                                    <Trash2 className="w-4 h-4 mr-2" />
+                                                    Hapus dari Wishlist
                                                 </Button>
                                             </div>
                                         </div>
@@ -279,46 +312,90 @@ export default function Wishlist() {
                             ))}
                         </div>
                     ) : (
-                        // Empty State
+                        // Empty State - Professional Design
                         <motion.div
                             initial={{ opacity: 0, scale: 0.8 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            className="text-center py-20"
+                            className="text-center py-24"
                         >
-                            <div className="max-w-md mx-auto">
-                                {/* Ilustrasi Ikan Cupang Imut */}
+                            <div className="max-w-lg mx-auto">
+                                {/* Professional Illustration */}
                                 <motion.div
                                     initial={{ y: 20 }}
                                     animate={{ y: 0 }}
                                     transition={{
                                         repeat: Infinity,
                                         repeatType: "reverse",
-                                        duration: 2,
+                                        duration: 3,
                                         ease: "easeInOut"
                                     }}
-                                    className="relative mb-8"
+                                    className="relative mb-12"
                                 >
-                                    <div className="w-32 h-32 mx-auto bg-gradient-to-br from-blue-100 to-cyan-100 rounded-full flex items-center justify-center shadow-lg">
-                                        <Fish className="w-16 h-16 text-blue-400" />
+                                    <div className="w-40 h-40 mx-auto bg-gradient-to-br from-blue-100 via-cyan-50 to-blue-100 rounded-full flex items-center justify-center shadow-2xl border-4 border-white/50 backdrop-blur-sm">
+                                        <div className="relative">
+                                            <Fish className="w-20 h-20 text-blue-400" />
+                                            <div className="absolute -top-1 -right-1 w-6 h-6 bg-blue-500 rounded-full animate-ping opacity-75"></div>
+                                        </div>
                                     </div>
-                                    <div className="absolute -top-2 -right-2 w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
-                                        <Heart className="w-4 h-4 text-red-400" />
+                                    <div className="absolute -top-3 -right-3 w-12 h-12 bg-gradient-to-br from-red-100 to-pink-100 rounded-full flex items-center justify-center shadow-lg border-2 border-white">
+                                        <Heart className="w-6 h-6 text-red-400" />
+                                    </div>
+                                    <div className="absolute -bottom-2 -left-2 w-8 h-8 bg-gradient-to-br from-cyan-100 to-blue-100 rounded-full flex items-center justify-center shadow-md border border-white">
+                                        <Star className="w-4 h-4 text-cyan-500 fill-current" />
                                     </div>
                                 </motion.div>
 
-                                <h3 className="text-3xl font-bold text-gray-700 mb-4">
-                                    Belum ada ikan cupang di wishlistmu
-                                </h3>
-                                <p className="text-gray-500 mb-8 text-lg leading-relaxed">
-                                    Jelajahi koleksi kami dan tambahkan ikan cupang favoritmu ke wishlist!
-                                </p>
+                                {/* Professional Typography */}
+                                <div className="space-y-6 mb-12">
+                                    <h3 className="text-4xl font-bold text-gray-800 mb-3 leading-tight">
+                                        Belum Ada Ikan Cupang
+                                        <br />
+                                        <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+                                            di Wishlist Anda
+                                        </span>
+                                    </h3>
+                                    <p className="text-gray-600 text-lg leading-relaxed max-w-md mx-auto">
+                                        Mulai koleksi ikan cupang impian Anda! Jelajahi berbagai jenis ikan cupang berkualitas premium dan tambahkan favorit Anda ke wishlist.
+                                    </p>
+                                </div>
 
-                                <Link to="/">
-                                    <Button className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg border-0">
-                                        <Fish className="w-5 h-5 mr-2" />
-                                        Jelajahi Koleksi
-                                    </Button>
-                                </Link>
+                                {/* Professional Features */}
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+                                    <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 shadow-lg border border-gray-100">
+                                        <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                            <Fish className="w-6 h-6 text-blue-600" />
+                                        </div>
+                                        <h4 className="font-semibold text-gray-800 mb-1">Kualitas Premium</h4>
+                                        <p className="text-xs text-gray-600">Ikan cupang pilihan terbaik</p>
+                                    </div>
+                                    <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 shadow-lg border border-gray-100">
+                                        <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                            <Heart className="w-6 h-6 text-green-600" />
+                                        </div>
+                                        <h4 className="font-semibold text-gray-800 mb-1">Mudah Dikelola</h4>
+                                        <p className="text-xs text-gray-600">Simpan favorit dengan praktis</p>
+                                    </div>
+                                    <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 shadow-lg border border-gray-100">
+                                        <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                            <Star className="w-6 h-6 text-purple-600" />
+                                        </div>
+                                        <h4 className="font-semibold text-gray-800 mb-1">Koleksi Eksklusif</h4>
+                                        <p className="text-xs text-gray-600">Varietas langka dan unik</p>
+                                    </div>
+                                </div>
+
+                                {/* Professional CTA */}
+                                <div className="space-y-4">
+                                    <Link to="/">
+                                        <Button className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white px-10 py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-2xl border-0 hover:shadow-blue-500/25">
+                                            <Fish className="w-6 h-6 mr-3" />
+                                            Jelajahi Koleksi Premium
+                                        </Button>
+                                    </Link>
+                                    <p className="text-sm text-gray-500">
+                                        Temukan ikan cupang terbaik untuk koleksi Anda
+                                    </p>
+                                </div>
                             </div>
                         </motion.div>
                     )}

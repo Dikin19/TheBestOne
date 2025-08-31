@@ -41,7 +41,7 @@ function Login() {
                 toast: true,
                 position: 'top-end',
                 icon: 'success',
-                title: 'Welcome back to TheBestOne!',
+                title: 'Welcome back to Bluerim Betta',
                 text: 'Signed in successfully',
                 showConfirmButton: false,
                 timer: 3000,

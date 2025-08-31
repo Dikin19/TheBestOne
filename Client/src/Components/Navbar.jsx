@@ -224,7 +224,7 @@ function Navbar() {
                             </motion.div>
                             <div className="flex flex-col">
                                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-cyan-600 to-teal-600 font-black text-2xl">
-                                    Bluerim
+                                    Bluerim Betta
                                 </span>
                             </div>
                             <div className="flex items-center gap-1">
