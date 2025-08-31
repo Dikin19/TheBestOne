@@ -143,13 +143,14 @@ export default function HomeCard({ el, index }) {
                 stiffness: 100
             }}
             whileHover={{
-                y: -8,
+                y: -12,
+                scale: 1.02,
                 transition: { duration: 0.3 }
             }}
-            className="group h-full max-w-sm w-full"
+            className="group h-full w-full"
         >
-            <Card className="overflow-hidden border-0 shadow-2xl hover:shadow-3xl transition-all duration-500 card-ocean-premium border-2 border-blue-100/60 h-full flex flex-col bg-white/95 backdrop-blur-sm">
-                <div className="relative overflow-hidden">
+            <Card className="gap-3 mt-10 professional-card overflow-hidden border-0 shadow-lg hover:shadow-2xl h-full flex flex-col bg-white backdrop-blur-sm rounded-xl border border-slate-200/50 hover:border-blue-300/50">
+                <div className="card-image-container relative overflow-hidden rounded-t-xl">
                     {/* Premium Quality Badge */}
                     <motion.div
                         initial={{ scale: 0, rotate: -45 }}
@@ -157,7 +158,7 @@ export default function HomeCard({ el, index }) {
                         transition={{ delay: 0.5 + index * 0.1 }}
                         className="absolute top-3 left-3 z-10"
                     >
-                        <Badge className={`text-xs font-bold text-white ${randomBadge.color} flex items-center gap-1 px-3 py-1 rounded-full shadow-lg`}>
+                        <Badge className={`card-badge text-xs font-bold text-white ${randomBadge.color} flex items-center gap-1.5 px-3 py-1 rounded-full shadow-lg border-0`}>
                             <randomBadge.icon className="h-3 w-3" />
                             {randomBadge.label}
                         </Badge>
@@ -165,42 +166,39 @@ export default function HomeCard({ el, index }) {
 
                     {/* Product Image */}
                     <Link to={`/detail/${el.id}`} className="block relative group">
-                        <div className="aspect-square overflow-hidden bg-gradient-to-br from-blue-50 to-teal-50">
+                        <div className="aspect-[4/3] overflow-hidden bg-gradient-to-br from-slate-50 to-blue-50 relative">
                             <motion.img
                                 src={el.imgUrl}
                                 alt={el.name}
-                                className={`w-full h-full object-cover transition-all duration-700 group-hover:scale-110 ${isImageLoaded ? 'opacity-100' : 'opacity-0'
+                                className={`card-image w-full h-full object-cover ${isImageLoaded ? 'opacity-100' : 'opacity-0'
                                     }`}
                                 onLoad={() => setIsImageLoaded(true)}
                                 loading="lazy"
                             />
                             {!isImageLoaded && (
-                                <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-teal-100 animate-pulse flex items-center justify-center">
-                                    <div className="flex flex-col items-center gap-2">
-                                        <Fish className="h-5 w-5 text-blue-400 animate-bounce" />
-                                        <div className="w-6 h-6 border-2 border-blue-300 border-t-blue-600 rounded-full animate-spin"></div>
+                                <div className="absolute inset-0 bg-gradient-to-br from-slate-100 to-blue-100 animate-pulse flex items-center justify-center">
+                                    <div className="flex flex-col items-center gap-3">
+                                        <Fish className="h-8 w-8 text-blue-400 animate-bounce" />
+                                        <div className="w-8 h-8 border-3 border-blue-300 border-t-blue-600 rounded-full animate-spin"></div>
                                     </div>
                                 </div>
                             )}
                         </div>
 
-                        {/* Underwater Effect Overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-blue-900/5 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
-
                         {/* Overlay with Quick Actions */}
                         <motion.div
                             initial={{ opacity: 0 }}
                             whileHover={{ opacity: 1 }}
-                            className="absolute inset-0 bg-gradient-to-t from-blue-900/40 via-transparent to-transparent flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300"
+                            className="card-overlay absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300"
                         >
-                            <div className="flex gap-3 m-lg-3">
+                            <div className="flex gap-3">
                                 <motion.div
                                     whileHover={{ scale: 1.1 }}
                                     whileTap={{ scale: 0.9 }}
                                 >
-                                    <Button size="sm" className="rounded-full bg-white/90 text-blue-700 hover:bg-white border border-blue-200 text-xs py-1 h-6">
-                                        <Eye className="h-2.5 w-2.5 mr-1" />
-                                        View Details
+                                    <Button size="sm" className="card-button rounded-full bg-white/95 text-blue-700 hover:bg-white border-0 text-sm px-4 py-2 h-9 font-semibold shadow-lg">
+                                        <Eye className="h-4 w-4 mr-2" />
+                                        Quick View
                                     </Button>
                                 </motion.div>
                             </div>
@@ -209,53 +207,49 @@ export default function HomeCard({ el, index }) {
                 </div>
 
                 <CardContent className="p-2 flex-grow flex flex-col">
-                    {/* Rating */}
+                    {/* Rating - Smaller */}
                     <div className="flex items-center gap-1 mb-1">
                         {[...Array(5)].map((_, i) => (
                             <Star
                                 key={i}
-                                className={`h-2 w-2 ${i < rating ? 'text-blue-400 fill-blue-400' : 'text-slate-300'
+                                className={`h-2.5 w-2.5 ${i < rating ? 'text-amber-400 fill-amber-400' : 'text-slate-300'
                                     }`}
                             />
                         ))}
                         <span className="text-xs text-slate-500 ml-1">({rating}.0)</span>
-                        <Fish className="h-2 w-2 text-blue-400 ml-1" />
                     </div>
 
-                    {/* Product Name */}
+                    {/* Product Name - More compact */}
                     <div className="mb-1">
-                        <h3 className="text-sm font-semibold text-slate-900 hover:text-blue-600 transition-colors line-clamp-2 cursor-pointer"
+                        <h3 className="text-sm font-semibold text-slate-900 hover:text-blue-600 transition-colors line-clamp-1 cursor-pointer leading-tight"
                             onClick={() => window.location.href = `/detail/${el.id}`}>
-                            {truncateText(el.name, 35)}
+                            {truncateText(el.name, 30)}
                         </h3>
                     </div>
 
-                    {/* Price */}
-                    {/* <div className="flex items-center gap-2 mb-3">
-                        <span className="text-xl font-bold text-blue-700">
+                    {/* Price - Added back with smaller size */}
+                    <div className="flex items-baseline gap-2 mb-1">
+                        <span className="text-base font-bold text-blue-700">
                             {formatPrice(el.price)}
                         </span>
-                        <span className="text-sm text-slate-500 line-through">
-                            {formatPrice(originalPrice)}
-                        </span>
-                    </div> */}
+                    </div>
 
-                    {/* Description */}
-                    <p className="text-xs text-slate-600 line-clamp-2 mb-1">
-                        {truncateText(el.description, 50)}
+                    {/* Description - More compact and shorter */}
+                    <p className="text-xs text-slate-600 line-clamp-1 mb-1 leading-relaxed">
+                        {truncateText(el.description, 40)}
                     </p>
 
-                    {/* Food Specific Info */}
-                    {/* <div className="flex items-center gap-1 mt-auto mb-1">
-                        <Badge variant="outline" className="text-xs border-blue-200 text-blue-700 px-1 py-0">
-                            <Waves className="h-1 w-1 mr-1" />
+                    {/* Quality indicators - Smaller badges */}
+                    <div className="flex items-center gap-1 mt-auto mb-1">
+                        <Badge variant="outline" className="text-xs border-blue-200 text-blue-700 px-1.5 py-0">
+                            <Fish className="h-2 w-2 mr-0.5" />
                             Fresh
                         </Badge>
-                        <Badge variant="outline" className="text-xs border-teal-200 text-teal-700 px-1 py-0">
-                            <Crown className="h-1 w-1 mr-1" />
+                        <Badge variant="outline" className="text-xs border-emerald-200 text-emerald-700 px-1.5 py-0">
+                            <Crown className="h-2 w-2 mr-0.5" />
                             Premium
                         </Badge>
-                    </div> */}
+                    </div>
                 </CardContent>
 
                 <CardFooter className="p-2 pt-0 flex gap-2 mt-auto">
@@ -263,10 +257,10 @@ export default function HomeCard({ el, index }) {
                         <Button
                             variant="outline"
                             size="sm"
-                            className="w-full hover:bg-blue-50 border-blue-200 text-blue-700 text-xs py-1 h-6"
+                            className="w-full hover:bg-blue-50 border-blue-200 text-blue-700 text-xs py-1 h-7 font-medium"
                         >
                             <Eye className="h-2.5 w-2.5 mr-1" />
-                            View Details
+                            Details
                         </Button>
                     </Link>
                     <Button
@@ -274,24 +268,23 @@ export default function HomeCard({ el, index }) {
                         size="sm"
                         onClick={handleAddToWishlist}
                         disabled={isWishlistLoading}
-                        className={`h-8 w-8 rounded-full transition-all duration-300 shadow-sm hover:shadow-md flex items-center justify-center p-0 border-0 ${isInWishlist
-                            ? 'text-red-500 bg-red-100 hover:bg-red-200'
-                            : 'text-slate-600 bg-slate-100 hover:text-red-500 hover:bg-red-50'
-                            } ${isWishlistLoading ? 'opacity-60 cursor-not-allowed' : 'hover:scale-110 active:scale-95'}`}
+                        className={`h-7 w-7 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md flex items-center justify-center p-0 border ${isInWishlist
+                            ? 'text-red-500 bg-red-50 border-red-200 hover:bg-red-100'
+                            : 'text-slate-600 bg-slate-50 border-slate-200 hover:text-red-500 hover:bg-red-50 hover:border-red-200'
+                            } ${isWishlistLoading ? 'opacity-60 cursor-not-allowed' : 'hover:scale-105 active:scale-95'}`}
                     >
                         {isWishlistLoading ? (
-                            <div className="w-3.5 h-3.5 border-2 border-red-300 border-t-red-500 rounded-full animate-spin"></div>
+                            <div className="w-2.5 h-2.5 border-2 border-red-300 border-t-red-500 rounded-full animate-spin"></div>
                         ) : (
                             <Heart
-                                className={`w-4 h-4 transition-all duration-200 ${isInWishlist
+                                className={`w-3 h-3 transition-all duration-200 ${isInWishlist
                                     ? 'fill-red-500 text-red-500'
-                                    : 'stroke-slate-600 hover:stroke-red-500 hover:fill-red-200'
+                                    : 'stroke-slate-600 hover:stroke-red-500'
                                     }`}
                                 strokeWidth={2}
                             />
                         )}
                     </Button>
-
                 </CardFooter>
             </Card>
         </motion.div>
